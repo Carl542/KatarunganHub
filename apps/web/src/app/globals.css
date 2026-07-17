@@ -3,16 +3,16 @@
 :root {
   --background: #faf6ec;
   --foreground: #1e2a3f;
-  --color-primary: #7a2e22;
-  --color-primary-light: #f1e4cc;
+  --color-primary: #0038a8;
+  --color-primary-light: #e7edf7;
   --color-accent: #3f6b4b;
-  --color-danger: #b3261e;
+  --color-danger: #c8102e;
   --color-warning: #9c6b1f;
-  --color-sidebar: #14213d;
-  --color-border: #dccba8;
+  --color-sidebar: #0a2559;
+  --color-border: #d9cfb4;
   --color-muted: #f3ebd8;
   --color-foreground-muted: #786956;
-  --color-brass: #b8863b;
+  --color-brass: #c9a227;
 }
 
 @theme inline {

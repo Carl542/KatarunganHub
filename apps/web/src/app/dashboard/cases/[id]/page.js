@@ -2,7 +2,8 @@
 
 import { useEffect, useState, use } from "react";
 import { apiFetch } from "@/lib/apiClient";
-import { LUPON_STAGES, OUTCOMES_BY_STAGE } from "@/lib/workflowDisplay";
+import { LUPON_STAGES, OUTCOMES_BY_STAGE as LUPON_OUTCOMES_BY_STAGE } from "@/lib/workflowDisplay";
+import { NON_LUPON_STAGES, OUTCOMES_BY_STAGE as NON_LUPON_OUTCOMES_BY_STAGE } from "@/lib/nonLuponDisplay";
 
 export default function CaseDetailsPage({ params }) {
   const { id } = use(params);
@@ -53,8 +54,11 @@ export default function CaseDetailsPage({ params }) {
   if (error) return <p className="text-danger">{error}</p>;
   if (!caseData) return null;
 
-  const currentStage = caseData.workflow_stage || "Official complaint encoded";
-  const availableOutcomes = OUTCOMES_BY_STAGE[currentStage] || [];
+  const isNonLupon = caseData.type === "Non-Lupon";
+  const stages = isNonLupon ? NON_LUPON_STAGES : LUPON_STAGES;
+  const outcomesByStage = isNonLupon ? NON_LUPON_OUTCOMES_BY_STAGE : LUPON_OUTCOMES_BY_STAGE;
+  const currentStage = caseData.workflow_stage || stages[0];
+  const availableOutcomes = outcomesByStage[currentStage] || [];
 
   return (
     <div className="max-w-3xl">
@@ -74,12 +78,12 @@ export default function CaseDetailsPage({ params }) {
         <p className="text-gray-700">{caseData.relief}</p>
       </div>
 
-      {caseData.type === "Lupon" && (
+      {(caseData.type === "Lupon" || caseData.type === "Non-Lupon") && (
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="font-bold mb-3">Workflow</h2>
 
           <div className="flex flex-wrap gap-2 mb-6">
-            {LUPON_STAGES.map((stage) => (
+            {stages.map((stage) => (
               <span
                 key={stage}
                 className={`text-xs px-2 py-1 rounded-full ${

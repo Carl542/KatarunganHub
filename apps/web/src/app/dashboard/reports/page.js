@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-
-const CHART_COLORS = ["#0038a8", "#c9a227", "#3f6b4b", "#c8102e", "#786956", "#9c6b1f"];
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import DonutChart from "@/components/DonutChart";
 
 function toChartData(obj) {
   return Object.entries(obj).map(([name, value]) => ({ name, value }));
@@ -96,35 +95,11 @@ export default function ReportsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white/90 rounded-sm border border-border p-4">
-              <h2 className="font-display text-lg font-semibold mb-2">By status</h2>
+              <h2 className="font-display text-lg font-semibold mb-3">By status</h2>
               {Object.keys(summary.byStatus).length === 0 ? (
                 <p className="text-foreground-muted text-sm">No data for this range.</p>
               ) : (
-                <>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie data={toChartData(summary.byStatus)} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78}>
-                        {toChartData(summary.byStatus).map((_, i) => (
-                          <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  {Object.entries(summary.byStatus).map(([status, count], i) => (
-                    <div key={status} className="flex justify-between text-sm py-1 border-t border-border first:border-0">
-                      <span className="flex items-center gap-2">
-                        <span
-                          className="inline-block w-2.5 h-2.5 rounded-full"
-                          style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
-                          aria-hidden="true"
-                        />
-                        {status}
-                      </span>
-                      <span className="font-medium">{count}</span>
-                    </div>
-                  ))}
-                </>
+                <DonutChart data={summary.byStatus} centerValue={summary.total} centerLabel="Total" />
               )}
             </div>
             <div className="bg-white/90 rounded-sm border border-border p-4">

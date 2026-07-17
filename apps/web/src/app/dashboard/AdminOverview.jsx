@@ -4,10 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
 import Icon from "@/components/Icon";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { ROLES } from "@/lib/roles";
+import DonutChart, { CHART_COLORS } from "@/components/DonutChart";
 
-const CHART_COLORS = ["#0038a8", "#c9a227", "#3f6b4b", "#c8102e", "#786956", "#9c6b1f"];
+const SHORT_ROLE_LABELS = {
+  admin: "Admin",
+  punong: "Punong Brgy",
+  secretary: "Secretary",
+  lupon: "Lupon Member",
+  complainant: "Complainant",
+  respondent: "Respondent",
+};
 
 function StatCard({ label, value, href, icon }) {
   return (
@@ -27,42 +35,8 @@ function StatCard({ label, value, href, icon }) {
 function DonutCard({ title, data }) {
   return (
     <div className="bg-white/90 rounded-sm border border-border p-5">
-      <h2 className="font-display text-lg font-semibold mb-2">{title}</h2>
-      {Object.keys(data).length === 0 ? (
-        <p className="text-foreground-muted text-sm">No data yet.</p>
-      ) : (
-        <>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={Object.entries(data).map(([name, value]) => ({ name, value }))}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={48}
-                outerRadius={78}
-              >
-                {Object.keys(data).map((_, i) => (
-                  <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-          {Object.entries(data).map(([name, count], i) => (
-            <div key={name} className="flex justify-between text-sm py-1 border-t border-border first:border-0">
-              <span className="flex items-center gap-2">
-                <span
-                  className="inline-block w-2.5 h-2.5 rounded-full"
-                  style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
-                  aria-hidden="true"
-                />
-                {name}
-              </span>
-              <span className="font-medium">{count}</span>
-            </div>
-          ))}
-        </>
-      )}
+      <h2 className="font-display text-lg font-semibold mb-3">{title}</h2>
+      <DonutChart data={data} />
     </div>
   );
 }
@@ -72,16 +46,16 @@ function RoleBarCard({ title, data }) {
 
   return (
     <div className="bg-white/90 rounded-sm border border-border p-5">
-      <h2 className="font-display text-lg font-semibold mb-2">{title}</h2>
+      <h2 className="font-display text-lg font-semibold mb-3">{title}</h2>
       {rows.length === 0 ? (
         <p className="text-foreground-muted text-sm">No data yet.</p>
       ) : (
-        <ResponsiveContainer width="100%" height={Math.max(180, rows.length * 40)}>
-          <BarChart data={rows} layout="vertical" margin={{ left: 8, right: 16 }}>
-            <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
-            <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 12, fill: "#786956" }} />
+        <ResponsiveContainer width="100%" height={Math.max(160, rows.length * 34)}>
+          <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 20, bottom: 4, left: 4 }} barCategoryGap="28%">
+            <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#786956" }} />
+            <YAxis type="category" dataKey="name" width={92} tick={{ fontSize: 11, fill: "#786956" }} tickLine={false} axisLine={false} />
             <Tooltip />
-            <Bar dataKey="value" radius={[0, 3, 3, 0]}>
+            <Bar dataKey="value" radius={[0, 3, 3, 0]} maxBarSize={18}>
               {rows.map((_, i) => (
                 <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
               ))}
@@ -142,7 +116,7 @@ export default function AdminOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <DonutCard title="Cases by status" data={stats.byStatus} />
-        <RoleBarCard title="Users by role" data={Object.fromEntries(Object.entries(stats.byRole).map(([r, n]) => [ROLES[r] || r, n]))} />
+        <RoleBarCard title="Users by role" data={Object.fromEntries(Object.entries(stats.byRole).map(([r, n]) => [SHORT_ROLE_LABELS[r] || ROLES[r] || r, n]))} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

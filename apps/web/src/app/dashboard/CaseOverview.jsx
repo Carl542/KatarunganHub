@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
 import Icon from "@/components/Icon";
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import DonutChart from "@/components/DonutChart";
 
-const CHART_COLORS = ["#0038a8", "#c9a227", "#3f6b4b", "#c8102e", "#786956", "#9c6b1f"];
 const MEDIATION_PERIOD_DAYS = 15; // Katarungang Pambarangay statutory mediation period (RA 7160 Sec. 410)
 
 function StatCard({ label, value, href, icon }) {
@@ -103,33 +103,8 @@ export default function CaseOverview() {
         </div>
 
         <div className="bg-white/90 rounded-sm border border-border p-5">
-          <h2 className="font-display text-lg font-semibold mb-2">Cases by status</h2>
-          {Object.keys(byStatus).length === 0 ? (
-            <p className="text-foreground-muted text-sm">No cases yet.</p>
-          ) : (
-            <div className="relative">
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={Object.entries(byStatus).map(([name, value]) => ({ name, value }))}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={48}
-                    outerRadius={78}
-                  >
-                    {Object.keys(byStatus).map((_, i) => (
-                      <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="font-display text-xl font-semibold">{cases.length}</span>
-                <span className="text-[0.65rem] uppercase tracking-wide text-foreground-muted">Total</span>
-              </div>
-            </div>
-          )}
+          <h2 className="font-display text-lg font-semibold mb-3">Cases by status</h2>
+          <DonutChart data={byStatus} centerValue={cases.length} centerLabel="Total" />
         </div>
 
         <div className="bg-white/90 rounded-sm border border-border">

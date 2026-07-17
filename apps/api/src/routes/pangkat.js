@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { requireCaseAccess } from "../middleware/caseAccess.js";
 import { getSupabaseClient } from "../lib/supabaseClient.js";
+import { logAudit } from "../lib/auditLog.js";
 
 const router = Router({ mergeParams: true });
 
@@ -30,6 +31,13 @@ router.post("/", requireAuth, requireRole("punong", "secretary"), async (req, re
 
   if (error) return res.status(500).json({ error: error.message });
   res.status(201).json(data);
+
+  logAudit({
+    actorId: req.user.id,
+    action: "Recorded Pangkat formation",
+    module: "Pangkat",
+    complaintId: req.params.complaintId,
+  });
 });
 
 router.get("/", requireAuth, requireCaseAccess, async (req, res) => {

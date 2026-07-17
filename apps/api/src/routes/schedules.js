@@ -3,6 +3,7 @@ import { requireAuth, requireRole } from "../middleware/auth.js";
 import { requireCaseAccess } from "../middleware/caseAccess.js";
 import { getSupabaseClient } from "../lib/supabaseClient.js";
 import { notify } from "../lib/notify.js";
+import { logAudit } from "../lib/auditLog.js";
 
 const router = Router({ mergeParams: true });
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
@@ -26,6 +27,8 @@ router.post("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
   res.status(201).json(data);
+
+  logAudit({ actorId: req.user.id, action: "Added schedule", module: "Scheduling", complaintId: req.params.complaintId });
 
   try {
     const { data: complaint } = await supabase

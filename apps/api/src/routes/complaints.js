@@ -5,6 +5,7 @@ import { getSupabaseClient } from "../lib/supabaseClient.js";
 import * as luponWorkflow from "../lib/workflowDefinitions.js";
 import * as nonLuponWorkflow from "../lib/nonLuponDefinitions.js";
 import { notify } from "../lib/notify.js";
+import { logAudit } from "../lib/auditLog.js";
 
 function workflowModuleFor(type) {
   return type === "Non-Lupon" ? nonLuponWorkflow : luponWorkflow;
@@ -56,6 +57,7 @@ router.post("/", requireAuth, requireRole("secretary"), async (req, res) => {
     complaintId: data.id,
     message: `Case ${data.reference_number} has been officially recorded.`,
   });
+  logAudit({ actorId: req.user.id, action: "Registered case", module: "Cases", complaintId: data.id });
 });
 
 router.get("/", requireAuth, async (req, res) => {
@@ -114,6 +116,8 @@ router.patch("/:id/jurisdiction", requireAuth, requireRole("punong", "secretary"
   });
 
   res.json(data);
+
+  logAudit({ actorId: req.user.id, action: "Reviewed jurisdiction", module: "Jurisdiction", complaintId: req.params.id });
 });
 
 router.patch("/:id/workflow", requireAuth, async (req, res) => {
@@ -168,6 +172,12 @@ router.patch("/:id/workflow", requireAuth, async (req, res) => {
   const message = `Case ${data.reference_number || req.params.id} moved to "${nextStage}" (${outcome}).`;
   notify({ recipientId: data.complainant_id, complaintId: data.id, message });
   notify({ recipientId: data.respondent_id, complaintId: data.id, message });
+  logAudit({
+    actorId: req.user.id,
+    action: "Recorded workflow transition",
+    module: "Workflow",
+    complaintId: data.id,
+  });
 });
 
 export default router;

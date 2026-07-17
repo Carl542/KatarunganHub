@@ -1,4 +1,4 @@
-// Client-side display copy only — mirrors apps/api/src/lib/nonLuponDefinitions.js
+// Client-side display copy only — mirrors backend/src/lib/nonLuponDefinitions.js
 // for rendering. Real validation always happens server-side.
 export const NON_LUPON_STAGES = ["Received", "Assigned", "Action in Progress", "Referred", "Closed"];
 

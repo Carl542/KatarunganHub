@@ -1,4 +1,4 @@
-// Client-side display copy only — mirrors apps/api/src/lib/workflowDefinitions.js
+// Client-side display copy only — mirrors backend/src/lib/workflowDefinitions.js
 // for rendering. Real validation always happens server-side; a stale copy here
 // only affects which options are offered, never what's accepted.
 export const LUPON_STAGES = [

@@ -2,7 +2,7 @@ services:
   - type: web
     name: katarunganhub-api
     runtime: node
-    rootDir: apps/api
+    rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     plan: free

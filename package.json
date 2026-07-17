@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "backend"
   ],
   "scripts": {
-    "dev": "concurrently -n web,api -c blue,green \"npm:dev -w apps/web\" \"npm:dev -w apps/api\"",
-    "test": "npm run test -w apps/web && npm run test -w apps/api"
+    "dev": "concurrently -n web,api -c blue,green \"npm:dev -w apps/web\" \"npm:dev -w backend\"",
+    "test": "npm run test -w apps/web && npm run test -w backend"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"

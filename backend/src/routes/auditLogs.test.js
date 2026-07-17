@@ -66,4 +66,20 @@ describe("GET /audit-logs", () => {
     expect(res.body[0].actor.full_name).toBe("Ana Reyes");
     expect(mockSelect).toHaveBeenCalledWith(expect.stringContaining("profiles"));
   });
+
+  it("joins the linked complaint's reference number", async () => {
+    mockSelect.mockReturnValue({
+      order: () =>
+        Promise.resolve({
+          data: [{ id: "a1", complaint_id: "case-1", complaint: { reference_number: "REF-2026-000001" } }],
+          error: null,
+        }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get("/audit-logs");
+
+    expect(res.status).toBe(200);
+    expect(res.body[0].complaint.reference_number).toBe("REF-2026-000001");
+    expect(mockSelect).toHaveBeenCalledWith(expect.stringContaining("complaint"));
+  });
 });

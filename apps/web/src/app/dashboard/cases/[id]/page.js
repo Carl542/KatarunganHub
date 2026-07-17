@@ -4,12 +4,19 @@ import { useEffect, useState, use } from "react";
 import { apiFetch } from "@/lib/apiClient";
 import { LUPON_STAGES, OUTCOMES_BY_STAGE as LUPON_OUTCOMES_BY_STAGE } from "@/lib/workflowDisplay";
 import { NON_LUPON_STAGES, OUTCOMES_BY_STAGE as NON_LUPON_OUTCOMES_BY_STAGE } from "@/lib/nonLuponDisplay";
+import SchedulesTab from "./tabs/SchedulesTab";
+import PangkatTab from "./tabs/PangkatTab";
+import AttendanceTab from "./tabs/AttendanceTab";
+import DocumentsTab from "./tabs/DocumentsTab";
+
+const TABS = ["Overview", "Workflow", "Schedules", "Pangkat", "Attendance", "Documents"];
 
 export default function CaseDetailsPage({ params }) {
   const { id } = use(params);
   const [caseData, setCaseData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState("Overview");
   const [outcome, setOutcome] = useState("");
   const [notes, setNotes] = useState("");
   const [actionError, setActionError] = useState("");
@@ -59,9 +66,10 @@ export default function CaseDetailsPage({ params }) {
   const outcomesByStage = isNonLupon ? NON_LUPON_OUTCOMES_BY_STAGE : LUPON_OUTCOMES_BY_STAGE;
   const currentStage = caseData.workflow_stage || stages[0];
   const availableOutcomes = outcomesByStage[currentStage] || [];
+  const hasWorkflow = caseData.type === "Lupon" || caseData.type === "Non-Lupon";
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold">{caseData.title}</h1>
@@ -71,17 +79,31 @@ export default function CaseDetailsPage({ params }) {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="font-bold mb-2">Narrative</h2>
-        <p className="text-gray-700 mb-4">{caseData.narrative}</p>
-        <h2 className="font-bold mb-2">Relief requested</h2>
-        <p className="text-gray-700">{caseData.relief}</p>
+      <div className="flex gap-1 mb-4 border-b">
+        {TABS.map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+              tab === t ? "border-primary text-primary" : "border-transparent text-gray-500"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
       </div>
 
-      {(caseData.type === "Lupon" || caseData.type === "Non-Lupon") && (
+      {tab === "Overview" && (
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="font-bold mb-3">Workflow</h2>
+          <h2 className="font-bold mb-2">Narrative</h2>
+          <p className="text-gray-700 mb-4">{caseData.narrative}</p>
+          <h2 className="font-bold mb-2">Relief requested</h2>
+          <p className="text-gray-700">{caseData.relief}</p>
+        </div>
+      )}
 
+      {tab === "Workflow" && hasWorkflow && (
+        <div className="bg-white rounded-lg shadow p-6">
           <div className="flex flex-wrap gap-2 mb-6">
             {stages.map((stage) => (
               <span
@@ -134,6 +156,11 @@ export default function CaseDetailsPage({ params }) {
           )}
         </div>
       )}
+
+      {tab === "Schedules" && <SchedulesTab caseId={id} />}
+      {tab === "Pangkat" && <PangkatTab caseId={id} />}
+      {tab === "Attendance" && <AttendanceTab caseId={id} />}
+      {tab === "Documents" && <DocumentsTab caseId={id} />}
     </div>
   );
 }

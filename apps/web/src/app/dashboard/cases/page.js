@@ -49,7 +49,11 @@ export default function CasesPage() {
             <tbody>
               {cases.map((c) => (
                 <tr key={c.id} className="border-t">
-                  <td className="px-4 py-2">{c.reference_number}</td>
+                  <td className="px-4 py-2">
+                    <Link href={`/dashboard/cases/${c.id}`} className="text-primary font-medium">
+                      {c.reference_number}
+                    </Link>
+                  </td>
                   <td className="px-4 py-2">{c.title}</td>
                   <td className="px-4 py-2">{c.type}</td>
                   <td className="px-4 py-2">{c.status}</td>

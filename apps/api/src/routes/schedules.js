@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { getSupabaseClient } from "../lib/supabaseClient.js";
+import { notify } from "../lib/notify.js";
 
 const router = Router({ mergeParams: true });
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
@@ -24,6 +25,22 @@ router.post("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
   res.status(201).json(data);
+
+  try {
+    const { data: complaint } = await supabase
+      .from("complaints")
+      .select("complainant_id, respondent_id, reference_number")
+      .eq("id", req.params.complaintId)
+      .single();
+
+    if (complaint) {
+      const message = `A ${type} is scheduled for ${scheduledAt} at ${venue} (case ${complaint.reference_number}).`;
+      notify({ recipientId: complaint.complainant_id, complaintId: req.params.complaintId, message });
+      notify({ recipientId: complaint.respondent_id, complaintId: req.params.complaintId, message });
+    }
+  } catch (err) {
+    console.error("Failed to notify parties of new schedule:", err.message);
+  }
 });
 
 router.get("/", requireAuth, async (req, res) => {

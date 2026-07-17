@@ -4,6 +4,7 @@ import { generateReferenceNumber } from "../lib/referenceNumber.js";
 import { getSupabaseClient } from "../lib/supabaseClient.js";
 import * as luponWorkflow from "../lib/workflowDefinitions.js";
 import * as nonLuponWorkflow from "../lib/nonLuponDefinitions.js";
+import { notify } from "../lib/notify.js";
 
 function workflowModuleFor(type) {
   return type === "Non-Lupon" ? nonLuponWorkflow : luponWorkflow;
@@ -49,6 +50,12 @@ router.post("/", requireAuth, requireRole("secretary"), async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
   res.status(201).json(data);
+
+  notify({
+    recipientId: data.complainant_id,
+    complaintId: data.id,
+    message: `Case ${data.reference_number} has been officially recorded.`,
+  });
 });
 
 router.get("/", requireAuth, async (req, res) => {
@@ -157,6 +164,10 @@ router.patch("/:id/workflow", requireAuth, async (req, res) => {
   });
 
   res.json(data);
+
+  const message = `Case ${data.reference_number || req.params.id} moved to "${nextStage}" (${outcome}).`;
+  notify({ recipientId: data.complainant_id, complaintId: data.id, message });
+  notify({ recipientId: data.respondent_id, complaintId: data.id, message });
 });
 
 export default router;

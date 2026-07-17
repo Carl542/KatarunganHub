@@ -1,6 +1,7 @@
 "use client";
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { tooltipStyle } from "@/lib/chartTheme";
 
 export const CHART_COLORS = ["#0038a8", "#c9a227", "#3f6b4b", "#c8102e", "#786956", "#9c6b1f"];
 
@@ -19,7 +20,7 @@ export default function DonutChart({ data, centerLabel, centerValue }) {
                 <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip {...tooltipStyle} />
           </PieChart>
         </ResponsiveContainer>
         {centerValue != null && (

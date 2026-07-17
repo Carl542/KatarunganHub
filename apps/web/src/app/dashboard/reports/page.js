@@ -6,6 +6,7 @@ import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from 
 import DonutChart, { CHART_COLORS } from "@/components/DonutChart";
 import UserPicker from "@/components/UserPicker";
 import Icon from "@/components/Icon";
+import { tooltipStyle, barCursorFill } from "@/lib/chartTheme";
 
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
@@ -129,7 +130,7 @@ export default function ReportsPage() {
                   <BarChart data={byTypeRows}>
                     <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#786956" }} />
                     <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
-                    <Tooltip />
+                    <Tooltip {...tooltipStyle} cursor={{ fill: barCursorFill }} />
                     <Bar dataKey="value" radius={[3, 3, 0, 0]} maxBarSize={64}>
                       {byTypeRows.map((_, i) => (
                         <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />

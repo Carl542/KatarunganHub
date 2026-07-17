@@ -7,6 +7,7 @@ import Icon from "@/components/Icon";
 import { Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { ROLES } from "@/lib/roles";
 import DonutChart, { CHART_COLORS } from "@/components/DonutChart";
+import { tooltipStyle, barCursorFill } from "@/lib/chartTheme";
 
 const SHORT_ROLE_LABELS = {
   admin: "Admin",
@@ -54,7 +55,7 @@ function RoleBarCard({ title, data }) {
           <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 20, bottom: 4, left: 4 }} barCategoryGap="28%">
             <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#786956" }} />
             <YAxis type="category" dataKey="name" width={92} tick={{ fontSize: 11, fill: "#786956" }} tickLine={false} axisLine={false} />
-            <Tooltip />
+            <Tooltip {...tooltipStyle} cursor={{ fill: barCursorFill }} />
             <Bar dataKey="value" radius={[0, 3, 3, 0]} maxBarSize={18}>
               {rows.map((_, i) => (
                 <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />

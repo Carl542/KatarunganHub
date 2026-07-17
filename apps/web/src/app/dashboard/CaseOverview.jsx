@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/apiClient";
 import Icon from "@/components/Icon";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import DonutChart from "@/components/DonutChart";
+import { tooltipStyle, lineCursorStroke } from "@/lib/chartTheme";
 
 const MEDIATION_PERIOD_DAYS = 15; // Katarungang Pambarangay statutory mediation period (RA 7160 Sec. 410)
 
@@ -96,7 +97,7 @@ export default function CaseOverview() {
             <LineChart data={perMonth}>
               <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#786956" }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
-              <Tooltip />
+              <Tooltip {...tooltipStyle} cursor={{ stroke: lineCursorStroke }} />
               <Line type="monotone" dataKey="count" stroke="#3f6b4b" strokeWidth={2} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>

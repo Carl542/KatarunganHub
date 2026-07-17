@@ -6,8 +6,18 @@ import UserPicker from "@/components/UserPicker";
 
 const LUPON_ELIGIBLE_ROLES = ["admin", "punong", "secretary", "lupon"];
 
+function initialsFor(fullName) {
+  return (fullName || "")
+    .split(" ")
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
 export default function LuponMembersPage() {
   const [profiles, setProfiles] = useState([]);
+  const [query, setQuery] = useState("");
   const [form, setForm] = useState({
     profileId: "",
     position: "Lupon Member",
@@ -44,11 +54,30 @@ export default function LuponMembersPage() {
     }
   }
 
+  const filtered = profiles.filter((p) => {
+    const q = query.toLowerCase();
+    return (p.profile?.full_name || "").toLowerCase().includes(q) || (p.position || "").toLowerCase().includes(q);
+  });
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Lupon Profiles</h1>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-semibold">Lupon Profiles</h1>
+          <p className="text-sm text-foreground-muted mt-1">{profiles.length} registered official{profiles.length === 1 ? "" : "s"}</p>
+        </div>
+        {profiles.length > 0 && (
+          <input
+            type="search"
+            placeholder="Search by name or position…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white w-full sm:w-64 focus-visible:outline-3 focus-visible:outline-primary"
+          />
+        )}
+      </div>
 
-      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 mb-6 grid grid-cols-2 gap-3">
+      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
           <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Barangay official</span>
           <UserPicker
@@ -105,7 +134,7 @@ export default function LuponMembersPage() {
             className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
-        <label className="col-span-2 flex flex-col gap-1">
+        <label className="sm:col-span-2 flex flex-col gap-1">
           <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Conflict notes</span>
           <textarea
             value={form.conflictNotes}
@@ -113,24 +142,60 @@ export default function LuponMembersPage() {
             className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
-        {error && <p className="text-danger text-sm col-span-2">{error}</p>}
-        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium col-span-2">
+        {error && <p className="text-danger text-sm sm:col-span-2">{error}</p>}
+        <button
+          type="submit"
+          className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium sm:col-span-2"
+        >
           Add Lupon profile
         </button>
       </form>
 
       {loading && <p className="text-foreground-muted">Loading…</p>}
 
-      {profiles.length > 0 && (
-        <div className="grid grid-cols-3 gap-4">
-          {profiles.map((p) => (
+      {!loading && profiles.length > 0 && filtered.length === 0 && (
+        <p className="text-foreground-muted">No officials match &ldquo;{query}&rdquo;.</p>
+      )}
+
+      {filtered.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((p) => (
             <div key={p.id} className="bg-white/90 rounded-sm border border-border p-4">
-              <p className="font-bold">{p.position}</p>
-              <p className="text-sm text-foreground-muted">Term: {p.term}</p>
-              <p className="text-sm text-foreground-muted">Contact: {p.contact}</p>
-              <p className="text-sm text-foreground-muted">Availability: {p.availability}</p>
-              <p className="text-sm text-foreground-muted">Skill: {p.skill}</p>
-              <p className="text-sm text-foreground-muted">Conflict: {p.conflict_notes || "None declared"}</p>
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-10 h-10 rounded-full bg-primary-light text-primary font-display font-semibold flex items-center justify-center text-sm shrink-0"
+                  aria-hidden="true"
+                >
+                  {initialsFor(p.profile?.full_name)}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{p.profile?.full_name || "Unassigned"}</p>
+                  <span className="stamp text-primary">{p.position}</span>
+                </div>
+              </div>
+              <dl className="text-sm space-y-1">
+                <div className="flex justify-between gap-2 py-1 border-t border-border">
+                  <dt className="text-foreground-muted">Term</dt>
+                  <dd className="text-right">{p.term || "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-2 py-1 border-t border-border">
+                  <dt className="text-foreground-muted">Contact</dt>
+                  <dd className="ref-number text-right">{p.contact || "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-2 py-1 border-t border-border">
+                  <dt className="text-foreground-muted">Availability</dt>
+                  <dd className="text-right">{p.availability || "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-2 py-1 border-t border-border">
+                  <dt className="text-foreground-muted">Skill</dt>
+                  <dd className="text-right">{p.skill || "—"}</dd>
+                </div>
+              </dl>
+              {p.conflict_notes && (
+                <p className="text-xs text-foreground-muted mt-2 pt-2 border-t border-border">
+                  Conflict: {p.conflict_notes}
+                </p>
+              )}
             </div>
           ))}
         </div>

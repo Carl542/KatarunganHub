@@ -46,6 +46,22 @@ describe("lupon profiles routes", () => {
     expect(res.status).toBe(200);
   });
 
+  it("joins the linked profile's name into the listing", async () => {
+    mockSelect.mockReturnValue({
+      order: () =>
+        Promise.resolve({
+          data: [{ id: "lp1", position: "Lupon Member", profile: { full_name: "Elena Cruz" } }],
+          error: null,
+        }),
+    });
+
+    const res = await request(buildTestApp({ id: "l1", role: "lupon" })).get("/lupon-profiles");
+
+    expect(res.status).toBe(200);
+    expect(res.body[0].profile.full_name).toBe("Elena Cruz");
+    expect(mockSelect).toHaveBeenCalledWith(expect.stringContaining("profiles"));
+  });
+
   it("rejects non admin/punong from creating a profile", async () => {
     const res = await request(buildTestApp({ id: "s1", role: "secretary" }))
       .post("/lupon-profiles")

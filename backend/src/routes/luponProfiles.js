@@ -10,7 +10,7 @@ router.get("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("lupon_profiles")
-    .select("*")
+    .select("*, profile:profiles(full_name)")
     .order("created_at", { ascending: true });
 
   if (error) return res.status(500).json({ error: error.message });

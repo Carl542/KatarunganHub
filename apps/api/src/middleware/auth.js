@@ -1,6 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+import { getSupabaseClient } from "../lib/supabaseClient.js";
 
 export async function requireAuth(req, res, next) {
   const header = req.headers.authorization || "";
@@ -10,6 +8,7 @@ export async function requireAuth(req, res, next) {
     return res.status(401).json({ error: "Missing authorization token" });
   }
 
+  const supabase = getSupabaseClient();
   const { data, error } = await supabase.auth.getUser(token);
   if (error || !data.user) {
     return res.status(401).json({ error: "Invalid or expired token" });

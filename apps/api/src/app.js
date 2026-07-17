@@ -1,4 +1,5 @@
 import express from "express";
+import complaintsRouter from "./routes/complaints.js";
 
 export function createApp() {
   const app = express();
@@ -7,6 +8,8 @@ export function createApp() {
   app.get("/health", (req, res) => {
     res.json({ status: "ok" });
   });
+
+  app.use("/complaints", complaintsRouter);
 
   return app;
 }

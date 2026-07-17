@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
 import Icon from "@/components/Icon";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { ROLES } from "@/lib/roles";
 
 const CHART_COLORS = ["#0038a8", "#c9a227", "#3f6b4b", "#c8102e", "#786956", "#9c6b1f"];
@@ -67,6 +67,32 @@ function DonutCard({ title, data }) {
   );
 }
 
+function RoleBarCard({ title, data }) {
+  const rows = Object.entries(data).map(([name, value]) => ({ name, value }));
+
+  return (
+    <div className="bg-white/90 rounded-sm border border-border p-5">
+      <h2 className="font-display text-lg font-semibold mb-2">{title}</h2>
+      {rows.length === 0 ? (
+        <p className="text-foreground-muted text-sm">No data yet.</p>
+      ) : (
+        <ResponsiveContainer width="100%" height={Math.max(180, rows.length * 40)}>
+          <BarChart data={rows} layout="vertical" margin={{ left: 8, right: 16 }}>
+            <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
+            <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 12, fill: "#786956" }} />
+            <Tooltip />
+            <Bar dataKey="value" radius={[0, 3, 3, 0]}>
+              {rows.map((_, i) => (
+                <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+}
+
 export default function AdminOverview() {
   const [stats, setStats] = useState(null);
   const [activity, setActivity] = useState([]);
@@ -116,7 +142,7 @@ export default function AdminOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <DonutCard title="Cases by status" data={stats.byStatus} />
-        <DonutCard title="Users by role" data={Object.fromEntries(Object.entries(stats.byRole).map(([r, n]) => [ROLES[r] || r, n]))} />
+        <RoleBarCard title="Users by role" data={Object.fromEntries(Object.entries(stats.byRole).map(([r, n]) => [ROLES[r] || r, n]))} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

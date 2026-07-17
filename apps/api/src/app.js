@@ -10,6 +10,7 @@ import auditLogsRouter from "./routes/auditLogs.js";
 import reportsRouter from "./routes/reports.js";
 import usersRouter from "./routes/users.js";
 import luponProfilesRouter from "./routes/luponProfiles.js";
+import settingsRouter from "./routes/settings.js";
 
 export function createApp() {
   const app = express();
@@ -30,6 +31,7 @@ export function createApp() {
   app.use("/reports", reportsRouter);
   app.use("/users", usersRouter);
   app.use("/lupon-profiles", luponProfilesRouter);
+  app.use("/settings", settingsRouter);
 
   return app;
 }

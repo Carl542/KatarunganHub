@@ -61,7 +61,7 @@ export default function UsersPage() {
                     <select
                       value={u.role}
                       onChange={(e) => updateUser(u.id, { role: e.target.value })}
-                      className="border rounded-sm px-2 py-1"
+                      className="border border-border rounded-sm px-2 py-1 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                     >
                       {Object.entries(ROLES).map(([id, label]) => (
                         <option key={id} value={id}>
@@ -76,7 +76,7 @@ export default function UsersPage() {
                       defaultValue={u.phone_number || ""}
                       placeholder="09171234567"
                       onBlur={(e) => savePhoneNumber(u.id, e.target.value)}
-                      className="border rounded-sm px-2 py-1 w-36"
+                      className="border border-border rounded-sm px-2 py-1 w-36 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                     />
                   </td>
                   <td className="px-4 py-2">{u.status}</td>

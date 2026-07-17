@@ -52,40 +52,40 @@ export default function RegisterCasePage() {
       ) : (
         <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-6 flex flex-col gap-4">
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Case title</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Case title</span>
             <input
               required
               value={form.title}
               onChange={(e) => update("title", e.target.value)}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Complainant ID</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant ID</span>
             <input
               required
               value={form.complainantId}
               onChange={(e) => update("complainantId", e.target.value)}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Respondent ID</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Respondent ID</span>
             <input
               value={form.respondentId}
               onChange={(e) => update("respondentId", e.target.value)}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Case type</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Case type</span>
             <select
               value={form.type}
               onChange={(e) => update("type", e.target.value)}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             >
               <option>Lupon</option>
               <option>Non-Lupon</option>
@@ -94,22 +94,22 @@ export default function RegisterCasePage() {
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Narrative</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Narrative</span>
             <textarea
               required
               minLength={20}
               value={form.narrative}
               onChange={(e) => update("narrative", e.target.value)}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Relief requested</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Relief requested</span>
             <textarea
               value={form.relief}
               onChange={(e) => update("relief", e.target.value)}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
 
@@ -118,7 +118,7 @@ export default function RegisterCasePage() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-white rounded-sm py-2 font-medium disabled:opacity-60"
+            className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium disabled:opacity-60"
           >
             {loading ? "Saving…" : "Save case & generate reference"}
           </button>

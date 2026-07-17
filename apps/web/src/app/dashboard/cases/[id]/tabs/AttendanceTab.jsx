@@ -46,28 +46,28 @@ export default function AttendanceTab({ caseId }) {
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Schedule ID</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Schedule ID</span>
             <input
               value={form.scheduleId}
               onChange={(e) => setForm({ ...form, scheduleId: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Lupon/Pangkat attendance</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Lupon/Pangkat attendance</span>
             <input
               required
               value={form.luponAttendance}
               onChange={(e) => setForm({ ...form, luponAttendance: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Complainant attendance</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant attendance</span>
             <select
               value={form.complainantAttendance}
               onChange={(e) => setForm({ ...form, complainantAttendance: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             >
               <option>Present</option>
               <option>Absent</option>
@@ -75,11 +75,11 @@ export default function AttendanceTab({ caseId }) {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Respondent attendance</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Respondent attendance</span>
             <select
               value={form.respondentAttendance}
               onChange={(e) => setForm({ ...form, respondentAttendance: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             >
               <option>Present</option>
               <option>Absent</option>
@@ -88,15 +88,15 @@ export default function AttendanceTab({ caseId }) {
           </label>
         </div>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Remarks</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Remarks</span>
           <textarea
             value={form.remarks}
             onChange={(e) => setForm({ ...form, remarks: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         {error && <p className="text-danger text-sm">{error}</p>}
-        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium self-start px-4">
+        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium self-start px-4">
           Record attendance
         </button>
       </form>

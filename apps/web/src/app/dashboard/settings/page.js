@@ -44,11 +44,11 @@ export default function SettingsPage() {
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-6 flex flex-col gap-4">
         {FIELDS.map((f) => (
           <label key={f.key} className="flex flex-col gap-1">
-            <span className="text-sm font-medium">{f.label}</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">{f.label}</span>
             <input
               value={values[f.key] || ""}
               onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
         ))}
@@ -56,7 +56,7 @@ export default function SettingsPage() {
         {error && <p className="text-danger text-sm">{error}</p>}
         {saved && <p className="text-accent text-sm">Settings saved.</p>}
 
-        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium">
+        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium">
           Save settings
         </button>
       </form>

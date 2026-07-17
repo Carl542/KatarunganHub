@@ -62,14 +62,14 @@ export default function DocumentsTab({ caseId }) {
     <div className="flex flex-col gap-4">
       <form onSubmit={handleCreate} className="bg-white/90 rounded-sm border border-border p-4 flex items-end gap-3">
         <label className="flex flex-col gap-1 flex-1">
-          <span className="text-sm font-medium">Document type</span>
-          <select value={type} onChange={(e) => setType(e.target.value)} className="border rounded-sm px-3 py-2">
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Document type</span>
+          <select value={type} onChange={(e) => setType(e.target.value)} className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary">
             {DOCUMENT_TYPES.map((t) => (
               <option key={t}>{t}</option>
             ))}
           </select>
         </label>
-        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium px-4">
+        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium px-4">
           Create document
         </button>
       </form>

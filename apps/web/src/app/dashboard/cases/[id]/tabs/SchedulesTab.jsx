@@ -39,11 +39,11 @@ export default function SchedulesTab({ caseId }) {
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Type</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Type</span>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             >
               <option>Summons</option>
               <option>Punong Barangay mediation</option>
@@ -52,34 +52,34 @@ export default function SchedulesTab({ caseId }) {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Date &amp; time</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Date &amp; time</span>
             <input
               type="datetime-local"
               required
               value={form.scheduledAt}
               onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Venue</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Venue</span>
             <input
               value={form.venue}
               onChange={(e) => setForm({ ...form, venue: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Facilitator ID (optional)</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Facilitator ID (optional)</span>
             <input
               value={form.facilitatorId}
               onChange={(e) => setForm({ ...form, facilitatorId: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
         </div>
         {error && <p className="text-danger text-sm">{error}</p>}
-        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium self-start px-4">
+        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium self-start px-4">
           Add schedule
         </button>
       </form>

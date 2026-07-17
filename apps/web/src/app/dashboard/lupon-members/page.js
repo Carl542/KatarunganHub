@@ -47,20 +47,20 @@ export default function LuponMembersPage() {
 
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 mb-6 grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Profile ID (user UUID)</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Profile ID (user UUID)</span>
           <input
             required
             value={form.profileId}
             onChange={(e) => setForm({ ...form, profileId: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Position</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Position</span>
           <select
             value={form.position}
             onChange={(e) => setForm({ ...form, position: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           >
             <option>Pangkat Chairperson</option>
             <option>Pangkat Secretary</option>
@@ -68,49 +68,49 @@ export default function LuponMembersPage() {
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Term</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Term</span>
           <input
             value={form.term}
             onChange={(e) => setForm({ ...form, term: e.target.value })}
             placeholder="2025-2027"
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Contact</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Contact</span>
           <input
             value={form.contact}
             onChange={(e) => setForm({ ...form, contact: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Availability</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Availability</span>
           <input
             value={form.availability}
             onChange={(e) => setForm({ ...form, availability: e.target.value })}
             placeholder="Weekday mornings"
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Specialization</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Specialization</span>
           <input
             value={form.skill}
             onChange={(e) => setForm({ ...form, skill: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         <label className="col-span-2 flex flex-col gap-1">
-          <span className="text-sm font-medium">Conflict notes</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Conflict notes</span>
           <textarea
             value={form.conflictNotes}
             onChange={(e) => setForm({ ...form, conflictNotes: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         {error && <p className="text-danger text-sm col-span-2">{error}</p>}
-        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium col-span-2">
+        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium col-span-2">
           Add Lupon profile
         </button>
       </form>

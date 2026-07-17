@@ -123,12 +123,12 @@ export default function CaseDetailsPage({ params }) {
           {currentStage !== "Closed" && (
             <form onSubmit={handleTransition} className="flex flex-col gap-3">
               <label className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Outcome</span>
+                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Outcome</span>
                 <select
                   required
                   value={outcome}
                   onChange={(e) => setOutcome(e.target.value)}
-                  className="border rounded-sm px-3 py-2"
+                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                 >
                   <option value="">Select outcome</option>
                   {availableOutcomes.map((o) => (
@@ -138,11 +138,11 @@ export default function CaseDetailsPage({ params }) {
               </label>
 
               <label className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Notes</span>
+                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Notes</span>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="border rounded-sm px-3 py-2"
+                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                 />
               </label>
 
@@ -151,7 +151,7 @@ export default function CaseDetailsPage({ params }) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-primary text-white rounded-sm py-2 font-medium disabled:opacity-60"
+                className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium disabled:opacity-60"
               >
                 {submitting ? "Recording…" : "Record transition"}
               </button>

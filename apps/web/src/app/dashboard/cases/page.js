@@ -22,7 +22,7 @@ export default function CasesPage() {
         <h1 className="text-2xl font-bold">Cases</h1>
         <Link
           href="/dashboard/cases/register"
-          className="bg-primary text-white rounded-sm px-4 py-2 text-sm font-medium"
+          className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 px-4 py-2 text-sm font-medium"
         >
           Register Case
         </Link>

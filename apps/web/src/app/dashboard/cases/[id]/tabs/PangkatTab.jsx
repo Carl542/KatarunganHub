@@ -45,54 +45,54 @@ export default function PangkatTab({ caseId }) {
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Formation date</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Formation date</span>
             <input
               type="date"
               required
               value={form.formationDate}
               onChange={(e) => setForm({ ...form, formationDate: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Chairperson ID</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Chairperson ID</span>
             <input
               required
               value={form.chairpersonId}
               onChange={(e) => setForm({ ...form, chairpersonId: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Secretary ID</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Secretary ID</span>
             <input
               required
               value={form.secretaryId}
               onChange={(e) => setForm({ ...form, secretaryId: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Member ID</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Member ID</span>
             <input
               required
               value={form.memberId}
               onChange={(e) => setForm({ ...form, memberId: e.target.value })}
-              className="border rounded-sm px-3 py-2"
+              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
         </div>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Conflict of interest review notes</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Conflict of interest review notes</span>
           <textarea
             required
             value={form.conflictNotes}
             onChange={(e) => setForm({ ...form, conflictNotes: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         {error && <p className="text-danger text-sm">{error}</p>}
-        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium self-start px-4">
+        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium self-start px-4">
           Save formation
         </button>
       </form>

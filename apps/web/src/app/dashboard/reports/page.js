@@ -37,32 +37,32 @@ export default function ReportsPage() {
 
       <div className="bg-white/90 rounded-sm border border-border p-4 mb-6 flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Filed from</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Filed from</span>
           <input
             type="date"
             value={filters.dateFrom}
             onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Filed to</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Filed to</span>
           <input
             type="date"
             value={filters.dateTo}
             onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Filed by (staff ID)</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Filed by (staff ID)</span>
           <input
             value={filters.filedBy}
             onChange={(e) => setFilters({ ...filters, filedBy: e.target.value })}
-            className="border rounded-sm px-3 py-2"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>
-        <button onClick={load} className="bg-primary text-white rounded-sm px-4 py-2 font-medium">
+        <button onClick={load} className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 px-4 py-2 font-medium">
           Apply
         </button>
       </div>

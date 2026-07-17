@@ -2,7 +2,12 @@ import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { generateReferenceNumber } from "../lib/referenceNumber.js";
 import { getSupabaseClient } from "../lib/supabaseClient.js";
-import { getAllowedOutcomes, getNextStage, canActOnStage } from "../lib/workflowDefinitions.js";
+import * as luponWorkflow from "../lib/workflowDefinitions.js";
+import * as nonLuponWorkflow from "../lib/nonLuponDefinitions.js";
+
+function workflowModuleFor(type) {
+  return type === "Non-Lupon" ? nonLuponWorkflow : luponWorkflow;
+}
 
 const router = Router();
 
@@ -110,29 +115,31 @@ router.patch("/:id/workflow", requireAuth, async (req, res) => {
 
   const { data: existing, error: fetchError } = await supabase
     .from("complaints")
-    .select("workflow_stage")
+    .select("workflow_stage, type")
     .eq("id", req.params.id)
     .single();
 
   if (fetchError || !existing) return res.status(404).json({ error: "Case not found" });
 
-  const currentStage = existing.workflow_stage || "Official complaint encoded";
+  const workflow = workflowModuleFor(existing.type);
+  const currentStage = existing.workflow_stage || workflow.STAGES[0];
 
-  if (!canActOnStage(currentStage, req.user.role)) {
+  if (!workflow.canActOnStage(currentStage, req.user.role)) {
     return res.status(403).json({ error: `${req.user.role} cannot act on stage "${currentStage}"` });
   }
 
-  if (!getAllowedOutcomes(currentStage).includes(outcome)) {
+  if (!workflow.getAllowedOutcomes(currentStage).includes(outcome)) {
     return res.status(400).json({ error: `"${outcome}" is not a valid outcome for "${currentStage}"` });
   }
 
-  const nextStage = getNextStage(currentStage, outcome);
+  const nextStage = workflow.getNextStage(currentStage, outcome);
+  const activeStatus = existing.type === "Non-Lupon" ? "Active" : "Under Mediation";
 
   const { data, error } = await supabase
     .from("complaints")
     .update({
       workflow_stage: nextStage,
-      status: nextStage === "Closed" ? "Closed" : "Under Mediation",
+      status: nextStage === "Closed" ? "Closed" : activeStatus,
     })
     .eq("id", req.params.id)
     .select()

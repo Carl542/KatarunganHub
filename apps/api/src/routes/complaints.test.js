@@ -159,9 +159,9 @@ describe("PATCH /complaints/:id/workflow", () => {
     mockLogInsert.mockResolvedValue({ data: null, error: null });
   });
 
-  function mockCurrentStage(stage) {
+  function mockCurrentStage(stage, type = "Lupon") {
     mockSelectCount.mockReturnValue({
-      eq: () => ({ single: () => Promise.resolve({ data: { workflow_stage: stage }, error: null }) }),
+      eq: () => ({ single: () => Promise.resolve({ data: { workflow_stage: stage, type }, error: null }) }),
     });
   }
 
@@ -228,5 +228,33 @@ describe("PATCH /complaints/:id/workflow", () => {
         next_stage: "Punong Barangay mediation",
       })
     );
+  });
+
+  it("uses Non-Lupon rules for a Non-Lupon case: secretary can act, punong cannot", async () => {
+    mockCurrentStage("Received", "Non-Lupon");
+
+    const punongRes = await request(buildTestApp({ id: "p1", role: "punong" }))
+      .patch("/complaints/case-1/workflow")
+      .send({ outcome: "Assigned to office/department" });
+    expect(punongRes.status).toBe(403);
+
+    mockUpdate.mockReturnValue({
+      eq: () => ({
+        select: () => ({
+          single: () =>
+            Promise.resolve({
+              data: { id: "case-1", workflow_stage: "Assigned", status: "Active" },
+              error: null,
+            }),
+        }),
+      }),
+    });
+
+    const secretaryRes = await request(buildTestApp({ id: "sec-1", role: "secretary" }))
+      .patch("/complaints/case-1/workflow")
+      .send({ outcome: "Assigned to office/department" });
+
+    expect(secretaryRes.status).toBe(200);
+    expect(secretaryRes.body.workflow_stage).toBe("Assigned");
   });
 });

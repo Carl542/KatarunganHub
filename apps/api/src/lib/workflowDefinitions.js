@@ -10,6 +10,10 @@ export const LUPON_STAGES = [
   "Closed",
 ];
 
+// Alias so callers that pick between workflowDefinitions and nonLuponDefinitions
+// (see routes/complaints.js workflowModuleFor) can rely on a common `.STAGES` name.
+export const STAGES = LUPON_STAGES;
+
 export const OUTCOMES_BY_STAGE = {
   "Official complaint encoded": ["For jurisdiction review"],
   "Jurisdiction review": ["Potentially covered", "Potentially not covered", "Requires further verification", "Referred to appropriate office"],

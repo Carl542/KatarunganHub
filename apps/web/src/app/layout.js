@@ -1,11 +1,10 @@
-import { Fraunces, Public_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Merriweather, Public_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({
+const merriweather = Merriweather({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  style: ["normal", "italic"],
+  weight: ["400", "700", "900"],
 });
 
 const publicSans = Public_Sans({
@@ -29,7 +28,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${publicSans.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${merriweather.variable} ${publicSans.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

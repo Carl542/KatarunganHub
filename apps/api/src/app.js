@@ -7,6 +7,7 @@ import attendanceRouter from "./routes/attendance.js";
 import documentsRouter from "./routes/documents.js";
 import notificationsRouter from "./routes/notifications.js";
 import auditLogsRouter from "./routes/auditLogs.js";
+import reportsRouter from "./routes/reports.js";
 
 export function createApp() {
   const app = express();
@@ -24,6 +25,7 @@ export function createApp() {
   app.use("/complaints/:complaintId/documents", documentsRouter);
   app.use("/notifications", notificationsRouter);
   app.use("/audit-logs", auditLogsRouter);
+  app.use("/reports", reportsRouter);
 
   return app;
 }

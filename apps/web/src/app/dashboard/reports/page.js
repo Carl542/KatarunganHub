@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+
+const CHART_COLORS = ["#0038a8", "#c9a227", "#3f6b4b", "#c8102e", "#786956", "#9c6b1f"];
+
+function toChartData(obj) {
+  return Object.entries(obj).map(([name, value]) => ({ name, value }));
+}
 
 export default function ReportsPage() {
   const [filters, setFilters] = useState({ dateFrom: "", dateTo: "", filedBy: "" });
@@ -87,24 +94,53 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white/90 rounded-sm border border-border p-4">
-              <h2 className="font-bold mb-2">By status</h2>
-              {Object.entries(summary.byStatus).map(([status, count]) => (
-                <div key={status} className="flex justify-between text-sm py-1 border-t first:border-0">
-                  <span>{status}</span>
-                  <span className="font-medium">{count}</span>
-                </div>
-              ))}
+              <h2 className="font-display text-lg font-semibold mb-2">By status</h2>
+              {Object.keys(summary.byStatus).length === 0 ? (
+                <p className="text-foreground-muted text-sm">No data for this range.</p>
+              ) : (
+                <>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={toChartData(summary.byStatus)} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78}>
+                        {toChartData(summary.byStatus).map((_, i) => (
+                          <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  {Object.entries(summary.byStatus).map(([status, count], i) => (
+                    <div key={status} className="flex justify-between text-sm py-1 border-t border-border first:border-0">
+                      <span className="flex items-center gap-2">
+                        <span
+                          className="inline-block w-2.5 h-2.5 rounded-full"
+                          style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
+                          aria-hidden="true"
+                        />
+                        {status}
+                      </span>
+                      <span className="font-medium">{count}</span>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
             <div className="bg-white/90 rounded-sm border border-border p-4">
-              <h2 className="font-bold mb-2">By type</h2>
-              {Object.entries(summary.byType).map(([type, count]) => (
-                <div key={type} className="flex justify-between text-sm py-1 border-t first:border-0">
-                  <span>{type}</span>
-                  <span className="font-medium">{count}</span>
-                </div>
-              ))}
+              <h2 className="font-display text-lg font-semibold mb-2">By type</h2>
+              {Object.keys(summary.byType).length === 0 ? (
+                <p className="text-foreground-muted text-sm">No data for this range.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={toChartData(summary.byType)}>
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#786956" }} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#0038a8" radius={[3, 3, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
         </>

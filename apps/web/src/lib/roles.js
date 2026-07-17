@@ -20,6 +20,7 @@ export const NAV_BY_ROLE = {
   punong: [
     { label: "Dashboard", path: "/dashboard", icon: "grid" },
     { label: "Cases", path: "/dashboard/cases", icon: "clipboard-list" },
+    { label: "Schedules", path: "/dashboard/schedules", icon: "calendar" },
     { label: "Lupon Profiles", path: "/dashboard/lupon-members", icon: "users" },
     { label: "Reports", path: "/dashboard/reports", icon: "clipboard-list" },
     { label: "Audit Logs", path: "/dashboard/audit-logs", icon: "clipboard-list" },
@@ -28,6 +29,7 @@ export const NAV_BY_ROLE = {
   secretary: [
     { label: "Dashboard", path: "/dashboard", icon: "grid" },
     { label: "Cases", path: "/dashboard/cases", icon: "clipboard-list" },
+    { label: "Schedules", path: "/dashboard/schedules", icon: "calendar" },
     { label: "Register Case", path: "/dashboard/cases/register", icon: "file-text" },
     { label: "Reports", path: "/dashboard/reports", icon: "clipboard-list" },
     { label: "Audit Logs", path: "/dashboard/audit-logs", icon: "clipboard-list" },
@@ -36,6 +38,7 @@ export const NAV_BY_ROLE = {
   lupon: [
     { label: "Dashboard", path: "/dashboard", icon: "grid" },
     { label: "Cases", path: "/dashboard/cases", icon: "clipboard-list" },
+    { label: "Schedules", path: "/dashboard/schedules", icon: "calendar" },
     { label: "Reports", path: "/dashboard/reports", icon: "clipboard-list" },
     { label: "Audit Logs", path: "/dashboard/audit-logs", icon: "clipboard-list" },
     { label: "Notifications", path: "/dashboard/notifications", icon: "bell" },

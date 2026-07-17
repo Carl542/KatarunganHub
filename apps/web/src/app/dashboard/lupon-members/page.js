@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
+import UserPicker from "@/components/UserPicker";
+
+const LUPON_ELIGIBLE_ROLES = ["admin", "punong", "secretary", "lupon"];
 
 export default function LuponMembersPage() {
   const [profiles, setProfiles] = useState([]);
@@ -47,12 +50,13 @@ export default function LuponMembersPage() {
 
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 mb-6 grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Profile ID (user UUID)</span>
-          <input
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Barangay official</span>
+          <UserPicker
             required
+            roles={LUPON_ELIGIBLE_ROLES}
             value={form.profileId}
-            onChange={(e) => setForm({ ...form, profileId: e.target.value })}
-            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+            onChange={(v) => setForm({ ...form, profileId: v })}
+            placeholder="Select official"
           />
         </label>
         <label className="flex flex-col gap-1">

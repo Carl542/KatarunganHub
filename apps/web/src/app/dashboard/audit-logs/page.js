@@ -41,7 +41,7 @@ export default function AuditLogsPage() {
               {logs.map((l) => (
                 <tr key={l.id} className="border-t">
                   <td className="px-4 py-2 whitespace-nowrap">{new Date(l.created_at).toLocaleString()}</td>
-                  <td className="px-4 py-2 text-xs">{l.actor_id}</td>
+                  <td className="px-4 py-2">{l.actor?.full_name || l.actor_id}</td>
                   <td className="px-4 py-2">{l.action}</td>
                   <td className="px-4 py-2">{l.module}</td>
                   <td className="px-4 py-2 text-xs">{l.complaint_id || "—"}</td>

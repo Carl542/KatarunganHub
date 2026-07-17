@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
+import UserPicker from "@/components/UserPicker";
 
 export default function RegisterCasePage() {
   const [form, setForm] = useState({
@@ -62,21 +63,23 @@ export default function RegisterCasePage() {
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant ID</span>
-            <input
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant</span>
+            <UserPicker
               required
+              roles={["complainant"]}
               value={form.complainantId}
-              onChange={(e) => update("complainantId", e.target.value)}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              onChange={(v) => update("complainantId", v)}
+              placeholder="Select complainant"
             />
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Respondent ID</span>
-            <input
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Respondent</span>
+            <UserPicker
+              roles={["respondent"]}
               value={form.respondentId}
-              onChange={(e) => update("respondentId", e.target.value)}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              onChange={(v) => update("respondentId", v)}
+              placeholder="Select respondent"
             />
           </label>
 

@@ -13,6 +13,22 @@ router.get("/", requireAuth, requireRole("admin"), async (req, res) => {
   res.json(data);
 });
 
+router.get(
+  "/lookup",
+  requireAuth,
+  requireRole("admin", "punong", "secretary", "lupon"),
+  async (req, res) => {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, role")
+      .order("full_name", { ascending: true });
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
+  }
+);
+
 router.patch("/:id", requireAuth, requireRole("admin"), async (req, res) => {
   const { role, status, phone_number } = req.body;
   const updates = {};

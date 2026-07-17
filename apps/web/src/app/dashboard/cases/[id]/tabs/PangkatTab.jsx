@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
+import UserPicker from "@/components/UserPicker";
+
+const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
 export default function PangkatTab({ caseId }) {
   const [formations, setFormations] = useState([]);
@@ -55,30 +58,33 @@ export default function PangkatTab({ caseId }) {
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Chairperson ID</span>
-            <input
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Chairperson</span>
+            <UserPicker
               required
+              roles={STAFF_ROLES}
               value={form.chairpersonId}
-              onChange={(e) => setForm({ ...form, chairpersonId: e.target.value })}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              onChange={(v) => setForm({ ...form, chairpersonId: v })}
+              placeholder="Select chairperson"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Secretary ID</span>
-            <input
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Secretary</span>
+            <UserPicker
               required
+              roles={STAFF_ROLES}
               value={form.secretaryId}
-              onChange={(e) => setForm({ ...form, secretaryId: e.target.value })}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              onChange={(v) => setForm({ ...form, secretaryId: v })}
+              placeholder="Select secretary"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Member ID</span>
-            <input
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Member</span>
+            <UserPicker
               required
+              roles={STAFF_ROLES}
               value={form.memberId}
-              onChange={(e) => setForm({ ...form, memberId: e.target.value })}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              onChange={(v) => setForm({ ...form, memberId: v })}
+              placeholder="Select member"
             />
           </label>
         </div>

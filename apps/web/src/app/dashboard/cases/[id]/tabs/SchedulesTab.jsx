@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
+import UserPicker from "@/components/UserPicker";
+
+const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
 export default function SchedulesTab({ caseId }) {
   const [schedules, setSchedules] = useState([]);
@@ -70,11 +73,12 @@ export default function SchedulesTab({ caseId }) {
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Facilitator ID (optional)</span>
-            <input
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Facilitator (optional)</span>
+            <UserPicker
+              roles={STAFF_ROLES}
               value={form.facilitatorId}
-              onChange={(e) => setForm({ ...form, facilitatorId: e.target.value })}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              onChange={(v) => setForm({ ...form, facilitatorId: v })}
+              placeholder="Select facilitator"
             />
           </label>
         </div>

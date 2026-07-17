@@ -50,4 +50,20 @@ describe("GET /audit-logs", () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(2);
   });
+
+  it("joins the actor's profile so the actor's name is available", async () => {
+    mockSelect.mockReturnValue({
+      order: () =>
+        Promise.resolve({
+          data: [{ id: "a1", actor_id: "u1", actor: { full_name: "Ana Reyes" } }],
+          error: null,
+        }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get("/audit-logs");
+
+    expect(res.status).toBe(200);
+    expect(res.body[0].actor.full_name).toBe("Ana Reyes");
+    expect(mockSelect).toHaveBeenCalledWith(expect.stringContaining("profiles"));
+  });
 });

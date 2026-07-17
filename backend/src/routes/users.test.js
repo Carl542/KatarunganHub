@@ -43,6 +43,23 @@ describe("users admin routes", () => {
     expect(res.status).toBe(403);
   });
 
+  it("rejects GET /users/lookup for citizen roles", async () => {
+    const res = await request(buildTestApp({ id: "u1", role: "complainant" })).get("/users/lookup");
+    expect(res.status).toBe(403);
+  });
+
+  it("lists minimal profile fields for staff roles on GET /users/lookup", async () => {
+    mockSelect.mockReturnValue({
+      order: () => Promise.resolve({ data: [{ id: "p1", full_name: "Maria Santos", role: "complainant" }], error: null }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get("/users/lookup");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([{ id: "p1", full_name: "Maria Santos", role: "complainant" }]);
+    expect(mockSelect).toHaveBeenCalledWith("id, full_name, role");
+  });
+
   it("lists all profiles for admin", async () => {
     mockSelect.mockReturnValue({
       order: () => Promise.resolve({ data: [{ id: "p1" }, { id: "p2" }], error: null }),

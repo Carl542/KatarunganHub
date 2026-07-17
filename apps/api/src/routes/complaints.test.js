@@ -93,3 +93,54 @@ describe("POST /complaints", () => {
     );
   });
 });
+
+describe("GET /complaints/:id", () => {
+  beforeEach(() => {
+    mockSelectCount.mockReset();
+  });
+
+  it("returns 404 when the case does not exist", async () => {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({ single: () => Promise.resolve({ data: null, error: { message: "not found" } }) }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get(
+      "/complaints/does-not-exist"
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it("allows staff roles to view any case", async () => {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({
+        single: () =>
+          Promise.resolve({
+            data: { id: "case-1", complainant_id: "other-1", respondent_id: "other-2" },
+            error: null,
+          }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get(
+      "/complaints/case-1"
+    );
+    expect(res.status).toBe(200);
+  });
+
+  it("forbids a non-party complainant from viewing another party's case", async () => {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({
+        single: () =>
+          Promise.resolve({
+            data: { id: "case-1", complainant_id: "other-1", respondent_id: "other-2" },
+            error: null,
+          }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "u1", role: "complainant" })).get(
+      "/complaints/case-1"
+    );
+    expect(res.status).toBe(403);
+  });
+});

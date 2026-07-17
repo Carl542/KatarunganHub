@@ -58,6 +58,19 @@ router.get("/", requireAuth, async (req, res) => {
   res.json(data);
 });
 
+router.get("/:id", requireAuth, async (req, res) => {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase.from("complaints").select("*").eq("id", req.params.id).single();
+
+  if (error || !data) return res.status(404).json({ error: "Case not found" });
+
+  const isParty = data.complainant_id === req.user.id || data.respondent_id === req.user.id;
+  const isStaff = ["admin", "punong", "secretary", "lupon"].includes(req.user.role);
+  if (!isStaff && !isParty) return res.status(403).json({ error: "Forbidden" });
+
+  res.json(data);
+});
+
 router.patch("/:id/jurisdiction", requireAuth, requireRole("punong", "secretary"), async (req, res) => {
   const supabase = getSupabaseClient();
   const { result, reason } = req.body;

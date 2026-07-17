@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { generateReferenceNumber } from "../lib/referenceNumber.js";
 import { getSupabaseClient } from "../lib/supabaseClient.js";
+import { getAllowedOutcomes, getNextStage, canActOnStage } from "../lib/workflowDefinitions.js";
 
 const router = Router();
 
@@ -98,6 +99,54 @@ router.patch("/:id/jurisdiction", requireAuth, requireRole("punong", "secretary"
     outcome: result,
     notes: reason,
     authorized_by: req.user.id,
+  });
+
+  res.json(data);
+});
+
+router.patch("/:id/workflow", requireAuth, async (req, res) => {
+  const supabase = getSupabaseClient();
+  const { outcome, notes } = req.body;
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("complaints")
+    .select("workflow_stage")
+    .eq("id", req.params.id)
+    .single();
+
+  if (fetchError || !existing) return res.status(404).json({ error: "Case not found" });
+
+  const currentStage = existing.workflow_stage || "Official complaint encoded";
+
+  if (!canActOnStage(currentStage, req.user.role)) {
+    return res.status(403).json({ error: `${req.user.role} cannot act on stage "${currentStage}"` });
+  }
+
+  if (!getAllowedOutcomes(currentStage).includes(outcome)) {
+    return res.status(400).json({ error: `"${outcome}" is not a valid outcome for "${currentStage}"` });
+  }
+
+  const nextStage = getNextStage(currentStage, outcome);
+
+  const { data, error } = await supabase
+    .from("complaints")
+    .update({
+      workflow_stage: nextStage,
+      status: nextStage === "Closed" ? "Closed" : "Under Mediation",
+    })
+    .eq("id", req.params.id)
+    .select()
+    .single();
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  await supabase.from("case_status_logs").insert({
+    complaint_id: req.params.id,
+    previous_stage: currentStage,
+    outcome,
+    next_stage: nextStage,
+    authorized_by: req.user.id,
+    notes,
   });
 
   res.json(data);

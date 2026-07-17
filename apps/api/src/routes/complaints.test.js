@@ -4,6 +4,8 @@ import request from "supertest";
 
 const mockSelectCount = vi.fn();
 const mockInsert = vi.fn();
+const mockUpdate = vi.fn();
+const mockLogInsert = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
@@ -12,7 +14,11 @@ vi.mock("@supabase/supabase-js", () => ({
         return {
           select: mockSelectCount,
           insert: mockInsert,
+          update: mockUpdate,
         };
+      }
+      if (table === "case_status_logs") {
+        return { insert: mockLogInsert };
       }
       return {};
     },
@@ -142,5 +148,85 @@ describe("GET /complaints/:id", () => {
       "/complaints/case-1"
     );
     expect(res.status).toBe(403);
+  });
+});
+
+describe("PATCH /complaints/:id/workflow", () => {
+  beforeEach(() => {
+    mockSelectCount.mockReset();
+    mockUpdate.mockReset();
+    mockLogInsert.mockReset();
+    mockLogInsert.mockResolvedValue({ data: null, error: null });
+  });
+
+  function mockCurrentStage(stage) {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({ single: () => Promise.resolve({ data: { workflow_stage: stage }, error: null }) }),
+    });
+  }
+
+  it("returns 404 when the case does not exist", async () => {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({ single: () => Promise.resolve({ data: null, error: { message: "not found" } }) }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" }))
+      .patch("/complaints/does-not-exist/workflow")
+      .send({ outcome: "Proceed to mediation" });
+
+    expect(res.status).toBe(404);
+  });
+
+  it("rejects a role that cannot act on the current stage", async () => {
+    mockCurrentStage("Punong Barangay mediation");
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" }))
+      .patch("/complaints/case-1/workflow")
+      .send({ outcome: "Settlement reached" });
+
+    expect(res.status).toBe(403);
+  });
+
+  it("rejects an outcome that isn't valid for the current stage", async () => {
+    mockCurrentStage("Summons issued");
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" }))
+      .patch("/complaints/case-1/workflow")
+      .send({ outcome: "Not a real outcome" });
+
+    expect(res.status).toBe(400);
+  });
+
+  it("advances the stage, updates status, and logs the transition on success", async () => {
+    mockCurrentStage("Summons issued");
+    mockUpdate.mockReturnValue({
+      eq: () => ({
+        select: () => ({
+          single: () =>
+            Promise.resolve({
+              data: { id: "case-1", workflow_stage: "Punong Barangay mediation", status: "Under Mediation" },
+              error: null,
+            }),
+        }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" }))
+      .patch("/complaints/case-1/workflow")
+      .send({ outcome: "Proceed to mediation", notes: "Both parties notified" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.workflow_stage).toBe("Punong Barangay mediation");
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ workflow_stage: "Punong Barangay mediation", status: "Under Mediation" })
+    );
+    expect(mockLogInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        complaint_id: "case-1",
+        previous_stage: "Summons issued",
+        outcome: "Proceed to mediation",
+        next_stage: "Punong Barangay mediation",
+      })
+    );
   });
 });

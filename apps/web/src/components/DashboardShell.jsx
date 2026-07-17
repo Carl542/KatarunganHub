@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import Icon from "./Icon";
@@ -20,6 +21,11 @@ export default function DashboardShell({ role, fullName, children }) {
   const pathname = usePathname();
   const router = useRouter();
   const navItems = NAV_BY_ROLE[role] || [];
+  const [today, setToday] = useState("");
+
+  useEffect(() => {
+    setToday(new Date().toLocaleDateString("en-PH", { weekday: "long", year: "numeric", month: "long", day: "numeric" }));
+  }, []);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -71,7 +77,8 @@ export default function DashboardShell({ role, fullName, children }) {
       <div className="flex-1 flex flex-col">
         <header role="banner" className="h-16 bg-white/90 border-b border-brass/30 flex items-center justify-between px-6">
           <span className="text-xs tracking-[0.14em] uppercase text-foreground-muted">Home / Dashboard</span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            {today && <span className="text-sm text-foreground-muted hidden sm:inline">{today}</span>}
             <div
               className="w-9 h-9 rounded-full bg-primary-light text-primary font-display font-semibold flex items-center justify-center text-sm"
               aria-hidden="true"

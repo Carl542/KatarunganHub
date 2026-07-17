@@ -5,6 +5,7 @@ import schedulesRouter from "./routes/schedules.js";
 import pangkatRouter from "./routes/pangkat.js";
 import attendanceRouter from "./routes/attendance.js";
 import documentsRouter from "./routes/documents.js";
+import notificationsRouter from "./routes/notifications.js";
 
 export function createApp() {
   const app = express();
@@ -20,6 +21,7 @@ export function createApp() {
   app.use("/complaints/:complaintId/pangkat", pangkatRouter);
   app.use("/complaints/:complaintId/attendance", attendanceRouter);
   app.use("/complaints/:complaintId/documents", documentsRouter);
+  app.use("/notifications", notificationsRouter);
 
   return app;
 }

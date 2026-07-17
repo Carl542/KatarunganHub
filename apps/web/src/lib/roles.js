@@ -13,6 +13,7 @@ export const NAV_BY_ROLE = {
     { label: "User Accounts", path: "/dashboard/users", icon: "users" },
     { label: "Lupon Profiles", path: "/dashboard/lupon-members", icon: "users" },
     { label: "Audit Logs", path: "/dashboard/audit-logs", icon: "clipboard-list" },
+    { label: "Reports", path: "/dashboard/reports", icon: "clipboard-list" },
     { label: "Notifications", path: "/dashboard/notifications", icon: "bell" },
     { label: "Settings", path: "/dashboard/settings", icon: "settings" },
   ],
@@ -22,6 +23,8 @@ export const NAV_BY_ROLE = {
     { label: "Jurisdiction", path: "/dashboard/jurisdiction", icon: "shield" },
     { label: "Lupon Workflow", path: "/dashboard/workflow", icon: "users" },
     { label: "Schedules", path: "/dashboard/schedules", icon: "bell" },
+    { label: "Reports", path: "/dashboard/reports", icon: "clipboard-list" },
+    { label: "Audit Logs", path: "/dashboard/audit-logs", icon: "clipboard-list" },
     { label: "Notifications", path: "/dashboard/notifications", icon: "bell" },
   ],
   secretary: [
@@ -30,6 +33,8 @@ export const NAV_BY_ROLE = {
     { label: "Register Case", path: "/dashboard/cases/register", icon: "file-text" },
     { label: "Jurisdiction", path: "/dashboard/jurisdiction", icon: "shield" },
     { label: "Schedules", path: "/dashboard/schedules", icon: "bell" },
+    { label: "Reports", path: "/dashboard/reports", icon: "clipboard-list" },
+    { label: "Audit Logs", path: "/dashboard/audit-logs", icon: "clipboard-list" },
     { label: "Notifications", path: "/dashboard/notifications", icon: "bell" },
   ],
   lupon: [
@@ -37,6 +42,8 @@ export const NAV_BY_ROLE = {
     { label: "Cases", path: "/dashboard/cases", icon: "clipboard-list" },
     { label: "Lupon Workflow", path: "/dashboard/workflow", icon: "users" },
     { label: "Schedules", path: "/dashboard/schedules", icon: "bell" },
+    { label: "Reports", path: "/dashboard/reports", icon: "clipboard-list" },
+    { label: "Audit Logs", path: "/dashboard/audit-logs", icon: "clipboard-list" },
     { label: "Notifications", path: "/dashboard/notifications", icon: "bell" },
   ],
   complainant: [

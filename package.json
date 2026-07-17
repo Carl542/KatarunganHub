@@ -1,0 +1,15 @@
+{
+  "name": "katarunganhub",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n web,api -c blue,green \"npm:dev -w apps/web\" \"npm:dev -w apps/api\"",
+    "test": "npm run test -w apps/web && npm run test -w apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}

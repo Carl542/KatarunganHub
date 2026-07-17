@@ -1,0 +1,46 @@
+export const ROLES = {
+  admin: "System Administrator",
+  punong: "Punong Barangay",
+  secretary: "Barangay/Lupon Secretary",
+  lupon: "Lupon/Pangkat Member",
+  complainant: "Complainant",
+  respondent: "Respondent",
+};
+
+export const NAV_BY_ROLE = {
+  admin: [
+    { label: "Dashboard", path: "/dashboard", icon: "grid" },
+    { label: "User Accounts", path: "/dashboard/users", icon: "users" },
+    { label: "Lupon Profiles", path: "/dashboard/lupon-members", icon: "users" },
+    { label: "Audit Logs", path: "/dashboard/audit-logs", icon: "clipboard-list" },
+    { label: "Settings", path: "/dashboard/settings", icon: "settings" },
+  ],
+  punong: [
+    { label: "Dashboard", path: "/dashboard", icon: "grid" },
+    { label: "Cases", path: "/dashboard/cases", icon: "clipboard-list" },
+    { label: "Jurisdiction", path: "/dashboard/jurisdiction", icon: "shield" },
+    { label: "Lupon Workflow", path: "/dashboard/workflow", icon: "users" },
+    { label: "Schedules", path: "/dashboard/schedules", icon: "bell" },
+  ],
+  secretary: [
+    { label: "Dashboard", path: "/dashboard", icon: "grid" },
+    { label: "Cases", path: "/dashboard/cases", icon: "clipboard-list" },
+    { label: "Register Case", path: "/dashboard/cases/register", icon: "file-text" },
+    { label: "Jurisdiction", path: "/dashboard/jurisdiction", icon: "shield" },
+    { label: "Schedules", path: "/dashboard/schedules", icon: "bell" },
+  ],
+  lupon: [
+    { label: "Dashboard", path: "/dashboard", icon: "grid" },
+    { label: "Cases", path: "/dashboard/cases", icon: "clipboard-list" },
+    { label: "Lupon Workflow", path: "/dashboard/workflow", icon: "users" },
+    { label: "Schedules", path: "/dashboard/schedules", icon: "bell" },
+  ],
+  complainant: [
+    { label: "Dashboard", path: "/dashboard", icon: "grid" },
+    { label: "My Cases", path: "/dashboard/my-cases", icon: "user-check" },
+  ],
+  respondent: [
+    { label: "Dashboard", path: "/dashboard", icon: "grid" },
+    { label: "My Cases", path: "/dashboard/my-cases", icon: "user-check" },
+  ],
+};

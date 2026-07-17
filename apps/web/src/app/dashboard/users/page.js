@@ -1,0 +1,87 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { apiFetch } from "@/lib/apiClient";
+import { ROLES } from "@/lib/roles";
+
+export default function UsersPage() {
+  const [users, setUsers] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  function load() {
+    setLoading(true);
+    apiFetch("/users")
+      .then(setUsers)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function updateUser(id, changes) {
+    try {
+      await apiFetch(`/users/${id}`, { method: "PATCH", body: JSON.stringify(changes) });
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">User Accounts</h1>
+
+      {loading && <p className="text-gray-500">Loading…</p>}
+      {error && <p className="text-danger">{error}</p>}
+
+      {users.length > 0 && (
+        <div className="bg-white rounded-lg shadow overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-primary-light text-left">
+              <tr>
+                <th className="px-4 py-2">Name</th>
+                <th className="px-4 py-2">Role</th>
+                <th className="px-4 py-2">Status</th>
+                <th className="px-4 py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.id} className="border-t">
+                  <td className="px-4 py-2">{u.full_name}</td>
+                  <td className="px-4 py-2">
+                    <select
+                      value={u.role}
+                      onChange={(e) => updateUser(u.id, { role: e.target.value })}
+                      className="border rounded-md px-2 py-1"
+                    >
+                      {Object.entries(ROLES).map(([id, label]) => (
+                        <option key={id} value={id}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-4 py-2">{u.status}</td>
+                  <td className="px-4 py-2">
+                    <button
+                      onClick={() =>
+                        updateUser(u.id, { status: u.status === "Active" ? "Inactive" : "Active" })
+                      }
+                      className="text-primary font-medium"
+                    >
+                      {u.status === "Active" ? "Deactivate" : "Activate"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

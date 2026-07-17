@@ -4,12 +4,16 @@ import request from "supertest";
 
 const mockSelect = vi.fn();
 const mockInsert = vi.fn();
+const mockCaseSingle = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
     from: (table) => {
       if (table === "attendance_records") {
         return { select: mockSelect, insert: mockInsert };
+      }
+      if (table === "complaints") {
+        return { select: () => ({ eq: () => ({ single: mockCaseSingle }) }) };
       }
       return {};
     },
@@ -38,6 +42,11 @@ describe("attendance sub-resource", () => {
   beforeEach(() => {
     mockSelect.mockReset();
     mockInsert.mockReset();
+    mockCaseSingle.mockReset();
+    mockCaseSingle.mockResolvedValue({
+      data: { id: "case-1", complainant_id: "u1", respondent_id: "u2" },
+      error: null,
+    });
   });
 
   it("rejects non-staff roles", async () => {

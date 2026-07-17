@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
+import { requireCaseAccess } from "../middleware/caseAccess.js";
 import { getSupabaseClient } from "../lib/supabaseClient.js";
 
 const router = Router({ mergeParams: true });
@@ -31,7 +32,7 @@ router.post("/", requireAuth, requireRole("punong", "secretary"), async (req, re
   res.status(201).json(data);
 });
 
-router.get("/", requireAuth, async (req, res) => {
+router.get("/", requireAuth, requireCaseAccess, async (req, res) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("pangkat_formations")

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
+import { requireCaseAccess } from "../middleware/caseAccess.js";
 import { getSupabaseClient } from "../lib/supabaseClient.js";
 import { VALID_DOCUMENT_TYPES } from "../lib/documentTypes.js";
 
@@ -30,7 +31,7 @@ router.post("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
   res.status(201).json(data);
 });
 
-router.get("/", requireAuth, async (req, res) => {
+router.get("/", requireAuth, requireCaseAccess, async (req, res) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("documents")

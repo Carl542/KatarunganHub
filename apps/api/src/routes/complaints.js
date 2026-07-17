@@ -29,8 +29,8 @@ router.post("/", requireAuth, requireRole("secretary"), async (req, res) => {
     .from("complaints")
     .insert({
       title,
-      complainant_id: complainantId,
-      respondent_id: respondentId,
+      complainant_id: complainantId || null,
+      respondent_id: respondentId || null,
       type,
       narrative,
       relief,

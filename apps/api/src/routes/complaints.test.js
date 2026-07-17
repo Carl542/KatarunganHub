@@ -75,4 +75,21 @@ describe("POST /complaints", () => {
     expect(res.status).toBe(201);
     expect(res.body.reference_number).toBe("REF-2026-000042");
   });
+
+  it("sends null instead of empty string for an omitted respondentId", async () => {
+    mockSelectCount.mockResolvedValue({ count: 41, error: null });
+    mockInsert.mockReturnValue({
+      select: () => ({
+        single: () => Promise.resolve({ data: { id: "case-1" }, error: null }),
+      }),
+    });
+
+    await request(buildTestApp({ id: "sec-1", role: "secretary" }))
+      .post("/complaints")
+      .send({ title: "Neighbor dispute", complainantId: "u1", respondentId: "", type: "Lupon" });
+
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ respondent_id: null })
+    );
+  });
 });

@@ -33,18 +33,29 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-primary-light px-4">
+    <main className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 -bottom-24 opacity-[0.06]"
+      >
+        <BrandMark size={420} />
+      </div>
+
       <form
         onSubmit={handleSubmit}
         aria-describedby={error ? errorId : undefined}
-        className="bg-white rounded-xl shadow-md p-8 w-full max-w-sm"
+        className="relative bg-white/90 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-8 w-full max-w-sm"
       >
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-3">
           <BrandMark size={64} />
         </div>
-        <h1 className="text-xl font-bold text-center text-foreground mb-6">KatarunganHub</h1>
+        <h1 className="font-display text-2xl font-semibold text-center text-foreground">KatarunganHub</h1>
+        <p className="text-center text-xs tracking-[0.14em] uppercase text-foreground-muted mt-1 mb-6">
+          Barangay Case Tracking &amp; Management
+        </p>
+        <div className="h-px bg-brass/40 mb-6" aria-hidden="true" />
 
-        <label className="block text-sm font-medium mb-1" htmlFor="email">
+        <label className="block text-xs font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="email">
           Email
         </label>
         <input
@@ -53,10 +64,10 @@ export default function LoginPage() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full min-h-11 border border-border rounded-md px-3 py-2 mb-4 focus-visible:outline-3 focus-visible:outline-primary"
+          className="w-full min-h-11 border border-border rounded-sm px-3 py-2 mb-4 bg-white focus-visible:outline-3 focus-visible:outline-primary"
         />
 
-        <label className="block text-sm font-medium mb-1" htmlFor="password">
+        <label className="block text-xs font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="password">
           Password
         </label>
         <input
@@ -65,7 +76,7 @@ export default function LoginPage() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full min-h-11 border border-border rounded-md px-3 py-2 mb-4 focus-visible:outline-3 focus-visible:outline-primary"
+          className="w-full min-h-11 border border-border rounded-sm px-3 py-2 mb-5 bg-white focus-visible:outline-3 focus-visible:outline-primary"
         />
 
         {error && (
@@ -77,7 +88,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full min-h-11 bg-primary text-white rounded-md py-2 font-medium disabled:opacity-60 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="w-full min-h-11 bg-primary text-white rounded-sm py-2 font-medium tracking-wide disabled:opacity-60 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary hover:bg-primary/90 transition-colors"
         >
           {loading ? "Signing in…" : "Sign in"}
         </button>

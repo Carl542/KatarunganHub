@@ -35,20 +35,20 @@ export default function SettingsPage() {
     }
   }
 
-  if (loading) return <p className="text-gray-500">Loading…</p>;
+  if (loading) return <p className="text-foreground-muted">Loading…</p>;
 
   return (
     <div className="max-w-xl">
       <h1 className="text-2xl font-bold mb-4">Settings</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-6 flex flex-col gap-4">
         {FIELDS.map((f) => (
           <label key={f.key} className="flex flex-col gap-1">
             <span className="text-sm font-medium">{f.label}</span>
             <input
               value={values[f.key] || ""}
               onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
         ))}
@@ -56,7 +56,7 @@ export default function SettingsPage() {
         {error && <p className="text-danger text-sm">{error}</p>}
         {saved && <p className="text-accent text-sm">Settings saved.</p>}
 
-        <button type="submit" className="bg-primary text-white rounded-md py-2 font-medium">
+        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium">
           Save settings
         </button>
       </form>

@@ -35,14 +35,14 @@ export default function ReportsPage() {
     <div>
       <h1 className="text-2xl font-bold mb-4">Reports</h1>
 
-      <div className="bg-white rounded-lg shadow p-4 mb-6 flex flex-wrap items-end gap-3">
+      <div className="bg-white/90 rounded-sm border border-border p-4 mb-6 flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1">
           <span className="text-sm font-medium">Filed from</span>
           <input
             type="date"
             value={filters.dateFrom}
             onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-            className="border rounded-md px-3 py-2"
+            className="border rounded-sm px-3 py-2"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -51,7 +51,7 @@ export default function ReportsPage() {
             type="date"
             value={filters.dateTo}
             onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-            className="border rounded-md px-3 py-2"
+            className="border rounded-sm px-3 py-2"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -59,36 +59,36 @@ export default function ReportsPage() {
           <input
             value={filters.filedBy}
             onChange={(e) => setFilters({ ...filters, filedBy: e.target.value })}
-            className="border rounded-md px-3 py-2"
+            className="border rounded-sm px-3 py-2"
           />
         </label>
-        <button onClick={load} className="bg-primary text-white rounded-md px-4 py-2 font-medium">
+        <button onClick={load} className="bg-primary text-white rounded-sm px-4 py-2 font-medium">
           Apply
         </button>
       </div>
 
-      {loading && <p className="text-gray-500">Loading…</p>}
+      {loading && <p className="text-foreground-muted">Loading…</p>}
       {error && <p className="text-danger">{error}</p>}
 
       {summary && (
         <>
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-4">
-              <p className="text-sm text-gray-500">Total cases</p>
+            <div className="bg-white/90 rounded-sm border border-border p-4">
+              <p className="text-sm text-foreground-muted">Total cases</p>
               <p className="text-3xl font-bold">{summary.total}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-4">
-              <p className="text-sm text-gray-500">Active</p>
+            <div className="bg-white/90 rounded-sm border border-border p-4">
+              <p className="text-sm text-foreground-muted">Active</p>
               <p className="text-3xl font-bold">{summary.active}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-4">
-              <p className="text-sm text-gray-500">Closed</p>
+            <div className="bg-white/90 rounded-sm border border-border p-4">
+              <p className="text-sm text-foreground-muted">Closed</p>
               <p className="text-3xl font-bold">{summary.closed}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-lg shadow p-4">
+            <div className="bg-white/90 rounded-sm border border-border p-4">
               <h2 className="font-bold mb-2">By status</h2>
               {Object.entries(summary.byStatus).map(([status, count]) => (
                 <div key={status} className="flex justify-between text-sm py-1 border-t first:border-0">
@@ -97,7 +97,7 @@ export default function ReportsPage() {
                 </div>
               ))}
             </div>
-            <div className="bg-white rounded-lg shadow p-4">
+            <div className="bg-white/90 rounded-sm border border-border p-4">
               <h2 className="font-bold mb-2">By type</h2>
               {Object.entries(summary.byType).map(([type, count]) => (
                 <div key={type} className="flex justify-between text-sm py-1 border-t first:border-0">

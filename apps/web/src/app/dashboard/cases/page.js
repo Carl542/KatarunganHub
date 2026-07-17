@@ -22,21 +22,21 @@ export default function CasesPage() {
         <h1 className="text-2xl font-bold">Cases</h1>
         <Link
           href="/dashboard/cases/register"
-          className="bg-primary text-white rounded-md px-4 py-2 text-sm font-medium"
+          className="bg-primary text-white rounded-sm px-4 py-2 text-sm font-medium"
         >
           Register Case
         </Link>
       </div>
 
-      {loading && <p className="text-gray-500">Loading…</p>}
+      {loading && <p className="text-foreground-muted">Loading…</p>}
       {error && <p className="text-danger">{error}</p>}
 
       {!loading && !error && cases.length === 0 && (
-        <p className="text-gray-500">No cases found.</p>
+        <p className="text-foreground-muted">No cases found.</p>
       )}
 
       {cases.length > 0 && (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left">
               <tr>

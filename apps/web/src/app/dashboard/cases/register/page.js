@@ -40,24 +40,24 @@ export default function RegisterCasePage() {
   return (
     <div className="max-w-xl">
       <h1 className="text-2xl font-bold mb-4">Official Case Registration</h1>
-      <p className="text-sm text-gray-600 mb-6">
+      <p className="text-sm text-foreground-muted mb-6">
         Only complaints officially received at the barangay may be encoded in this system.
       </p>
 
       {result ? (
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">Case saved. Reference number:</p>
+        <div className="bg-white/90 rounded-sm border border-border p-6">
+          <p className="text-sm text-foreground-muted">Case saved. Reference number:</p>
           <p className="text-2xl font-bold text-primary">{result.reference_number}</p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-6 flex flex-col gap-4">
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium">Case title</span>
             <input
               required
               value={form.title}
               onChange={(e) => update("title", e.target.value)}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
 
@@ -67,7 +67,7 @@ export default function RegisterCasePage() {
               required
               value={form.complainantId}
               onChange={(e) => update("complainantId", e.target.value)}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
 
@@ -76,7 +76,7 @@ export default function RegisterCasePage() {
             <input
               value={form.respondentId}
               onChange={(e) => update("respondentId", e.target.value)}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
 
@@ -85,7 +85,7 @@ export default function RegisterCasePage() {
             <select
               value={form.type}
               onChange={(e) => update("type", e.target.value)}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             >
               <option>Lupon</option>
               <option>Non-Lupon</option>
@@ -100,7 +100,7 @@ export default function RegisterCasePage() {
               minLength={20}
               value={form.narrative}
               onChange={(e) => update("narrative", e.target.value)}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
 
@@ -109,7 +109,7 @@ export default function RegisterCasePage() {
             <textarea
               value={form.relief}
               onChange={(e) => update("relief", e.target.value)}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
 
@@ -118,7 +118,7 @@ export default function RegisterCasePage() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-white rounded-md py-2 font-medium disabled:opacity-60"
+            className="bg-primary text-white rounded-sm py-2 font-medium disabled:opacity-60"
           >
             {loading ? "Saving…" : "Save case & generate reference"}
           </button>

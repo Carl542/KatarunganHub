@@ -60,16 +60,16 @@ export default function DocumentsTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleCreate} className="bg-white rounded-lg shadow p-4 flex items-end gap-3">
+      <form onSubmit={handleCreate} className="bg-white/90 rounded-sm border border-border p-4 flex items-end gap-3">
         <label className="flex flex-col gap-1 flex-1">
           <span className="text-sm font-medium">Document type</span>
-          <select value={type} onChange={(e) => setType(e.target.value)} className="border rounded-md px-3 py-2">
+          <select value={type} onChange={(e) => setType(e.target.value)} className="border rounded-sm px-3 py-2">
             {DOCUMENT_TYPES.map((t) => (
               <option key={t}>{t}</option>
             ))}
           </select>
         </label>
-        <button type="submit" className="bg-primary text-white rounded-md py-2 font-medium px-4">
+        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium px-4">
           Create document
         </button>
       </form>
@@ -77,9 +77,9 @@ export default function DocumentsTab({ caseId }) {
       {error && <p className="text-danger text-sm">{error}</p>}
 
       {loading ? (
-        <p className="text-gray-500">Loading…</p>
+        <p className="text-foreground-muted">Loading…</p>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left">
               <tr>
@@ -92,7 +92,7 @@ export default function DocumentsTab({ caseId }) {
             <tbody>
               {documents.length === 0 && (
                 <tr>
-                  <td className="px-4 py-3 text-gray-500" colSpan={4}>
+                  <td className="px-4 py-3 text-foreground-muted" colSpan={4}>
                     No documents yet.
                   </td>
                 </tr>

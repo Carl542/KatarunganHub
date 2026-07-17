@@ -36,14 +36,14 @@ export default function SchedulesTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-4 flex flex-col gap-3">
+      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium">Type</span>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             >
               <option>Summons</option>
               <option>Punong Barangay mediation</option>
@@ -58,7 +58,7 @@ export default function SchedulesTab({ caseId }) {
               required
               value={form.scheduledAt}
               onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -66,7 +66,7 @@ export default function SchedulesTab({ caseId }) {
             <input
               value={form.venue}
               onChange={(e) => setForm({ ...form, venue: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -74,20 +74,20 @@ export default function SchedulesTab({ caseId }) {
             <input
               value={form.facilitatorId}
               onChange={(e) => setForm({ ...form, facilitatorId: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
         </div>
         {error && <p className="text-danger text-sm">{error}</p>}
-        <button type="submit" className="bg-primary text-white rounded-md py-2 font-medium self-start px-4">
+        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium self-start px-4">
           Add schedule
         </button>
       </form>
 
       {loading ? (
-        <p className="text-gray-500">Loading…</p>
+        <p className="text-foreground-muted">Loading…</p>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left">
               <tr>
@@ -100,7 +100,7 @@ export default function SchedulesTab({ caseId }) {
             <tbody>
               {schedules.length === 0 && (
                 <tr>
-                  <td className="px-4 py-3 text-gray-500" colSpan={4}>
+                  <td className="px-4 py-3 text-foreground-muted" colSpan={4}>
                     No schedules yet.
                   </td>
                 </tr>

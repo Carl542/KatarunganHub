@@ -42,7 +42,7 @@ export default function PangkatTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-4 flex flex-col gap-3">
+      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium">Formation date</span>
@@ -51,7 +51,7 @@ export default function PangkatTab({ caseId }) {
               required
               value={form.formationDate}
               onChange={(e) => setForm({ ...form, formationDate: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -60,7 +60,7 @@ export default function PangkatTab({ caseId }) {
               required
               value={form.chairpersonId}
               onChange={(e) => setForm({ ...form, chairpersonId: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -69,7 +69,7 @@ export default function PangkatTab({ caseId }) {
               required
               value={form.secretaryId}
               onChange={(e) => setForm({ ...form, secretaryId: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -78,7 +78,7 @@ export default function PangkatTab({ caseId }) {
               required
               value={form.memberId}
               onChange={(e) => setForm({ ...form, memberId: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
         </div>
@@ -88,19 +88,19 @@ export default function PangkatTab({ caseId }) {
             required
             value={form.conflictNotes}
             onChange={(e) => setForm({ ...form, conflictNotes: e.target.value })}
-            className="border rounded-md px-3 py-2"
+            className="border rounded-sm px-3 py-2"
           />
         </label>
         {error && <p className="text-danger text-sm">{error}</p>}
-        <button type="submit" className="bg-primary text-white rounded-md py-2 font-medium self-start px-4">
+        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium self-start px-4">
           Save formation
         </button>
       </form>
 
       {loading ? (
-        <p className="text-gray-500">Loading…</p>
+        <p className="text-foreground-muted">Loading…</p>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left">
               <tr>
@@ -114,7 +114,7 @@ export default function PangkatTab({ caseId }) {
             <tbody>
               {formations.length === 0 && (
                 <tr>
-                  <td className="px-4 py-3 text-gray-500" colSpan={5}>
+                  <td className="px-4 py-3 text-foreground-muted" colSpan={5}>
                     No Pangkat formation recorded yet.
                   </td>
                 </tr>

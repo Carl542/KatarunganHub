@@ -26,28 +26,32 @@ export default function TrackCasePage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-primary-light px-4">
-      <div className="bg-white rounded-xl shadow-md p-8 w-full max-w-sm">
-        <div className="flex justify-center mb-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <div className="bg-white/90 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-8 w-full max-w-sm">
+        <div className="flex justify-center mb-3">
           <BrandMark size={64} />
         </div>
-        <h1 className="text-xl font-bold text-center mb-6">Track Your Case</h1>
+        <h1 className="font-display text-xl font-semibold text-center">Track Your Case</h1>
+        <p className="text-center text-xs tracking-[0.14em] uppercase text-foreground-muted mt-1 mb-6">
+          Katarungang Pambarangay Registry
+        </p>
+        <div className="h-px bg-brass/40 mb-6" aria-hidden="true" />
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium">Reference Number</span>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Reference Number</span>
             <input
               required
               placeholder="REF-2026-000042"
               value={referenceNumber}
               onChange={(e) => setReferenceNumber(e.target.value)}
-              className="border rounded-md px-3 py-2"
+              className="ref-number border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
           </label>
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-white rounded-md py-2 font-medium disabled:opacity-60"
+            className="bg-primary text-white rounded-sm py-2 min-h-11 font-medium tracking-wide disabled:opacity-60 hover:bg-primary/90 transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             {loading ? "Searching…" : "Track Case"}
           </button>
@@ -60,11 +64,13 @@ export default function TrackCasePage() {
         )}
 
         {result && (
-          <div className="mt-4 border-t pt-4">
-            <p className="font-bold">{result.reference_number}</p>
-            <p className="text-sm text-gray-600">Status: {result.status}</p>
-            <p className="text-sm text-gray-600">Type: {result.type}</p>
-            <p className="text-sm text-gray-600">{result.title}</p>
+          <div className="mt-4 border-t border-border pt-4">
+            <p className="ref-number font-medium">{result.reference_number}</p>
+            <p className="text-sm text-foreground-muted mt-2">
+              <span className="stamp text-primary">{result.status}</span>
+            </p>
+            <p className="text-sm text-foreground-muted mt-2">Type: {result.type}</p>
+            <p className="text-sm text-foreground-muted">{result.title}</p>
           </div>
         )}
       </div>

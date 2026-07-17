@@ -57,7 +57,7 @@ export default function CaseDetailsPage({ params }) {
     }
   }
 
-  if (loading) return <p className="text-gray-500">Loading…</p>;
+  if (loading) return <p className="text-foreground-muted">Loading…</p>;
   if (error) return <p className="text-danger">{error}</p>;
   if (!caseData) return null;
 
@@ -72,9 +72,12 @@ export default function CaseDetailsPage({ params }) {
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold">{caseData.title}</h1>
-          <p className="text-sm text-gray-500">
-            {caseData.reference_number} · {caseData.type} · {caseData.status}
+          <h1 className="font-display text-2xl font-semibold">{caseData.title}</h1>
+          <p className="text-sm text-foreground-muted mt-1 flex items-center gap-2 flex-wrap">
+            <span className="ref-number">{caseData.reference_number}</span>
+            <span aria-hidden="true">·</span>
+            <span>{caseData.type}</span>
+            <span className="stamp text-primary">{caseData.status}</span>
           </p>
         </div>
       </div>
@@ -85,7 +88,7 @@ export default function CaseDetailsPage({ params }) {
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
-              tab === t ? "border-primary text-primary" : "border-transparent text-gray-500"
+              tab === t ? "border-primary text-primary" : "border-transparent text-foreground-muted"
             }`}
           >
             {t}
@@ -94,22 +97,22 @@ export default function CaseDetailsPage({ params }) {
       </div>
 
       {tab === "Overview" && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white/90 rounded-sm border border-border p-6">
           <h2 className="font-bold mb-2">Narrative</h2>
-          <p className="text-gray-700 mb-4">{caseData.narrative}</p>
+          <p className="text-foreground mb-4">{caseData.narrative}</p>
           <h2 className="font-bold mb-2">Relief requested</h2>
-          <p className="text-gray-700">{caseData.relief}</p>
+          <p className="text-foreground">{caseData.relief}</p>
         </div>
       )}
 
       {tab === "Workflow" && hasWorkflow && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white/90 rounded-sm border border-border p-6">
           <div className="flex flex-wrap gap-2 mb-6">
             {stages.map((stage) => (
               <span
                 key={stage}
-                className={`text-xs px-2 py-1 rounded-full ${
-                  stage === currentStage ? "bg-primary text-white" : "bg-primary-light text-gray-600"
+                className={`text-xs px-2 py-1 rounded-sm ${
+                  stage === currentStage ? "bg-primary text-white" : "bg-primary-light text-foreground-muted"
                 }`}
               >
                 {stage}
@@ -125,7 +128,7 @@ export default function CaseDetailsPage({ params }) {
                   required
                   value={outcome}
                   onChange={(e) => setOutcome(e.target.value)}
-                  className="border rounded-md px-3 py-2"
+                  className="border rounded-sm px-3 py-2"
                 >
                   <option value="">Select outcome</option>
                   {availableOutcomes.map((o) => (
@@ -139,7 +142,7 @@ export default function CaseDetailsPage({ params }) {
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="border rounded-md px-3 py-2"
+                  className="border rounded-sm px-3 py-2"
                 />
               </label>
 
@@ -148,7 +151,7 @@ export default function CaseDetailsPage({ params }) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-primary text-white rounded-md py-2 font-medium disabled:opacity-60"
+                className="bg-primary text-white rounded-sm py-2 font-medium disabled:opacity-60"
               >
                 {submitting ? "Recording…" : "Record transition"}
               </button>

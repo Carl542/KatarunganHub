@@ -18,15 +18,15 @@ export default function AuditLogsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-1">Audit Logs</h1>
-      <p className="text-sm text-gray-500 mb-4">Read-only record of staff actions.</p>
+      <p className="text-sm text-foreground-muted mb-4">Read-only record of staff actions.</p>
 
-      {loading && <p className="text-gray-500">Loading…</p>}
+      {loading && <p className="text-foreground-muted">Loading…</p>}
       {error && <p className="text-danger">{error}</p>}
 
-      {!loading && !error && logs.length === 0 && <p className="text-gray-500">No audit entries yet.</p>}
+      {!loading && !error && logs.length === 0 && <p className="text-foreground-muted">No audit entries yet.</p>}
 
       {logs.length > 0 && (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left">
               <tr>

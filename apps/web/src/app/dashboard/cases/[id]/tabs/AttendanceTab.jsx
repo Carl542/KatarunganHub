@@ -43,14 +43,14 @@ export default function AttendanceTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-4 flex flex-col gap-3">
+      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium">Schedule ID</span>
             <input
               value={form.scheduleId}
               onChange={(e) => setForm({ ...form, scheduleId: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -59,7 +59,7 @@ export default function AttendanceTab({ caseId }) {
               required
               value={form.luponAttendance}
               onChange={(e) => setForm({ ...form, luponAttendance: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1">
@@ -67,7 +67,7 @@ export default function AttendanceTab({ caseId }) {
             <select
               value={form.complainantAttendance}
               onChange={(e) => setForm({ ...form, complainantAttendance: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             >
               <option>Present</option>
               <option>Absent</option>
@@ -79,7 +79,7 @@ export default function AttendanceTab({ caseId }) {
             <select
               value={form.respondentAttendance}
               onChange={(e) => setForm({ ...form, respondentAttendance: e.target.value })}
-              className="border rounded-md px-3 py-2"
+              className="border rounded-sm px-3 py-2"
             >
               <option>Present</option>
               <option>Absent</option>
@@ -92,19 +92,19 @@ export default function AttendanceTab({ caseId }) {
           <textarea
             value={form.remarks}
             onChange={(e) => setForm({ ...form, remarks: e.target.value })}
-            className="border rounded-md px-3 py-2"
+            className="border rounded-sm px-3 py-2"
           />
         </label>
         {error && <p className="text-danger text-sm">{error}</p>}
-        <button type="submit" className="bg-primary text-white rounded-md py-2 font-medium self-start px-4">
+        <button type="submit" className="bg-primary text-white rounded-sm py-2 font-medium self-start px-4">
           Record attendance
         </button>
       </form>
 
       {loading ? (
-        <p className="text-gray-500">Loading…</p>
+        <p className="text-foreground-muted">Loading…</p>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left">
               <tr>
@@ -117,7 +117,7 @@ export default function AttendanceTab({ caseId }) {
             <tbody>
               {records.length === 0 && (
                 <tr>
-                  <td className="px-4 py-3 text-gray-500" colSpan={4}>
+                  <td className="px-4 py-3 text-foreground-muted" colSpan={4}>
                     No attendance recorded yet.
                   </td>
                 </tr>

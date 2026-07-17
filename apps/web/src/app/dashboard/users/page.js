@@ -38,11 +38,11 @@ export default function UsersPage() {
     <div>
       <h1 className="text-2xl font-bold mb-4">User Accounts</h1>
 
-      {loading && <p className="text-gray-500">Loading…</p>}
+      {loading && <p className="text-foreground-muted">Loading…</p>}
       {error && <p className="text-danger">{error}</p>}
 
       {users.length > 0 && (
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left">
               <tr>
@@ -61,7 +61,7 @@ export default function UsersPage() {
                     <select
                       value={u.role}
                       onChange={(e) => updateUser(u.id, { role: e.target.value })}
-                      className="border rounded-md px-2 py-1"
+                      className="border rounded-sm px-2 py-1"
                     >
                       {Object.entries(ROLES).map(([id, label]) => (
                         <option key={id} value={id}>
@@ -76,7 +76,7 @@ export default function UsersPage() {
                       defaultValue={u.phone_number || ""}
                       placeholder="09171234567"
                       onBlur={(e) => savePhoneNumber(u.id, e.target.value)}
-                      className="border rounded-md px-2 py-1 w-36"
+                      className="border rounded-sm px-2 py-1 w-36"
                     />
                   </td>
                   <td className="px-4 py-2">{u.status}</td>

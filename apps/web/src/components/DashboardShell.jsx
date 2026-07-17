@@ -35,9 +35,9 @@ export default function DashboardShell({ role, fullName, children }) {
       </a>
 
       <aside className="w-64 bg-sidebar text-white flex flex-col">
-        <div className="flex items-center gap-3 p-4 border-b border-white/10">
+        <div className="flex items-center gap-3 p-4 border-b border-brass/20">
           <BrandMark size={40} />
-          <span className="font-bold">KatarunganHub</span>
+          <span className="font-display font-semibold tracking-wide">KatarunganHub</span>
         </div>
         <nav aria-label="Primary" className="flex-1 p-2">
           {navItems.map((item) => {
@@ -47,8 +47,10 @@ export default function DashboardShell({ role, fullName, children }) {
                 key={item.path}
                 href={item.path}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex items-center gap-3 px-3 min-h-11 py-2 rounded-md mb-1 focus-visible:outline focus-visible:outline-3 focus-visible:outline-white focus-visible:outline-offset-2 ${
-                  isActive ? "bg-primary" : "hover:bg-white/10"
+                className={`flex items-center gap-3 px-3 min-h-11 py-2 mb-1 border-l-[3px] focus-visible:outline focus-visible:outline-3 focus-visible:outline-white focus-visible:outline-offset-2 ${
+                  isActive
+                    ? "border-brass bg-white/[0.06] text-white"
+                    : "border-transparent text-white/75 hover:bg-white/[0.04] hover:text-white"
                 }`}
               >
                 <Icon name={item.icon} className="w-5 h-5 shrink-0" />
@@ -59,7 +61,7 @@ export default function DashboardShell({ role, fullName, children }) {
         </nav>
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-3 min-h-11 py-4 border-t border-white/10 hover:bg-white/10 focus-visible:outline focus-visible:outline-3 focus-visible:outline-white focus-visible:outline-offset-[-2px]"
+          className="flex items-center gap-3 px-3 min-h-11 py-4 border-t border-brass/20 hover:bg-white/[0.04] focus-visible:outline focus-visible:outline-3 focus-visible:outline-white focus-visible:outline-offset-[-2px]"
         >
           <Icon name="log-out" className="w-5 h-5 shrink-0" />
           Sign Out
@@ -67,11 +69,11 @@ export default function DashboardShell({ role, fullName, children }) {
       </aside>
 
       <div className="flex-1 flex flex-col">
-        <header role="banner" className="h-16 bg-white border-b border-border flex items-center justify-between px-6">
-          <span className="text-sm text-foreground-muted">Home / Dashboard</span>
+        <header role="banner" className="h-16 bg-white/90 border-b border-brass/30 flex items-center justify-between px-6">
+          <span className="text-xs tracking-[0.14em] uppercase text-foreground-muted">Home / Dashboard</span>
           <div className="flex items-center gap-3">
             <div
-              className="w-9 h-9 rounded-full bg-primary-light text-primary font-bold flex items-center justify-center text-sm"
+              className="w-9 h-9 rounded-full bg-primary-light text-primary font-display font-semibold flex items-center justify-center text-sm"
               aria-hidden="true"
             >
               {initialsFor(fullName)}
@@ -82,7 +84,7 @@ export default function DashboardShell({ role, fullName, children }) {
             </div>
           </div>
         </header>
-        <main id="main-content" tabIndex="-1" className="flex-1 p-6 bg-primary-light/40">
+        <main id="main-content" tabIndex="-1" className="flex-1 p-6">
           {children}
         </main>
       </div>

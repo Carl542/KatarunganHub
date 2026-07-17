@@ -6,7 +6,7 @@ export default async function DashboardPage() {
   return (
     <>
       <h1 className="text-2xl font-bold mb-2">Welcome, {profile.full_name}</h1>
-      <p className="text-gray-600">
+      <p className="text-foreground-muted">
         You are signed in as {profile.role}. Case management modules arrive in later milestones.
       </p>
     </>

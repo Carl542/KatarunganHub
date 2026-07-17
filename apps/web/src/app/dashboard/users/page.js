@@ -30,6 +30,10 @@ export default function UsersPage() {
     }
   }
 
+  function savePhoneNumber(id, value) {
+    if (value.trim()) updateUser(id, { phone_number: value.trim() });
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">User Accounts</h1>
@@ -44,6 +48,7 @@ export default function UsersPage() {
               <tr>
                 <th className="px-4 py-2">Name</th>
                 <th className="px-4 py-2">Role</th>
+                <th className="px-4 py-2">Phone Number</th>
                 <th className="px-4 py-2">Status</th>
                 <th className="px-4 py-2">Actions</th>
               </tr>
@@ -64,6 +69,15 @@ export default function UsersPage() {
                         </option>
                       ))}
                     </select>
+                  </td>
+                  <td className="px-4 py-2">
+                    <input
+                      type="tel"
+                      defaultValue={u.phone_number || ""}
+                      placeholder="09171234567"
+                      onBlur={(e) => savePhoneNumber(u.id, e.target.value)}
+                      className="border rounded-md px-2 py-1 w-36"
+                    />
                   </td>
                   <td className="px-4 py-2">{u.status}</td>
                   <td className="px-4 py-2">

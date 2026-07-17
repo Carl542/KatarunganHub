@@ -14,10 +14,11 @@ router.get("/", requireAuth, requireRole("admin"), async (req, res) => {
 });
 
 router.patch("/:id", requireAuth, requireRole("admin"), async (req, res) => {
-  const { role, status } = req.body;
+  const { role, status, phone_number } = req.body;
   const updates = {};
   if (role) updates.role = role;
   if (status) updates.status = status;
+  if (phone_number !== undefined) updates.phone_number = phone_number;
 
   const supabase = getSupabaseClient();
   const { data, error } = await supabase

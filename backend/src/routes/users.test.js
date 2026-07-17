@@ -76,4 +76,21 @@ describe("users admin routes", () => {
     expect(res.status).toBe(200);
     expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ role: "lupon", status: "Active" }));
   });
+
+  it("updates phone_number for admin", async () => {
+    mockUpdate.mockReturnValue({
+      eq: () => ({
+        select: () => ({
+          single: () => Promise.resolve({ data: { id: "p1", phone_number: "09171234567" }, error: null }),
+        }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "a1", role: "admin" }))
+      .patch("/users/p1")
+      .send({ phone_number: "09171234567" });
+
+    expect(res.status).toBe(200);
+    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ phone_number: "09171234567" }));
+  });
 });

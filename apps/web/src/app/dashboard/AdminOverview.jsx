@@ -101,14 +101,14 @@ export default function AdminOverview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <DonutCard title="Cases by status" data={stats.byStatus} />
-        <RoleBarCard title="Users by role" data={Object.fromEntries(Object.entries(stats.byRole).map(([r, n]) => [SHORT_ROLE_LABELS[r] || ROLES[r] || r, n]))} />
+        <DonutCard title="Cases by Status" data={stats.byStatus} />
+        <RoleBarCard title="Users by Role" data={Object.fromEntries(Object.entries(stats.byRole).map(([r, n]) => [SHORT_ROLE_LABELS[r] || ROLES[r] || r, n]))} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white/90 rounded-sm border border-border">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-            <h2 className="font-display text-lg font-semibold">Upcoming schedule</h2>
+            <h2 className="font-display text-lg font-semibold">Upcoming Schedule</h2>
             <Link href="/dashboard/schedules" className="text-sm text-primary font-medium hover:underline">
               View calendar
             </Link>
@@ -149,7 +149,7 @@ export default function AdminOverview() {
 
         <div className="bg-white/90 rounded-sm border border-border">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-            <h2 className="font-display text-lg font-semibold">Recent activity</h2>
+            <h2 className="font-display text-lg font-semibold">Recent Activity</h2>
             <Link href="/dashboard/audit-logs" className="text-sm text-primary font-medium hover:underline">
               View all
             </Link>
@@ -159,9 +159,16 @@ export default function AdminOverview() {
 
           {activity.length > 0 && (
             <ul>
-              {activity.map((entry) => (
+              {activity.map((entry, i) => (
                 <li key={entry.id} className="flex items-center justify-between px-5 py-3 border-t border-border first:border-t-0 text-sm">
-                  <span>{entry.action}</span>
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="inline-block w-2 h-2 rounded-full shrink-0"
+                      style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
+                      aria-hidden="true"
+                    />
+                    {entry.action}
+                  </span>
                   <span className="text-foreground-muted whitespace-nowrap ml-4">
                     {new Date(entry.created_at).toLocaleString()}
                   </span>

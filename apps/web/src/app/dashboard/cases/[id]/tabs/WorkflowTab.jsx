@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
+import { useCurrentProfile } from "@/lib/useCurrentProfile";
 import Icon from "@/components/Icon";
 import {
   LUPON_STAGES,
@@ -28,7 +29,11 @@ function chunk(arr, size) {
   return out;
 }
 
+const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
+
 export default function WorkflowTab({ caseId, caseData, onUpdated }) {
+  const profile = useCurrentProfile();
+  const canManage = STAFF_ROLES.includes(profile?.role);
   const isNonLupon = caseData.type === "Non-Lupon";
   const stages = isNonLupon ? NON_LUPON_STAGES : LUPON_STAGES;
   const outcomesByStage = isNonLupon ? NON_LUPON_OUTCOMES_BY_STAGE : LUPON_OUTCOMES_BY_STAGE;
@@ -146,7 +151,7 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {!isClosed && (
+        {canManage && !isClosed && (
           <div className="bg-white/90 rounded-sm border border-border p-6">
             <h2 className="font-display text-lg font-semibold mb-4">Record Workflow Transition</h2>
             <form onSubmit={handleTransition} className="flex flex-col gap-3">
@@ -205,7 +210,7 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
           </div>
         )}
 
-        <div className={`flex flex-col gap-4 ${isClosed ? "lg:col-span-2" : ""}`}>
+        <div className={`flex flex-col gap-4 ${!canManage || isClosed ? "lg:col-span-2" : ""}`}>
           <div className="bg-white/90 rounded-sm border border-border p-5">
             <h2 className="font-display text-lg font-semibold mb-3">Current Stage</h2>
             <div className="flex items-center gap-3 mb-4">
@@ -235,7 +240,7 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
             </dl>
           </div>
 
-          {!isClosed && (
+          {canManage && !isClosed && (
             <div className="bg-white/90 rounded-sm border border-border p-5">
               <h2 className="font-display text-lg font-semibold mb-3">Required Before Moving Forward</h2>
               {checklist.length === 0 && <p className="text-sm text-foreground-muted">No additional checks for this stage.</p>}

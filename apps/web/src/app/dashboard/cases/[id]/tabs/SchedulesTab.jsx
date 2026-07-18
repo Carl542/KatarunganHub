@@ -3,10 +3,13 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
 import UserPicker from "@/components/UserPicker";
+import { useCurrentProfile } from "@/lib/useCurrentProfile";
 
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
 export default function SchedulesTab({ caseId }) {
+  const profile = useCurrentProfile();
+  const canManage = STAFF_ROLES.includes(profile?.role);
   const [schedules, setSchedules] = useState([]);
   const [form, setForm] = useState({ type: "Summons", scheduledAt: "", venue: "Barangay Hall", facilitatorId: "" });
   const [error, setError] = useState("");
@@ -39,6 +42,7 @@ export default function SchedulesTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
+      {canManage && (
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-5 flex flex-col gap-3">
         <h2 className="font-display text-lg font-semibold">Add Case Schedule</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -88,6 +92,7 @@ export default function SchedulesTab({ caseId }) {
           Add schedule
         </button>
       </form>
+      )}
 
       {loading ? (
         <p className="text-foreground-muted">Loading…</p>

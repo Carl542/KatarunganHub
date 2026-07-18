@@ -2,8 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
+import { useCurrentProfile } from "@/lib/useCurrentProfile";
+
+const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
 export default function AttendanceTab({ caseId }) {
+  const profile = useCurrentProfile();
+  const canManage = STAFF_ROLES.includes(profile?.role);
   const [records, setRecords] = useState([]);
   const [form, setForm] = useState({
     scheduleId: "",
@@ -43,6 +48,7 @@ export default function AttendanceTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
+      {canManage && (
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-5 flex flex-col gap-3">
         <h2 className="font-display text-lg font-semibold">Record Attendance</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -101,6 +107,7 @@ export default function AttendanceTab({ caseId }) {
           Record attendance
         </button>
       </form>
+      )}
 
       {loading ? (
         <p className="text-foreground-muted">Loading…</p>

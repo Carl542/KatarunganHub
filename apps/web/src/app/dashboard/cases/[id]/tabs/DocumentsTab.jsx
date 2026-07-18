@@ -6,8 +6,11 @@ import { useCurrentProfile } from "@/lib/useCurrentProfile";
 import Icon from "@/components/Icon";
 import { DOCUMENT_TYPES } from "@/lib/documentTypes";
 
+const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
+
 export default function DocumentsTab({ caseId }) {
   const profile = useCurrentProfile();
+  const canManage = STAFF_ROLES.includes(profile?.role);
   const [documents, setDocuments] = useState([]);
   const [type, setType] = useState(DOCUMENT_TYPES[0]);
   const [file, setFile] = useState(null);
@@ -68,6 +71,7 @@ export default function DocumentsTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
+      {canManage && (
       <form onSubmit={handleCreate} className="bg-white/90 rounded-sm border border-border p-5 flex flex-col gap-3">
         <h2 className="font-display text-lg font-semibold">Case Documents</h2>
         <div className="flex flex-col sm:flex-row sm:items-end gap-3">
@@ -100,6 +104,7 @@ export default function DocumentsTab({ caseId }) {
           </button>
         </div>
       </form>
+      )}
 
       {error && <p className="text-danger text-sm">{error}</p>}
 

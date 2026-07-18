@@ -114,11 +114,11 @@ export default function CaseOverview() {
                 <li key={c.id} className="border-t border-border first:border-t-0">
                   <Link
                     href={`/dashboard/cases/${c.id}`}
-                    className="flex items-center justify-between gap-3 px-5 py-3 text-sm hover:bg-muted transition-colors"
+                    className="flex items-start justify-between gap-3 px-5 py-2.5 text-sm hover:bg-muted transition-colors"
                   >
-                    <span className="min-w-0">
+                    <span className="min-w-0 leading-tight">
                       <span className="ref-number text-primary block">{c.reference_number}</span>
-                      <span className="text-foreground-muted truncate block">{c.title}</span>
+                      <span className="text-foreground-muted truncate block text-xs mt-0.5">{c.title}</span>
                     </span>
                     <span className={`stamp shrink-0 ${STATUS_COLOR[c.status] || "text-foreground-muted"}`}>{c.status}</span>
                   </Link>

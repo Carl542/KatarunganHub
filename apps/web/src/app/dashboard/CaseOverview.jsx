@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/apiClient";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import DonutChart from "@/components/DonutChart";
 import StatCard from "@/components/StatCard";
+import Icon from "@/components/Icon";
 import { tooltipStyle, lineCursorStroke } from "@/lib/chartTheme";
 
 const MEDIATION_PERIOD_DAYS = 15; // Katarungang Pambarangay statutory mediation period (RA 7160 Sec. 410)
@@ -132,7 +133,12 @@ export default function CaseOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white/90 rounded-sm border border-border">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-            <h2 className="font-display text-lg font-semibold">Upcoming mediation schedule</h2>
+            <h2 className="font-display text-lg font-semibold flex items-center gap-2">
+              <span className="w-7 h-7 rounded-sm bg-[#e3eaf7] text-[#0038a8] flex items-center justify-center shrink-0">
+                <Icon name="calendar" className="w-4 h-4" />
+              </span>
+              Upcoming Mediation Schedule
+            </h2>
             <Link href="/dashboard/schedules" className="text-sm text-primary font-medium hover:underline">
               View calendar
             </Link>
@@ -144,17 +150,20 @@ export default function CaseOverview() {
                 <li key={s.id} className="border-t border-border first:border-t-0">
                   <Link
                     href={`/dashboard/cases/${s.complaint_id}`}
-                    className="flex items-center justify-between px-5 py-3 text-sm hover:bg-muted transition-colors"
+                    className="flex items-center gap-3 px-5 py-3 text-sm hover:bg-muted transition-colors"
                   >
-                    <span>
+                    <span className="w-8 h-8 rounded-sm bg-[#e3eaf7] text-[#0038a8] flex items-center justify-center shrink-0">
+                      <Icon name="calendar" className="w-4 h-4" />
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block">{s.type}</span>
                       {s.complaint?.reference_number && (
-                        <span className="ref-number text-foreground-muted mr-2 text-xs">
+                        <span className="ref-number text-foreground-muted text-xs block">
                           {s.complaint.reference_number}
                         </span>
                       )}
-                      {s.type}
                     </span>
-                    <span className="text-foreground-muted whitespace-nowrap ml-4">
+                    <span className="text-foreground-muted whitespace-nowrap">
                       {new Date(s.scheduled_at).toLocaleString("en-PH", {
                         month: "short",
                         day: "numeric",

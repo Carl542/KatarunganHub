@@ -98,13 +98,14 @@ export default function SchedulesTab({ caseId }) {
                 <th className="px-4 py-2">Type</th>
                 <th className="px-4 py-2">Date &amp; time</th>
                 <th className="px-4 py-2">Venue</th>
+                <th className="px-4 py-2">Facilitator</th>
                 <th className="px-4 py-2">Status</th>
               </tr>
             </thead>
             <tbody>
               {schedules.length === 0 && (
                 <tr>
-                  <td className="px-4 py-3 text-foreground-muted" colSpan={4}>
+                  <td className="px-4 py-3 text-foreground-muted" colSpan={5}>
                     No schedules yet.
                   </td>
                 </tr>
@@ -114,6 +115,7 @@ export default function SchedulesTab({ caseId }) {
                   <td className="px-4 py-2">{s.type}</td>
                   <td className="px-4 py-2">{new Date(s.scheduled_at).toLocaleString()}</td>
                   <td className="px-4 py-2">{s.venue}</td>
+                  <td className="px-4 py-2">{s.facilitator?.full_name || "—"}</td>
                   <td className="px-4 py-2">{s.status}</td>
                 </tr>
               ))}

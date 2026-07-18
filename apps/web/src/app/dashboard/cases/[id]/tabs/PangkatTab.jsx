@@ -128,9 +128,9 @@ export default function PangkatTab({ caseId }) {
               {formations.map((f) => (
                 <tr key={f.id} className="border-t">
                   <td className="px-4 py-2">{f.formation_date}</td>
-                  <td className="px-4 py-2 text-xs">{f.chairperson_id}</td>
-                  <td className="px-4 py-2 text-xs">{f.secretary_id}</td>
-                  <td className="px-4 py-2 text-xs">{f.member_id}</td>
+                  <td className="px-4 py-2">{f.chairperson?.full_name || "—"}</td>
+                  <td className="px-4 py-2">{f.secretary?.full_name || "—"}</td>
+                  <td className="px-4 py-2">{f.member?.full_name || "—"}</td>
                   <td className="px-4 py-2">{f.acceptance_status}</td>
                 </tr>
               ))}

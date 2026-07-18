@@ -99,4 +99,33 @@ describe("pangkat sub-resource", () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
   });
+
+  it("joins chairperson/secretary/member names into the listing", async () => {
+    mockSelect.mockReturnValue({
+      eq: () => ({
+        order: () =>
+          Promise.resolve({
+            data: [
+              {
+                id: "pf-1",
+                chairperson: { full_name: "Elena Cruz" },
+                secretary: { full_name: "Ana Reyes" },
+                member: { full_name: "Hon. Roberto Lim" },
+              },
+            ],
+            error: null,
+          }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get(
+      "/complaints/case-1/pangkat"
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body[0].chairperson.full_name).toBe("Elena Cruz");
+    expect(res.body[0].secretary.full_name).toBe("Ana Reyes");
+    expect(res.body[0].member.full_name).toBe("Hon. Roberto Lim");
+    expect(mockSelect).toHaveBeenCalledWith(expect.stringContaining("chairperson:profiles"));
+  });
 });

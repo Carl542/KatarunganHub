@@ -51,7 +51,7 @@ router.get("/", requireAuth, requireCaseAccess, async (req, res) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("mediation_schedules")
-    .select("*")
+    .select("*, facilitator:profiles!facilitator_id(full_name)")
     .eq("complaint_id", req.params.complaintId)
     .order("scheduled_at", { ascending: true });
 

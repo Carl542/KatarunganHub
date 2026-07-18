@@ -44,7 +44,9 @@ router.get("/", requireAuth, requireCaseAccess, async (req, res) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("pangkat_formations")
-    .select("*")
+    .select(
+      "*, chairperson:profiles!chairperson_id(full_name), secretary:profiles!secretary_id(full_name), member:profiles!member_id(full_name)"
+    )
     .eq("complaint_id", req.params.complaintId)
     .order("created_at", { ascending: false });
 

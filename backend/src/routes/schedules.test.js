@@ -91,4 +91,24 @@ describe("schedules sub-resource", () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
   });
+
+  it("joins the facilitator's name into the listing", async () => {
+    mockSelect.mockReturnValue({
+      eq: () => ({
+        order: () =>
+          Promise.resolve({
+            data: [{ id: "sched-1", facilitator: { full_name: "Hon. Roberto Lim" } }],
+            error: null,
+          }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get(
+      "/complaints/case-1/schedules"
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body[0].facilitator.full_name).toBe("Hon. Roberto Lim");
+    expect(mockSelect).toHaveBeenCalledWith(expect.stringContaining("facilitator:profiles"));
+  });
 });

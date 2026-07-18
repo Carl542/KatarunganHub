@@ -10,7 +10,7 @@ router.get("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("lupon_profiles")
-    .select("*, profile:profiles(full_name)")
+    .select("*, profile:profiles(full_name, status)")
     .order("created_at", { ascending: true });
 
   if (error) return res.status(500).json({ error: error.message });
@@ -54,6 +54,16 @@ router.patch("/:id", requireAuth, requireRole("admin", "punong"), async (req, re
 
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
+});
+
+router.delete("/:id", requireAuth, requireRole("admin", "punong"), async (req, res) => {
+  const supabase = getSupabaseClient();
+  const { error } = await supabase.from("lupon_profiles").delete().eq("id", req.params.id);
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.status(204).send();
+
+  logAudit({ actorId: req.user.id, action: "Removed Lupon profile", module: "Lupon Profiles", complaintId: null });
 });
 
 export default router;

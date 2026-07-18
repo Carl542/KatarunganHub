@@ -5,11 +5,14 @@ import request from "supertest";
 const mockSelect = vi.fn();
 const mockInsert = vi.fn();
 const mockUpdate = vi.fn();
+const mockDelete = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
     from: (table) => {
-      if (table === "lupon_profiles") return { select: mockSelect, insert: mockInsert, update: mockUpdate };
+      if (table === "lupon_profiles") {
+        return { select: mockSelect, insert: mockInsert, update: mockUpdate, delete: mockDelete };
+      }
       return {};
     },
   }),
@@ -38,6 +41,7 @@ describe("lupon profiles routes", () => {
     mockSelect.mockReset();
     mockInsert.mockReset();
     mockUpdate.mockReset();
+    mockDelete.mockReset();
   });
 
   it("allows any staff role to list profiles", async () => {
@@ -77,5 +81,58 @@ describe("lupon profiles routes", () => {
       .post("/lupon-profiles")
       .send({ profileId: "p1", position: "Member" });
     expect(res.status).toBe(201);
+  });
+
+  it("joins the linked profile's account status too", async () => {
+    mockSelect.mockReturnValue({
+      order: () =>
+        Promise.resolve({
+          data: [{ id: "lp1", profile: { full_name: "Elena Cruz", status: "Active" } }],
+          error: null,
+        }),
+    });
+
+    const res = await request(buildTestApp({ id: "l1", role: "lupon" })).get("/lupon-profiles");
+
+    expect(res.body[0].profile.status).toBe("Active");
+    expect(mockSelect).toHaveBeenCalledWith(expect.stringContaining("status"));
+  });
+
+  it("rejects non admin/punong from updating a profile", async () => {
+    const res = await request(buildTestApp({ id: "s1", role: "secretary" }))
+      .patch("/lupon-profiles/lp1")
+      .send({ position: "Pangkat Secretary" });
+    expect(res.status).toBe(403);
+  });
+
+  it("allows punong to update a profile", async () => {
+    mockUpdate.mockReturnValue({
+      eq: () => ({
+        select: () => ({
+          single: () => Promise.resolve({ data: { id: "lp1", position: "Pangkat Secretary" }, error: null }),
+        }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "p1", role: "punong" }))
+      .patch("/lupon-profiles/lp1")
+      .send({ position: "Pangkat Secretary" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.position).toBe("Pangkat Secretary");
+  });
+
+  it("rejects non admin/punong from removing a profile", async () => {
+    const res = await request(buildTestApp({ id: "s1", role: "secretary" })).delete("/lupon-profiles/lp1");
+    expect(res.status).toBe(403);
+  });
+
+  it("allows admin to remove a profile", async () => {
+    mockDelete.mockReturnValue({ eq: () => Promise.resolve({ error: null }) });
+
+    const res = await request(buildTestApp({ id: "a1", role: "admin" })).delete("/lupon-profiles/lp1");
+
+    expect(res.status).toBe(204);
+    expect(mockDelete).toHaveBeenCalled();
   });
 });

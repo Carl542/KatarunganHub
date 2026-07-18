@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function BrandMark({ size = 60 }) {
   return (
     <div
-      className="brand-mark relative shrink-0 rounded-full overflow-hidden ring-1 ring-brass/30"
+      className="brand-mark relative shrink-0 rounded-full overflow-hidden"
       style={{ width: size, height: size }}
     >
       <Image

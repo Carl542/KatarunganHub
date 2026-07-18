@@ -70,6 +70,21 @@ describe("GET /reports/summary", () => {
     expect(res.body.byType).toEqual({ Lupon: 2, "Non-Lupon": 1 });
   });
 
+  it("aggregates category and priority breakdown, defaulting unset ones", async () => {
+    mockSelect.mockReturnValue(
+      chainable([
+        { status: "New", type: "Lupon", category: { name: "Family Dispute" }, priority: { name: "High" } },
+        { status: "New", type: "Lupon", category: { name: "Family Dispute" }, priority: null },
+        { status: "Closed", type: "Lupon", category: null, priority: null },
+      ])
+    );
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get("/reports/summary");
+
+    expect(res.body.byCategory).toEqual({ "Family Dispute": 2, Uncategorized: 1 });
+    expect(res.body.byPriority).toEqual({ High: 1, Unset: 2 });
+  });
+
   it("applies dateFrom/dateTo/filedBy filters to the query", async () => {
     const chain = chainable([]);
     const gteSpy = vi.spyOn(chain, "gte");

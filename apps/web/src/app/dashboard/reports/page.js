@@ -141,6 +141,25 @@ export default function ReportsPage() {
               )}
             </div>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="bg-white/90 rounded-sm border border-border p-4">
+              <h2 className="font-display text-lg font-semibold mb-3">By category</h2>
+              {Object.keys(summary.byCategory || {}).length === 0 ? (
+                <p className="text-foreground-muted text-sm">No data for this range.</p>
+              ) : (
+                <DonutChart data={summary.byCategory} />
+              )}
+            </div>
+            <div className="bg-white/90 rounded-sm border border-border p-4">
+              <h2 className="font-display text-lg font-semibold mb-3">By priority</h2>
+              {Object.keys(summary.byPriority || {}).length === 0 ? (
+                <p className="text-foreground-muted text-sm">No data for this range.</p>
+              ) : (
+                <DonutChart data={summary.byPriority} />
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>

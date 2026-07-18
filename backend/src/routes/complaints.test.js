@@ -98,6 +98,23 @@ describe("POST /complaints", () => {
       expect.objectContaining({ respondent_id: null })
     );
   });
+
+  it("stores category_id and priority_id when provided", async () => {
+    mockSelectCount.mockResolvedValue({ count: 41, error: null });
+    mockInsert.mockReturnValue({
+      select: () => ({
+        single: () => Promise.resolve({ data: { id: "case-1" }, error: null }),
+      }),
+    });
+
+    await request(buildTestApp({ id: "sec-1", role: "secretary" }))
+      .post("/complaints")
+      .send({ title: "Neighbor dispute", complainantId: "u1", type: "Lupon", categoryId: 2, priorityId: 3 });
+
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ category_id: 2, priority_id: 3 })
+    );
+  });
 });
 
 describe("GET /complaints/:id", () => {

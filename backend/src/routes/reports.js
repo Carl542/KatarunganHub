@@ -12,7 +12,9 @@ router.get(
     const supabase = getSupabaseClient();
     const { dateFrom, dateTo, filedBy } = req.query;
 
-    let query = supabase.from("complaints").select("status, type");
+    let query = supabase
+      .from("complaints")
+      .select("status, type, category:complaint_categories(name), priority:priority_levels(name)");
     if (dateFrom) query = query.gte("filed_at", dateFrom);
     if (dateTo) query = query.lte("filed_at", dateTo);
     if (filedBy) query = query.eq("created_by", filedBy);
@@ -22,11 +24,17 @@ router.get(
 
     const byStatus = {};
     const byType = {};
+    const byCategory = {};
+    const byPriority = {};
     let closed = 0;
 
     for (const row of data) {
       byStatus[row.status] = (byStatus[row.status] || 0) + 1;
       byType[row.type] = (byType[row.type] || 0) + 1;
+      const categoryName = row.category?.name || "Uncategorized";
+      const priorityName = row.priority?.name || "Unset";
+      byCategory[categoryName] = (byCategory[categoryName] || 0) + 1;
+      byPriority[priorityName] = (byPriority[priorityName] || 0) + 1;
       if (row.status === "Closed") closed += 1;
     }
 
@@ -36,6 +44,8 @@ router.get(
       closed,
       byStatus,
       byType,
+      byCategory,
+      byPriority,
     });
   }
 );

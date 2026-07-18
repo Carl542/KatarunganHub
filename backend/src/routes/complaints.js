@@ -28,7 +28,7 @@ router.get("/track/:referenceNumber", async (req, res) => {
 
 router.post("/", requireAuth, requireRole("secretary"), async (req, res) => {
   const supabase = getSupabaseClient();
-  const { title, complainantId, respondentId, type, narrative, relief } = req.body;
+  const { title, complainantId, respondentId, type, narrative, relief, categoryId, priorityId } = req.body;
 
   const { count } = await supabase.from("complaints").select("*", { count: "exact", head: true });
   const referenceNumber = generateReferenceNumber((count || 0) + 1);
@@ -42,6 +42,8 @@ router.post("/", requireAuth, requireRole("secretary"), async (req, res) => {
       type,
       narrative,
       relief,
+      category_id: categoryId || null,
+      priority_id: priorityId || null,
       reference_number: referenceNumber,
       status: "New",
       created_by: req.user.id,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch } from "@/lib/apiClient";
+import { apiFetch, apiDownload } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
 
 const DOCUMENT_TYPES = [
@@ -21,8 +21,10 @@ export default function DocumentsTab({ caseId }) {
   const profile = useCurrentProfile();
   const [documents, setDocuments] = useState([]);
   const [type, setType] = useState(DOCUMENT_TYPES[0]);
+  const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   function load() {
     setLoading(true);
@@ -40,11 +42,19 @@ export default function DocumentsTab({ caseId }) {
   async function handleCreate(e) {
     e.preventDefault();
     setError("");
+    setSubmitting(true);
     try {
-      await apiFetch(`/complaints/${caseId}/documents`, { method: "POST", body: JSON.stringify({ type }) });
+      const formData = new FormData();
+      formData.append("type", type);
+      if (file) formData.append("file", file);
+
+      await apiFetch(`/complaints/${caseId}/documents`, { method: "POST", body: formData });
+      setFile(null);
       load();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -58,9 +68,18 @@ export default function DocumentsTab({ caseId }) {
     }
   }
 
+  async function handleDownload(doc) {
+    setError("");
+    try {
+      await apiDownload(`/complaints/${caseId}/documents/${doc.id}/download`, doc.original_filename);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleCreate} className="bg-white/90 rounded-sm border border-border p-4 flex items-end gap-3">
+      <form onSubmit={handleCreate} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col sm:flex-row sm:items-end gap-3">
         <label className="flex flex-col gap-1 flex-1">
           <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Document type</span>
           <select value={type} onChange={(e) => setType(e.target.value)} className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary">
@@ -69,8 +88,20 @@ export default function DocumentsTab({ caseId }) {
             ))}
           </select>
         </label>
-        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium px-4">
-          Create document
+        <label className="flex flex-col gap-1 flex-1">
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">File (optional)</span>
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="border border-border rounded-sm px-3 py-1.5 min-h-11 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium px-4 disabled:opacity-60"
+        >
+          {submitting ? "Uploading…" : "Create document"}
         </button>
       </form>
 
@@ -84,6 +115,7 @@ export default function DocumentsTab({ caseId }) {
             <thead className="bg-primary-light text-left">
               <tr>
                 <th className="px-4 py-2">Type</th>
+                <th className="px-4 py-2">File</th>
                 <th className="px-4 py-2">Version</th>
                 <th className="px-4 py-2">Status</th>
                 <th className="px-4 py-2">Actions</th>
@@ -92,7 +124,7 @@ export default function DocumentsTab({ caseId }) {
             <tbody>
               {documents.length === 0 && (
                 <tr>
-                  <td className="px-4 py-3 text-foreground-muted" colSpan={4}>
+                  <td className="px-4 py-3 text-foreground-muted" colSpan={5}>
                     No documents yet.
                   </td>
                 </tr>
@@ -100,6 +132,15 @@ export default function DocumentsTab({ caseId }) {
               {documents.map((d) => (
                 <tr key={d.id} className="border-t">
                   <td className="px-4 py-2">{d.type}</td>
+                  <td className="px-4 py-2">
+                    {d.storage_path ? (
+                      <button onClick={() => handleDownload(d)} className="text-primary font-medium hover:underline">
+                        {d.original_filename || "Download"}
+                      </button>
+                    ) : (
+                      <span className="text-foreground-muted">—</span>
+                    )}
+                  </td>
                   <td className="px-4 py-2">{d.version}</td>
                   <td className="px-4 py-2">{d.status}</td>
                   <td className="px-4 py-2">

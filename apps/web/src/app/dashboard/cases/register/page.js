@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
 import ResidentPicker from "@/components/ResidentPicker";
 
@@ -10,12 +10,21 @@ export default function RegisterCasePage() {
     complainantId: "",
     respondentId: "",
     type: "Lupon",
+    categoryId: "",
+    priorityId: "",
     narrative: "",
     relief: "",
   });
+  const [referenceData, setReferenceData] = useState({ categories: [], priorities: [] });
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    apiFetch("/reference-data")
+      .then(setReferenceData)
+      .catch(() => {});
+  }, []);
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -86,6 +95,39 @@ export default function RegisterCasePage() {
               <option>Pending classification</option>
             </select>
           </label>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="flex flex-col gap-1">
+              <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Category</span>
+              <select
+                value={form.categoryId}
+                onChange={(e) => update("categoryId", e.target.value)}
+                className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              >
+                <option value="">Uncategorized</option>
+                {referenceData.categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Priority</span>
+              <select
+                value={form.priorityId}
+                onChange={(e) => update("priorityId", e.target.value)}
+                className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              >
+                <option value="">Unset</option>
+                {referenceData.priorities.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
 
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Narrative</span>

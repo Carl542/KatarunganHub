@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
+import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
-import { LUPON_STAGES, OUTCOMES_BY_STAGE as LUPON_OUTCOMES_BY_STAGE } from "@/lib/workflowDisplay";
-import { NON_LUPON_STAGES, OUTCOMES_BY_STAGE as NON_LUPON_OUTCOMES_BY_STAGE } from "@/lib/nonLuponDisplay";
+import Icon from "@/components/Icon";
 import SchedulesTab from "./tabs/SchedulesTab";
 import PangkatTab from "./tabs/PangkatTab";
 import AttendanceTab from "./tabs/AttendanceTab";
 import DocumentsTab from "./tabs/DocumentsTab";
+import WorkflowTab from "./tabs/WorkflowTab";
 
 const TABS = ["Overview", "Workflow", "Schedules", "Pangkat", "Attendance", "Documents"];
 
@@ -17,10 +18,6 @@ export default function CaseDetailsPage({ params }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("Overview");
-  const [outcome, setOutcome] = useState("");
-  const [notes, setNotes] = useState("");
-  const [actionError, setActionError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   function load() {
     setLoading(true);
@@ -38,39 +35,15 @@ export default function CaseDetailsPage({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  async function handleTransition(e) {
-    e.preventDefault();
-    setActionError("");
-    setSubmitting(true);
-    try {
-      await apiFetch(`/complaints/${id}/workflow`, {
-        method: "PATCH",
-        body: JSON.stringify({ outcome, notes }),
-      });
-      setOutcome("");
-      setNotes("");
-      load();
-    } catch (err) {
-      setActionError(err.message);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
   if (loading) return <p className="text-foreground-muted">Loading…</p>;
   if (error) return <p className="text-danger">{error}</p>;
   if (!caseData) return null;
 
-  const isNonLupon = caseData.type === "Non-Lupon";
-  const stages = isNonLupon ? NON_LUPON_STAGES : LUPON_STAGES;
-  const outcomesByStage = isNonLupon ? NON_LUPON_OUTCOMES_BY_STAGE : LUPON_OUTCOMES_BY_STAGE;
-  const currentStage = caseData.workflow_stage || stages[0];
-  const availableOutcomes = outcomesByStage[currentStage] || [];
   const hasWorkflow = caseData.type === "Lupon" || caseData.type === "Non-Lupon";
 
   return (
-    <div className="max-w-4xl">
-      <div className="flex items-center justify-between mb-4">
+    <div className="max-w-5xl">
+      <div className="flex items-center justify-between mb-4 gap-3">
         <div>
           <h1 className="font-display text-2xl font-semibold">{caseData.title}</h1>
           <p className="text-sm text-foreground-muted mt-1 flex items-center gap-2 flex-wrap">
@@ -80,6 +53,13 @@ export default function CaseDetailsPage({ params }) {
             <span className="stamp text-primary">{caseData.status}</span>
           </p>
         </div>
+        <Link
+          href="/dashboard/cases"
+          className="border border-border rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors shrink-0"
+        >
+          <Icon name="chevron-right" className="w-4 h-4 rotate-180" />
+          Back to Cases
+        </Link>
       </div>
 
       <div className="flex gap-1 mb-4 border-b">
@@ -105,60 +85,7 @@ export default function CaseDetailsPage({ params }) {
         </div>
       )}
 
-      {tab === "Workflow" && hasWorkflow && (
-        <div className="bg-white/90 rounded-sm border border-border p-6">
-          <div className="flex flex-wrap gap-2 mb-6">
-            {stages.map((stage) => (
-              <span
-                key={stage}
-                className={`text-xs px-2 py-1 rounded-sm ${
-                  stage === currentStage ? "bg-primary text-white" : "bg-primary-light text-foreground-muted"
-                }`}
-              >
-                {stage}
-              </span>
-            ))}
-          </div>
-
-          {currentStage !== "Closed" && (
-            <form onSubmit={handleTransition} className="flex flex-col gap-3">
-              <label className="flex flex-col gap-1">
-                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Outcome</span>
-                <select
-                  required
-                  value={outcome}
-                  onChange={(e) => setOutcome(e.target.value)}
-                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-                >
-                  <option value="">Select outcome</option>
-                  {availableOutcomes.map((o) => (
-                    <option key={o}>{o}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="flex flex-col gap-1">
-                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Notes</span>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-                />
-              </label>
-
-              {actionError && <p className="text-danger text-sm">{actionError}</p>}
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium disabled:opacity-60"
-              >
-                {submitting ? "Recording…" : "Record transition"}
-              </button>
-            </form>
-          )}
-        </div>
-      )}
+      {tab === "Workflow" && hasWorkflow && <WorkflowTab caseId={id} caseData={caseData} onUpdated={load} />}
 
       {tab === "Schedules" && <SchedulesTab caseId={id} />}
       {tab === "Pangkat" && <PangkatTab caseId={id} />}

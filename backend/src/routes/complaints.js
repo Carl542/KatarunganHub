@@ -77,7 +77,13 @@ router.get("/", requireAuth, async (req, res) => {
 
 router.get("/:id", requireAuth, async (req, res) => {
   const supabase = getSupabaseClient();
-  const { data, error } = await supabase.from("complaints").select("*").eq("id", req.params.id).single();
+  const { data, error } = await supabase
+    .from("complaints")
+    .select(
+      "*, creator:profiles!created_by(full_name), status_logs:case_status_logs(previous_stage, outcome, next_stage, notes, created_at, actor:profiles!authorized_by(full_name))"
+    )
+    .eq("id", req.params.id)
+    .single();
 
   if (error || !data) return res.status(404).json({ error: "Case not found" });
 

@@ -166,6 +166,38 @@ describe("GET /complaints/:id", () => {
     );
     expect(res.status).toBe(403);
   });
+
+  it("embeds the creator's name and status log history for the Workflow tab", async () => {
+    let capturedSelect;
+    mockSelectCount.mockImplementation((selectArg) => {
+      capturedSelect = selectArg;
+      return {
+        eq: () => ({
+          single: () =>
+            Promise.resolve({
+              data: {
+                id: "case-1",
+                complainant_id: "other-1",
+                respondent_id: "other-2",
+                creator: { full_name: "Ana Reyes" },
+                status_logs: [{ next_stage: "Jurisdiction review", created_at: "2026-07-18", actor: { full_name: "Ana Reyes" } }],
+              },
+              error: null,
+            }),
+        }),
+      };
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get(
+      "/complaints/case-1"
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.creator.full_name).toBe("Ana Reyes");
+    expect(res.body.status_logs[0].actor.full_name).toBe("Ana Reyes");
+    expect(capturedSelect).toEqual(expect.stringContaining("creator:profiles!created_by"));
+    expect(capturedSelect).toEqual(expect.stringContaining("status_logs:case_status_logs"));
+  });
 });
 
 describe("PATCH /complaints/:id/workflow", () => {

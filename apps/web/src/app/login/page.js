@@ -1,16 +1,19 @@
 "use client";
 
 import { useId, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import BrandMark from "@/components/BrandMark";
+import Icon from "@/components/Icon";
 
 export default function LoginPage() {
   const router = useRouter();
   const errorId = useId();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +22,7 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const supabase = createClient();
+    const supabase = createClient({ rememberMe });
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
     setLoading(false);
@@ -70,35 +73,54 @@ export default function LoginPage() {
           <div className="flex justify-center mb-3">
             <BrandMark size={64} />
           </div>
-          <h1 className="font-display text-2xl font-semibold text-center text-foreground">KatarunganHub</h1>
-          <p className="text-center text-xs tracking-[0.14em] uppercase text-foreground-muted mt-1 mb-6">
-            Barangay Case Tracking &amp; Management
-          </p>
+          <h1 className="font-display text-2xl font-semibold text-center text-foreground">Welcome Back!</h1>
+          <p className="text-center text-sm text-foreground-muted mt-1 mb-6">Sign in to your account</p>
           <div className="h-px bg-brass/40 mb-6" aria-hidden="true" />
 
           <label className="block text-xs font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="email">
             Email
           </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full min-h-11 border border-border rounded-sm px-3 py-2 mb-4 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-          />
+          <div className="relative mb-4">
+            <Icon name="mail" className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
+            <input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full min-h-11 border border-border rounded-sm pl-9 pr-3 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+            />
+          </div>
 
           <label className="block text-xs font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="password">
             Password
           </label>
-          <input
-            id="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full min-h-11 border border-border rounded-sm px-3 py-2 mb-5 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-          />
+          <div className="relative mb-3">
+            <Icon name="lock" className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
+            <input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full min-h-11 border border-border rounded-sm pl-9 pr-3 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+            />
+          </div>
+
+          <div className="flex items-center justify-between mb-5 text-sm">
+            <label className="flex items-center gap-2 text-foreground-muted">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 accent-primary"
+              />
+              Remember me
+            </label>
+            <Link href="/forgot-password" className="text-primary font-medium hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
 
           {error && (
             <p id={errorId} role="alert" className="text-danger text-sm mb-4">
@@ -111,7 +133,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full min-h-11 bg-primary text-white rounded-sm py-2 font-medium tracking-wide disabled:opacity-60 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary hover:bg-primary/90 transition-colors"
           >
-            {loading ? "Signing in…" : "Sign in"}
+            {loading ? "Signing in…" : "Login"}
           </button>
 
           <p className="text-center text-[0.65rem] text-foreground-muted mt-6">

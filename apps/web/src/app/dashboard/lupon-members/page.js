@@ -117,13 +117,19 @@ export default function LuponMembersPage() {
           <p className="text-sm text-foreground-muted mt-1">Manage Lupon and Pangkat member records.</p>
         </div>
         {profiles.length > 0 && (
-          <input
-            type="search"
-            placeholder="Search by name or position…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white w-full sm:w-64 focus-visible:outline-3 focus-visible:outline-primary"
-          />
+          <div className="relative w-full sm:w-64">
+            <Icon
+              name="search"
+              className="w-4 h-4 text-foreground-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+            />
+            <input
+              type="search"
+              placeholder="Search by name or position…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white w-full focus-visible:outline-3 focus-visible:outline-primary"
+            />
+          </div>
         )}
       </div>
 

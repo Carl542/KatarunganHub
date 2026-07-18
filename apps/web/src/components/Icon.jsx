@@ -139,6 +139,12 @@ const PATHS = {
       <line x1="12" y1="3" x2="12" y2="15" />
     </>
   ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </>
+  ),
 };
 
 export default function Icon({ name, className = "", size, ...rest }) {

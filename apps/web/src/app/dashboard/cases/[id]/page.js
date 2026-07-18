@@ -42,7 +42,7 @@ export default function CaseDetailsPage({ params }) {
   const hasWorkflow = caseData.type === "Lupon" || caseData.type === "Non-Lupon";
 
   return (
-    <div className="max-w-5xl">
+    <div>
       <div className="flex items-center justify-between mb-4 gap-3">
         <div>
           <h1 className="font-display text-2xl font-semibold">{caseData.title}</h1>
@@ -77,7 +77,7 @@ export default function CaseDetailsPage({ params }) {
       </div>
 
       {tab === "Overview" && (
-        <div className="bg-white/90 rounded-sm border border-border p-6">
+        <div className="bg-white/90 rounded-sm border border-border p-6 max-w-3xl">
           <h2 className="font-display text-lg font-semibold mb-2">Narrative</h2>
           <p className="text-foreground mb-4">{caseData.narrative}</p>
           <h2 className="font-display text-lg font-semibold mb-2">Relief requested</h2>

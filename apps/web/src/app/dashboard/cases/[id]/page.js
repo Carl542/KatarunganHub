@@ -53,13 +53,23 @@ export default function CaseDetailsPage({ params }) {
             <span className="stamp text-primary">{caseData.status}</span>
           </p>
         </div>
-        <Link
-          href="/dashboard/cases"
-          className="bg-primary text-white rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
-        >
-          <Icon name="chevron-right" className="w-4 h-4 rotate-180" />
-          Back to Cases
-        </Link>
+        <div className="flex items-center gap-2 shrink-0">
+          <Link
+            href={`/dashboard/cases/${id}/print`}
+            target="_blank"
+            className="border border-border rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
+          >
+            <Icon name="file-text" className="w-4 h-4" />
+            Print
+          </Link>
+          <Link
+            href="/dashboard/cases"
+            className="bg-primary text-white rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-primary/90 transition-colors"
+          >
+            <Icon name="chevron-right" className="w-4 h-4 rotate-180" />
+            Back to Cases
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-1 mb-4 border-b">

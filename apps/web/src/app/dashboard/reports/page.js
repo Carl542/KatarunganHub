@@ -45,6 +45,37 @@ export default function ReportsPage() {
   const resolutionRate = summary && summary.total > 0 ? Math.round((summary.closed / summary.total) * 100) : 0;
   const byTypeRows = summary ? toChartData(summary.byType) : [];
 
+  function exportCsv() {
+    if (!summary) return;
+    const rows = [
+      ["Metric", "Value"],
+      ["Total Cases", summary.total],
+      ["Active", summary.active],
+      ["Closed", summary.closed],
+      ["Resolution Rate", `${resolutionRate}%`],
+      [],
+      ["By Status"],
+      ...Object.entries(summary.byStatus),
+      [],
+      ["By Type"],
+      ...Object.entries(summary.byType),
+      [],
+      ["By Category"],
+      ...Object.entries(summary.byCategory || {}),
+      [],
+      ["By Priority"],
+      ...Object.entries(summary.byPriority || {}),
+    ];
+    const csv = rows.map((r) => r.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `case-report-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div>
       <div className="mb-4">
@@ -85,6 +116,13 @@ export default function ReportsPage() {
           className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 px-4 py-2 font-medium"
         >
           Apply
+        </button>
+        <button
+          onClick={exportCsv}
+          disabled={!summary}
+          className="border border-border rounded-sm hover:bg-muted transition-colors min-h-11 px-4 py-2 font-medium disabled:opacity-60"
+        >
+          Export CSV
         </button>
       </div>
 

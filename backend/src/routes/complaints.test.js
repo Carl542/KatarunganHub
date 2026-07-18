@@ -198,6 +198,38 @@ describe("GET /complaints/:id", () => {
     expect(capturedSelect).toEqual(expect.stringContaining("creator:profiles!created_by"));
     expect(capturedSelect).toEqual(expect.stringContaining("status_logs:case_status_logs"));
   });
+
+  it("embeds complainant and respondent names for printable documents", async () => {
+    let capturedSelect;
+    mockSelectCount.mockImplementation((selectArg) => {
+      capturedSelect = selectArg;
+      return {
+        eq: () => ({
+          single: () =>
+            Promise.resolve({
+              data: {
+                id: "case-1",
+                complainant_id: "other-1",
+                respondent_id: "other-2",
+                complainant: { full_name: "Maria Santos" },
+                respondent: { full_name: "Pedro Cruz" },
+              },
+              error: null,
+            }),
+        }),
+      };
+    });
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get(
+      "/complaints/case-1"
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.complainant.full_name).toBe("Maria Santos");
+    expect(res.body.respondent.full_name).toBe("Pedro Cruz");
+    expect(capturedSelect).toEqual(expect.stringContaining("complainant:profiles!complainant_id"));
+    expect(capturedSelect).toEqual(expect.stringContaining("respondent:profiles!respondent_id"));
+  });
 });
 
 describe("PATCH /complaints/:id/workflow", () => {

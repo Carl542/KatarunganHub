@@ -80,7 +80,7 @@ router.get("/:id", requireAuth, async (req, res) => {
   const { data, error } = await supabase
     .from("complaints")
     .select(
-      "*, creator:profiles!created_by(full_name), status_logs:case_status_logs(previous_stage, outcome, next_stage, notes, created_at, actor:profiles!authorized_by(full_name))"
+      "*, creator:profiles!created_by(full_name), complainant:profiles!complainant_id(full_name), respondent:profiles!respondent_id(full_name), category:complaint_categories(name), priority:priority_levels(name), status_logs:case_status_logs(previous_stage, outcome, next_stage, notes, created_at, actor:profiles!authorized_by(full_name))"
     )
     .eq("id", req.params.id)
     .single();

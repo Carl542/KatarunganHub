@@ -40,7 +40,7 @@ export default function DashboardShell({ role, fullName, barangayName, children 
         Skip to main content
       </a>
 
-      <aside className="w-64 bg-sidebar text-white flex flex-col">
+      <aside className="w-64 bg-sidebar text-white flex flex-col print:hidden">
         <div className="flex flex-col items-center text-center gap-2 px-4 pt-8 pb-6 border-b border-brass/20">
           <BrandMark size={72} />
           <div className="leading-tight">
@@ -78,7 +78,10 @@ export default function DashboardShell({ role, fullName, barangayName, children 
       </aside>
 
       <div className="flex-1 flex flex-col">
-        <header role="banner" className="h-16 bg-white/90 border-b border-brass/30 flex items-center justify-between px-6">
+        <header
+          role="banner"
+          className="h-16 bg-white/90 border-b border-brass/30 flex items-center justify-between px-6 print:hidden"
+        >
           <span className="text-xs tracking-[0.14em] uppercase text-foreground-muted">Home / Dashboard</span>
           <div className="flex items-center gap-4">
             {today && <span className="text-sm text-foreground-muted hidden sm:inline">{today}</span>}
@@ -94,7 +97,7 @@ export default function DashboardShell({ role, fullName, barangayName, children 
             </div>
           </div>
         </header>
-        <main id="main-content" tabIndex="-1" className="flex-1 p-6">
+        <main id="main-content" tabIndex="-1" className="flex-1 p-6 print:p-0">
           {children}
         </main>
       </div>

@@ -4,19 +4,7 @@ import { useEffect, useState } from "react";
 import { apiFetch, apiDownload } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
 import Icon from "@/components/Icon";
-
-const DOCUMENT_TYPES = [
-  "Complaint",
-  "Summons",
-  "Notice of hearing",
-  "Mediation minutes",
-  "Pangkat formation record",
-  "Amicable settlement",
-  "Arbitration agreement",
-  "Arbitration award",
-  "Certification to File Action",
-  "Disposition record",
-];
+import { DOCUMENT_TYPES } from "@/lib/documentTypes";
 
 export default function DocumentsTab({ caseId }) {
   const profile = useCurrentProfile();

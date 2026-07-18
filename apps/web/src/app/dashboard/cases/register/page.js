@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
-import UserPicker from "@/components/UserPicker";
+import ResidentPicker from "@/components/ResidentPicker";
 
 export default function RegisterCasePage() {
   const [form, setForm] = useState({
@@ -40,15 +40,17 @@ export default function RegisterCasePage() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-2xl font-bold mb-4">Official Case Registration</h1>
-      <p className="text-sm text-foreground-muted mb-6">
-        Only complaints officially received at the barangay may be encoded in this system.
-      </p>
+      <div className="mb-6">
+        <h1 className="font-display text-2xl font-semibold">Official Case Registration</h1>
+        <p className="text-sm text-foreground-muted mt-1">
+          Only complaints officially received at the barangay may be encoded in this system.
+        </p>
+      </div>
 
       {result ? (
         <div className="bg-white/90 rounded-sm border border-border p-6">
           <p className="text-sm text-foreground-muted">Case saved. Reference number:</p>
-          <p className="text-2xl font-bold text-primary">{result.reference_number}</p>
+          <p className="ref-number text-2xl font-semibold text-primary">{result.reference_number}</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-6 flex flex-col gap-4">
@@ -64,23 +66,12 @@ export default function RegisterCasePage() {
 
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant</span>
-            <UserPicker
-              required
-              roles={["complainant"]}
-              value={form.complainantId}
-              onChange={(v) => update("complainantId", v)}
-              placeholder="Select complainant"
-            />
+            <ResidentPicker required role="complainant" value={form.complainantId} onChange={(v) => update("complainantId", v)} />
           </label>
 
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Respondent</span>
-            <UserPicker
-              roles={["respondent"]}
-              value={form.respondentId}
-              onChange={(v) => update("respondentId", v)}
-              placeholder="Select respondent"
-            />
+            <ResidentPicker role="respondent" value={form.respondentId} onChange={(v) => update("respondentId", v)} />
           </label>
 
           <label className="flex flex-col gap-1">

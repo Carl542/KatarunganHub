@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
+import Icon from "@/components/Icon";
 
 const FIELDS = [
   { key: "barangay_name", label: "Barangay name" },
@@ -15,6 +16,7 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     apiFetch("/settings")
@@ -27,39 +29,61 @@ export default function SettingsPage() {
     e.preventDefault();
     setError("");
     setSaved(false);
+    setSaving(true);
     try {
       await apiFetch("/settings", { method: "PATCH", body: JSON.stringify(values) });
       setSaved(true);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setSaving(false);
     }
   }
 
-  if (loading) return <p className="text-foreground-muted">Loading…</p>;
-
   return (
-    <div className="max-w-xl">
-      <h1 className="text-2xl font-bold mb-4">Settings</h1>
+    <div>
+      <div className="mb-4">
+        <h1 className="font-display text-2xl font-semibold">Settings</h1>
+        <p className="text-sm text-foreground-muted mt-1">Barangay identity used across cases, notices, and printouts.</p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-6 flex flex-col gap-4">
-        {FIELDS.map((f) => (
-          <label key={f.key} className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">{f.label}</span>
-            <input
-              value={values[f.key] || ""}
-              onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-            />
-          </label>
-        ))}
+      {loading ? (
+        <p className="text-foreground-muted">Loading…</p>
+      ) : (
+        <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-6 flex flex-col gap-4 max-w-xl">
+          {FIELDS.map((f) => (
+            <label key={f.key} className="flex flex-col gap-1">
+              <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">{f.label}</span>
+              <input
+                value={values[f.key] || ""}
+                onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
+                className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              />
+            </label>
+          ))}
 
-        {error && <p className="text-danger text-sm">{error}</p>}
-        {saved && <p className="text-accent text-sm">Settings saved.</p>}
+          {error && (
+            <p className="flex items-center gap-2 text-sm text-danger bg-danger/10 border border-danger rounded-sm px-3 py-2">
+              <Icon name="alert-circle" className="w-4 h-4 shrink-0" />
+              {error}
+            </p>
+          )}
+          {saved && !error && (
+            <p className="flex items-center gap-2 text-sm text-accent bg-accent/10 border border-accent rounded-sm px-3 py-2">
+              <Icon name="check-circle" className="w-4 h-4 shrink-0" />
+              Settings saved.
+            </p>
+          )}
 
-        <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium">
-          Save settings
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={saving}
+            className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium disabled:opacity-60"
+          >
+            {saving ? "Saving…" : "Save settings"}
+          </button>
+        </form>
+      )}
     </div>
   );
 }

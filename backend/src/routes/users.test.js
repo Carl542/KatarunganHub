@@ -4,11 +4,14 @@ import request from "supertest";
 
 const mockSelect = vi.fn();
 const mockUpdate = vi.fn();
+const mockInsert = vi.fn();
+const mockCreateUser = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
+    auth: { admin: { createUser: mockCreateUser } },
     from: (table) => {
-      if (table === "profiles") return { select: mockSelect, update: mockUpdate };
+      if (table === "profiles") return { select: mockSelect, update: mockUpdate, insert: mockInsert };
       return {};
     },
   }),
@@ -36,6 +39,8 @@ describe("users admin routes", () => {
   beforeEach(() => {
     mockSelect.mockReset();
     mockUpdate.mockReset();
+    mockInsert.mockReset();
+    mockCreateUser.mockReset();
   });
 
   it("rejects GET /users for non-admin", async () => {
@@ -109,5 +114,74 @@ describe("users admin routes", () => {
 
     expect(res.status).toBe(200);
     expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ phone_number: "09171234567" }));
+  });
+
+  it("rejects POST /users for roles other than admin/secretary", async () => {
+    const res = await request(buildTestApp({ id: "l1", role: "lupon" }))
+      .post("/users")
+      .send({ fullName: "Maria Santos", role: "complainant" });
+    expect(res.status).toBe(403);
+  });
+
+  it("rejects secretary registering a non-resident role", async () => {
+    const res = await request(buildTestApp({ id: "s1", role: "secretary" }))
+      .post("/users")
+      .send({ fullName: "Someone", role: "lupon" });
+    expect(res.status).toBe(403);
+  });
+
+  it("lets secretary register a new complainant with an auto-generated email and temp password", async () => {
+    mockCreateUser.mockResolvedValue({ data: { user: { id: "new-1" } }, error: null });
+    mockInsert.mockReturnValue({
+      select: () => ({
+        single: () =>
+          Promise.resolve({
+            data: { id: "new-1", full_name: "Maria Santos", role: "complainant" },
+            error: null,
+          }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "s1", role: "secretary" }))
+      .post("/users")
+      .send({ fullName: "Maria Santos", phoneNumber: "09171234567", role: "complainant" });
+
+    expect(res.status).toBe(201);
+    expect(res.body.tempPassword).toHaveLength(10);
+    expect(res.body.email).toMatch(/@resident\.katarunganhub\.local$/);
+    expect(mockCreateUser).toHaveBeenCalledWith(
+      expect.objectContaining({ password: res.body.tempPassword, email_confirm: true })
+    );
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "new-1", full_name: "Maria Santos", role: "complainant", phone_number: "09171234567" })
+    );
+  });
+
+  it("lets admin register any role, using a provided email as-is", async () => {
+    mockCreateUser.mockResolvedValue({ data: { user: { id: "new-2" } }, error: null });
+    mockInsert.mockReturnValue({
+      select: () => ({
+        single: () => Promise.resolve({ data: { id: "new-2", full_name: "Elena Cruz", role: "lupon" }, error: null }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "a1", role: "admin" }))
+      .post("/users")
+      .send({ fullName: "Elena Cruz", email: "elena@example.com", role: "lupon" });
+
+    expect(res.status).toBe(201);
+    expect(res.body.email).toBe("elena@example.com");
+    expect(mockCreateUser).toHaveBeenCalledWith(expect.objectContaining({ email: "elena@example.com" }));
+  });
+
+  it("returns 400 when account creation fails", async () => {
+    mockCreateUser.mockResolvedValue({ data: null, error: { message: "Email already registered" } });
+
+    const res = await request(buildTestApp({ id: "s1", role: "secretary" }))
+      .post("/users")
+      .send({ fullName: "Maria Santos", email: "dup@example.com", role: "complainant" });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Email already registered");
   });
 });

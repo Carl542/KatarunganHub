@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/", requireAuth, async (req, res) => {
   const supabase = getSupabaseClient();
-  let query = supabase.from("notifications").select("*");
+  let query = supabase.from("notifications").select("*, complaint:complaints(reference_number)");
 
   if (["complainant", "respondent"].includes(req.user.role)) {
     query = query.eq("recipient_id", req.user.id);

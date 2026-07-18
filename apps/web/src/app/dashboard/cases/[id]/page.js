@@ -98,9 +98,9 @@ export default function CaseDetailsPage({ params }) {
 
       {tab === "Overview" && (
         <div className="bg-white/90 rounded-sm border border-border p-6">
-          <h2 className="font-bold mb-2">Narrative</h2>
+          <h2 className="font-display text-lg font-semibold mb-2">Narrative</h2>
           <p className="text-foreground mb-4">{caseData.narrative}</p>
-          <h2 className="font-bold mb-2">Relief requested</h2>
+          <h2 className="font-display text-lg font-semibold mb-2">Relief requested</h2>
           <p className="text-foreground">{caseData.relief}</p>
         </div>
       )}

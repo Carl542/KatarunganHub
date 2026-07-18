@@ -5,6 +5,9 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
 import { DOCUMENT_TYPES } from "@/lib/documentTypes";
+import { useCurrentProfile } from "@/lib/useCurrentProfile";
+
+const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
 function formatDate(value) {
   if (!value) return "___________________";
@@ -156,6 +159,7 @@ function DocumentBody({ type, caseData, upcomingSchedule, barangayName }) {
 function PrintDocument({ id }) {
   const searchParams = useSearchParams();
   const type = searchParams.get("type") || "Summons";
+  const profile = useCurrentProfile();
 
   const [caseData, setCaseData] = useState(null);
   const [schedules, setSchedules] = useState([]);
@@ -181,6 +185,9 @@ function PrintDocument({ id }) {
   if (loading) return <p className="p-6 text-foreground-muted">Loading…</p>;
   if (error) return <p className="p-6 text-danger">{error}</p>;
   if (!caseData) return null;
+  if (profile && !STAFF_ROLES.includes(profile.role)) {
+    return <p className="p-6 text-danger">Only barangay staff can print official case documents.</p>;
+  }
 
   const upcomingSchedule = [...schedules]
     .filter((s) => new Date(s.scheduled_at) >= new Date())

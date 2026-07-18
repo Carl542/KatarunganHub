@@ -9,11 +9,14 @@ import PangkatTab from "./tabs/PangkatTab";
 import AttendanceTab from "./tabs/AttendanceTab";
 import DocumentsTab from "./tabs/DocumentsTab";
 import WorkflowTab from "./tabs/WorkflowTab";
+import { useCurrentProfile } from "@/lib/useCurrentProfile";
 
 const TABS = ["Overview", "Workflow", "Schedules", "Pangkat", "Attendance", "Documents"];
+const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
 export default function CaseDetailsPage({ params }) {
   const { id } = use(params);
+  const profile = useCurrentProfile();
   const [caseData, setCaseData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -54,14 +57,16 @@ export default function CaseDetailsPage({ params }) {
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Link
-            href={`/dashboard/cases/${id}/print`}
-            target="_blank"
-            className="border border-border rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
-          >
-            <Icon name="file-text" className="w-4 h-4" />
-            Print
-          </Link>
+          {STAFF_ROLES.includes(profile?.role) && (
+            <Link
+              href={`/dashboard/cases/${id}/print`}
+              target="_blank"
+              className="border border-border rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
+            >
+              <Icon name="file-text" className="w-4 h-4" />
+              Print
+            </Link>
+          )}
           <Link
             href="/dashboard/cases"
             className="bg-primary text-white rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-primary/90 transition-colors"

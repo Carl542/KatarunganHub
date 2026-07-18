@@ -12,7 +12,7 @@ export default function BrandMark({ size = 60 }) {
         fill
         sizes={`${size}px`}
         quality={100}
-        className="object-cover scale-[1.18]"
+        className="object-cover scale-[1.06]"
         priority
       />
     </div>

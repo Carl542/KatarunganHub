@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiFetch, apiDownload } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
+import Icon from "@/components/Icon";
 
 const DOCUMENT_TYPES = [
   "Complaint",
@@ -92,11 +93,15 @@ export default function DocumentsTab({ caseId }) {
           </label>
           <label className="flex flex-col gap-1 flex-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">File (optional)</span>
-            <input
-              type="file"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="border border-border rounded-sm px-3 py-1.5 min-h-11 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
-            />
+            <span className="border border-border rounded-sm px-3 min-h-11 bg-white text-sm flex items-center gap-2 cursor-pointer focus-within:outline-3 focus-within:outline-primary">
+              <Icon name="upload" className="w-4 h-4 text-foreground-muted shrink-0" />
+              <span className="text-foreground-muted truncate">{file ? file.name : "Choose file…"}</span>
+              <input
+                type="file"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                className="sr-only"
+              />
+            </span>
           </label>
           <button
             type="submit"

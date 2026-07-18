@@ -13,11 +13,18 @@ function initialsFor(fullName) {
     .toUpperCase();
 }
 
+const STAFF_ROLE_OPTIONS = ["admin", "punong", "secretary", "lupon"];
+
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [addForm, setAddForm] = useState({ fullName: "", email: "", phoneNumber: "", role: "secretary" });
+  const [addError, setAddError] = useState("");
+  const [adding, setAdding] = useState(false);
+  const [addedCredentials, setAddedCredentials] = useState(null);
 
   function load() {
     setLoading(true);
@@ -44,6 +51,37 @@ export default function UsersPage() {
     if (value.trim()) updateUser(id, { phone_number: value.trim() });
   }
 
+  async function handleAddUser(e) {
+    e.preventDefault();
+    if (!addForm.fullName.trim()) return;
+    setAddError("");
+    setAdding(true);
+    try {
+      const created = await apiFetch("/users", {
+        method: "POST",
+        body: JSON.stringify({
+          fullName: addForm.fullName.trim(),
+          email: addForm.email.trim() || undefined,
+          phoneNumber: addForm.phoneNumber.trim() || undefined,
+          role: addForm.role,
+        }),
+      });
+      setAddedCredentials({ email: created.email, tempPassword: created.tempPassword });
+      setAddForm({ fullName: "", email: "", phoneNumber: "", role: "secretary" });
+      load();
+    } catch (err) {
+      setAddError(err.message);
+    } finally {
+      setAdding(false);
+    }
+  }
+
+  function closeAddForm() {
+    setShowAddForm(false);
+    setAddedCredentials(null);
+    setAddError("");
+  }
+
   const filtered = users.filter((u) => (u.full_name || "").toLowerCase().includes(query.toLowerCase()));
 
   return (
@@ -53,14 +91,91 @@ export default function UsersPage() {
           <h1 className="font-display text-2xl font-semibold">User Accounts</h1>
           <p className="text-sm text-foreground-muted mt-1">{users.length} registered account{users.length === 1 ? "" : "s"}</p>
         </div>
-        <input
-          type="search"
-          placeholder="Search by name…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white w-full sm:w-64 focus-visible:outline-3 focus-visible:outline-primary"
-        />
+        <div className="flex items-center gap-3 flex-wrap">
+          <input
+            type="search"
+            placeholder="Search by name…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white w-full sm:w-64 focus-visible:outline-3 focus-visible:outline-primary"
+          />
+          <button
+            onClick={() => (showAddForm ? closeAddForm() : setShowAddForm(true))}
+            className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 px-4 py-2 text-sm font-medium whitespace-nowrap"
+          >
+            {showAddForm ? "Cancel" : "+ Add User"}
+          </button>
+        </div>
       </div>
+
+      {showAddForm && (
+        <div className="bg-white/90 rounded-sm border border-border p-4 mb-4 max-w-md">
+          {addedCredentials ? (
+            <div className="text-sm">
+              <p className="font-medium text-accent mb-2">Account created — give these to the staff member:</p>
+              <p className="ref-number">Email: {addedCredentials.email}</p>
+              <p className="ref-number mb-3">Temp password: {addedCredentials.tempPassword}</p>
+              <button
+                onClick={closeAddForm}
+                className="border border-border rounded-sm px-3 py-1.5 text-xs font-medium hover:bg-muted"
+              >
+                Done
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleAddUser} className="flex flex-col gap-3">
+              <label className="flex flex-col gap-1">
+                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Full name</span>
+                <input
+                  value={addForm.fullName}
+                  onChange={(e) => setAddForm({ ...addForm, fullName: e.target.value })}
+                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Role</span>
+                <select
+                  value={addForm.role}
+                  onChange={(e) => setAddForm({ ...addForm, role: e.target.value })}
+                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                >
+                  {STAFF_ROLE_OPTIONS.map((r) => (
+                    <option key={r} value={r}>
+                      {ROLES[r]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Email (optional)</span>
+                <input
+                  type="email"
+                  value={addForm.email}
+                  onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Phone number (optional)</span>
+                <input
+                  type="tel"
+                  value={addForm.phoneNumber}
+                  onChange={(e) => setAddForm({ ...addForm, phoneNumber: e.target.value })}
+                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                />
+              </label>
+              {addError && <p className="text-danger text-sm">{addError}</p>}
+              <button
+                type="submit"
+                disabled={adding || !addForm.fullName.trim()}
+                className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium disabled:opacity-60"
+              >
+                {adding ? "Creating…" : "Create account"}
+              </button>
+            </form>
+          )}
+        </div>
+      )}
 
       {loading && <p className="text-foreground-muted">Loading…</p>}
       {error && <p className="text-danger">{error}</p>}

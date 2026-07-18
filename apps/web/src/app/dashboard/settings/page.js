@@ -8,7 +8,6 @@ const FIELDS = [
   { key: "barangay_name", label: "Barangay name" },
   { key: "barangay_address", label: "Address" },
   { key: "barangay_contact", label: "Contact details" },
-  { key: "case_number_format", label: "Case number format" },
 ];
 
 export default function SettingsPage() {
@@ -44,7 +43,9 @@ export default function SettingsPage() {
     <div>
       <div className="mb-4">
         <h1 className="font-display text-2xl font-semibold">Settings</h1>
-        <p className="text-sm text-foreground-muted mt-1">Barangay identity used across cases, notices, and printouts.</p>
+        <p className="text-sm text-foreground-muted mt-1">
+          Barangay identity shown in the dashboard sidebar and the public case-tracking page.
+        </p>
       </div>
 
       {loading ? (

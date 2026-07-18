@@ -17,7 +17,7 @@ function initialsFor(fullName) {
     .toUpperCase();
 }
 
-export default function DashboardShell({ role, fullName, children }) {
+export default function DashboardShell({ role, fullName, barangayName, children }) {
   const pathname = usePathname();
   const router = useRouter();
   const navItems = NAV_BY_ROLE[role] || [];
@@ -43,7 +43,10 @@ export default function DashboardShell({ role, fullName, children }) {
       <aside className="w-64 bg-sidebar text-white flex flex-col">
         <div className="flex items-center gap-3 p-4 border-b border-brass/20">
           <BrandMark size={40} />
-          <span className="font-display font-semibold tracking-wide">KatarunganHub</span>
+          <div className="leading-tight">
+            <span className="font-display font-semibold tracking-wide block">KatarunganHub</span>
+            {barangayName && <span className="text-xs text-white/60 block">{barangayName}</span>}
+          </div>
         </div>
         <nav aria-label="Primary" className="flex-1 p-2">
           {navItems.map((item) => {

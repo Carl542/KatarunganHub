@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
 import BrandMark from "@/components/BrandMark";
 
@@ -9,6 +9,13 @@ export default function TrackCasePage() {
   const [result, setResult] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    apiFetch("/settings/public")
+      .then(setSettings)
+      .catch(() => {});
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -33,7 +40,7 @@ export default function TrackCasePage() {
         </div>
         <h1 className="font-display text-xl font-semibold text-center">Track Your Case</h1>
         <p className="text-center text-xs tracking-[0.14em] uppercase text-foreground-muted mt-1 mb-6">
-          Katarungang Pambarangay Registry
+          {settings?.barangay_name ? `${settings.barangay_name} — Katarungang Pambarangay` : "Katarungang Pambarangay Registry"}
         </p>
         <div className="h-px bg-brass/40 mb-6" aria-hidden="true" />
 
@@ -71,6 +78,13 @@ export default function TrackCasePage() {
             </p>
             <p className="text-sm text-foreground-muted mt-2">Type: {result.type}</p>
             <p className="text-sm text-foreground-muted">{result.title}</p>
+          </div>
+        )}
+
+        {(settings?.barangay_address || settings?.barangay_contact) && (
+          <div className="mt-6 pt-4 border-t border-border text-center text-xs text-foreground-muted">
+            {settings.barangay_address && <p>{settings.barangay_address}</p>}
+            {settings.barangay_contact && <p>{settings.barangay_contact}</p>}
           </div>
         )}
       </div>

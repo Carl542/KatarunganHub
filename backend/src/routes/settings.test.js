@@ -53,6 +53,27 @@ describe("settings routes", () => {
     expect(res.body).toEqual({ barangay_name: "Barangay Mabuhay", barangay_address: "Digos City" });
   });
 
+  it("returns only the public identity fields with no auth required, from GET /settings/public", async () => {
+    mockSelect.mockResolvedValue({
+      data: [
+        { key: "barangay_name", value: "Barangay Mabuhay" },
+        { key: "barangay_address", value: "Digos City" },
+        { key: "barangay_contact", value: "0917-000-0000" },
+        { key: "case_number_format", value: "SHOULD-NOT-APPEAR" },
+      ],
+      error: null,
+    });
+
+    const res = await request(buildTestApp(null)).get("/settings/public");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      barangay_name: "Barangay Mabuhay",
+      barangay_address: "Digos City",
+      barangay_contact: "0917-000-0000",
+    });
+  });
+
   it("rejects PATCH for non-admin", async () => {
     const res = await request(buildTestApp({ id: "s1", role: "secretary" }))
       .patch("/settings")

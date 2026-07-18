@@ -5,25 +5,13 @@ import { apiFetch } from "@/lib/apiClient";
 import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import DonutChart, { CHART_COLORS } from "@/components/DonutChart";
 import UserPicker from "@/components/UserPicker";
-import Icon from "@/components/Icon";
+import StatCard from "@/components/StatCard";
 import { tooltipStyle, barCursorFill } from "@/lib/chartTheme";
 
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
 function toChartData(obj) {
   return Object.entries(obj).map(([name, value]) => ({ name, value }));
-}
-
-function StatCard({ label, value, icon }) {
-  return (
-    <div className="bg-white/90 rounded-sm border border-border p-5">
-      <div className="flex items-center gap-2 text-foreground-muted mb-2">
-        <Icon name={icon} className="w-4 h-4" />
-        <span className="text-xs tracking-wide uppercase">{label}</span>
-      </div>
-      <p className="font-display text-3xl font-semibold">{value}</p>
-    </div>
-  );
 }
 
 export default function ReportsPage() {
@@ -106,10 +94,10 @@ export default function ReportsPage() {
       {summary && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <StatCard label="Total Cases" value={summary.total} icon="clipboard-list" />
-            <StatCard label="Active" value={summary.active} icon="info" />
-            <StatCard label="Closed" value={summary.closed} icon="check-circle" />
-            <StatCard label="Resolution Rate" value={`${resolutionRate}%`} icon="shield" />
+            <StatCard label="Total Cases" value={summary.total} icon="clipboard-list" color="primary" />
+            <StatCard label="Active" value={summary.active} icon="info" color="warning" />
+            <StatCard label="Closed" value={summary.closed} icon="check-circle" color="accent" />
+            <StatCard label="Resolution Rate" value={`${resolutionRate}%`} icon="shield" color="brass" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

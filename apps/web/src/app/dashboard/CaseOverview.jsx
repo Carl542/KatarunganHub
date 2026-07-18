@@ -3,27 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
-import Icon from "@/components/Icon";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import DonutChart from "@/components/DonutChart";
+import StatCard from "@/components/StatCard";
 import { tooltipStyle, lineCursorStroke } from "@/lib/chartTheme";
 
 const MEDIATION_PERIOD_DAYS = 15; // Katarungang Pambarangay statutory mediation period (RA 7160 Sec. 410)
-
-function StatCard({ label, value, href, icon }) {
-  return (
-    <div className="bg-white/90 rounded-sm border border-border p-5">
-      <div className="flex items-center gap-2 text-foreground-muted mb-2">
-        <Icon name={icon} className="w-4 h-4" />
-        <span className="text-xs tracking-wide uppercase">{label}</span>
-      </div>
-      <p className="font-display text-3xl font-semibold">{value}</p>
-      <Link href={href} className="text-sm text-primary font-medium hover:underline">
-        View details
-      </Link>
-    </div>
-  );
-}
 
 function lastNMonths(n) {
   const now = new Date();
@@ -84,10 +69,10 @@ export default function CaseOverview() {
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <StatCard label="Total Cases" value={cases.length} href="/dashboard/cases" icon="clipboard-list" />
-        <StatCard label="Pending Cases" value={pending} href="/dashboard/cases" icon="file-text" />
-        <StatCard label="Under Mediation" value={underMediation} href="/dashboard/cases" icon="info" />
-        <StatCard label="Resolved Cases" value={resolved} href="/dashboard/cases" icon="check-circle" />
+        <StatCard label="Total Cases" value={cases.length} href="/dashboard/cases" icon="clipboard-list" color="primary" />
+        <StatCard label="Pending Cases" value={pending} href="/dashboard/cases" icon="file-text" color="warning" />
+        <StatCard label="Under Mediation" value={underMediation} href="/dashboard/cases" icon="info" color="brass" />
+        <StatCard label="Resolved Cases" value={resolved} href="/dashboard/cases" icon="check-circle" color="accent" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">

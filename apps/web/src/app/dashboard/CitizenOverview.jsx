@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
-import Icon from "@/components/Icon";
+import StatCard from "@/components/StatCard";
 
 const STATUS_COLOR = {
   Closed: "text-accent",
@@ -12,18 +12,6 @@ const STATUS_COLOR = {
   "Under Mediation": "text-warning",
   New: "text-primary",
 };
-
-function StatCard({ label, value, icon }) {
-  return (
-    <div className="bg-white/90 rounded-sm border border-border p-5">
-      <div className="flex items-center gap-2 text-foreground-muted mb-2">
-        <Icon name={icon} className="w-4 h-4" />
-        <span className="text-xs tracking-wide uppercase">{label}</span>
-      </div>
-      <p className="font-display text-3xl font-semibold">{value}</p>
-    </div>
-  );
-}
 
 export default function CitizenOverview() {
   const profile = useCurrentProfile();
@@ -52,9 +40,9 @@ export default function CitizenOverview() {
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <StatCard label="Total Cases" value={cases.length} icon="clipboard-list" />
-        <StatCard label="Active" value={active} icon="info" />
-        <StatCard label="Closed" value={closed} icon="check-circle" />
+        <StatCard label="Total Cases" value={cases.length} icon="clipboard-list" color="primary" />
+        <StatCard label="Active" value={active} icon="info" color="warning" />
+        <StatCard label="Closed" value={closed} icon="check-circle" color="accent" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
-import Icon from "@/components/Icon";
 import { Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { ROLES } from "@/lib/roles";
 import DonutChart, { CHART_COLORS } from "@/components/DonutChart";
+import StatCard from "@/components/StatCard";
 import { tooltipStyle, barCursorFill } from "@/lib/chartTheme";
 
 const SHORT_ROLE_LABELS = {
@@ -17,21 +17,6 @@ const SHORT_ROLE_LABELS = {
   complainant: "Complainant",
   respondent: "Respondent",
 };
-
-function StatCard({ label, value, href, icon }) {
-  return (
-    <div className="bg-white/90 rounded-sm border border-border p-5">
-      <div className="flex items-center gap-2 text-foreground-muted mb-2">
-        <Icon name={icon} className="w-4 h-4" />
-        <span className="text-xs tracking-wide uppercase">{label}</span>
-      </div>
-      <p className="font-display text-3xl font-semibold">{value}</p>
-      <Link href={href} className="text-sm text-primary font-medium hover:underline">
-        View
-      </Link>
-    </div>
-  );
-}
 
 function DonutCard({ title, data }) {
   return (
@@ -109,10 +94,10 @@ export default function AdminOverview() {
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Total Users" value={stats.totalUsers} href="/dashboard/users" icon="users" />
-        <StatCard label="Active Accounts" value={stats.activeUsers} href="/dashboard/users" icon="user-check" />
-        <StatCard label="Total Cases" value={stats.totalCases} href="/dashboard/reports" icon="clipboard-list" />
-        <StatCard label="Active Cases" value={stats.activeCases} href="/dashboard/reports" icon="clipboard-list" />
+        <StatCard label="Total Users" value={stats.totalUsers} href="/dashboard/users" icon="users" color="primary" />
+        <StatCard label="Active Accounts" value={stats.activeUsers} href="/dashboard/users" icon="user-check" color="accent" />
+        <StatCard label="Total Cases" value={stats.totalCases} href="/dashboard/reports" icon="clipboard-list" color="brass" />
+        <StatCard label="Active Cases" value={stats.activeCases} href="/dashboard/reports" icon="clipboard-list" color="warning" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">

@@ -82,7 +82,12 @@ export default function DashboardShell({ role, fullName, barangayName, children 
           role="banner"
           className="h-16 bg-white/90 border-b border-brass/30 flex items-center justify-between px-6 print:hidden"
         >
-          <span className="text-xs tracking-[0.14em] uppercase text-foreground-muted">Home / Dashboard</span>
+          <span className="text-xs tracking-[0.14em] uppercase text-foreground-muted">
+            <Link href="/dashboard" className="text-primary hover:underline">
+              Home
+            </Link>{" "}
+            / Dashboard
+          </span>
           <div className="flex items-center gap-4">
             {today && <span className="text-sm text-foreground-muted hidden sm:inline">{today}</span>}
             <div

@@ -41,14 +41,14 @@ export default function DashboardShell({ role, fullName, barangayName, children 
       </a>
 
       <aside className="w-64 bg-sidebar text-white flex flex-col">
-        <div className="flex items-center gap-3 p-4 border-b border-brass/20">
-          <BrandMark size={40} />
+        <div className="flex flex-col items-center text-center gap-2 px-4 pt-8 pb-6 border-b border-brass/20">
+          <BrandMark size={64} />
           <div className="leading-tight">
-            <span className="font-display font-semibold tracking-wide block">KatarunganHub</span>
-            {barangayName && <span className="text-xs text-white/60 block">{barangayName}</span>}
+            <span className="font-display text-lg font-semibold tracking-wide block">KatarunganHub</span>
+            {barangayName && <span className="text-xs text-white/60 block mt-0.5">{barangayName}</span>}
           </div>
         </div>
-        <nav aria-label="Primary" className="flex-1 p-2">
+        <nav aria-label="Primary" className="flex-1 px-2 pt-4 pb-2">
           {navItems.map((item) => {
             const isActive = pathname === item.path;
             return (

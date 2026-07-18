@@ -55,7 +55,7 @@ export default function CaseDetailsPage({ params }) {
         </div>
         <Link
           href="/dashboard/cases"
-          className="border border-border rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors shrink-0"
+          className="bg-primary text-white rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
         >
           <Icon name="chevron-right" className="w-4 h-4 rotate-180" />
           Back to Cases

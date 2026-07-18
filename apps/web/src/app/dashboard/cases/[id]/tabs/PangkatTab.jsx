@@ -45,8 +45,9 @@ export default function PangkatTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col gap-3">
-        <div className="grid grid-cols-2 gap-3">
+      <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-5 flex flex-col gap-3">
+        <h2 className="font-display text-lg font-semibold">Pangkat Formation</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Formation date</span>
             <input
@@ -120,7 +121,7 @@ export default function PangkatTab({ caseId }) {
             <tbody>
               {formations.length === 0 && (
                 <tr>
-                  <td className="px-4 py-3 text-foreground-muted" colSpan={5}>
+                  <td className="px-4 py-16 text-center text-foreground-muted" colSpan={5}>
                     No Pangkat formation recorded yet.
                   </td>
                 </tr>

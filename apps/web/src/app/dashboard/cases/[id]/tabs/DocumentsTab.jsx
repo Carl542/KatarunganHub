@@ -79,30 +79,33 @@ export default function DocumentsTab({ caseId }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleCreate} className="bg-white/90 rounded-sm border border-border p-4 flex flex-col sm:flex-row sm:items-end gap-3">
-        <label className="flex flex-col gap-1 flex-1">
-          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Document type</span>
-          <select value={type} onChange={(e) => setType(e.target.value)} className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary">
-            {DOCUMENT_TYPES.map((t) => (
-              <option key={t}>{t}</option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 flex-1">
-          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">File (optional)</span>
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="border border-border rounded-sm px-3 py-1.5 min-h-11 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
-          />
-        </label>
-        <button
-          type="submit"
-          disabled={submitting}
-          className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium px-4 disabled:opacity-60"
-        >
-          {submitting ? "Uploading…" : "Create document"}
-        </button>
+      <form onSubmit={handleCreate} className="bg-white/90 rounded-sm border border-border p-5 flex flex-col gap-3">
+        <h2 className="font-display text-lg font-semibold">Case Documents</h2>
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+          <label className="flex flex-col gap-1 flex-1">
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Document type</span>
+            <select value={type} onChange={(e) => setType(e.target.value)} className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary">
+              {DOCUMENT_TYPES.map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 flex-1">
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">File (optional)</span>
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="border border-border rounded-sm px-3 py-1.5 min-h-11 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
+            />
+          </label>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium px-4 disabled:opacity-60"
+          >
+            {submitting ? "Uploading…" : "Create document"}
+          </button>
+        </div>
       </form>
 
       {error && <p className="text-danger text-sm">{error}</p>}
@@ -124,7 +127,7 @@ export default function DocumentsTab({ caseId }) {
             <tbody>
               {documents.length === 0 && (
                 <tr>
-                  <td className="px-4 py-3 text-foreground-muted" colSpan={5}>
+                  <td className="px-4 py-16 text-center text-foreground-muted" colSpan={5}>
                     No documents yet.
                   </td>
                 </tr>

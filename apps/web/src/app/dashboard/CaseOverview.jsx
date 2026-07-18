@@ -10,6 +10,13 @@ import { tooltipStyle, lineCursorStroke } from "@/lib/chartTheme";
 
 const MEDIATION_PERIOD_DAYS = 15; // Katarungang Pambarangay statutory mediation period (RA 7160 Sec. 410)
 
+const STATUS_COLOR = {
+  Closed: "text-accent",
+  Active: "text-warning",
+  "Under Mediation": "text-warning",
+  New: "text-primary",
+};
+
 function lastNMonths(n) {
   const now = new Date();
   const out = [];
@@ -23,16 +30,14 @@ function lastNMonths(n) {
 export default function CaseOverview() {
   const [cases, setCases] = useState(null);
   const [upcoming, setUpcoming] = useState([]);
-  const [activity, setActivity] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([apiFetch("/complaints"), apiFetch("/schedules"), apiFetch("/audit-logs")])
-      .then(([complaints, schedules, auditLogs]) => {
+    Promise.all([apiFetch("/complaints"), apiFetch("/schedules")])
+      .then(([complaints, schedules]) => {
         setCases(complaints);
         setUpcoming(schedules.filter((s) => new Date(s.scheduled_at) >= new Date()).slice(0, 5));
-        setActivity(auditLogs.slice(0, 5));
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -66,6 +71,8 @@ export default function CaseOverview() {
     .sort((a, b) => a.daysLeft - b.daysLeft)
     .slice(0, 5);
 
+  const recentCases = [...cases].sort((a, b) => new Date(b.filed_at) - new Date(a.filed_at)).slice(0, 5);
+
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
@@ -95,17 +102,26 @@ export default function CaseOverview() {
 
         <div className="bg-white/90 rounded-sm border border-border">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-            <h2 className="font-display text-lg font-semibold">Recent activities</h2>
-            <Link href="/dashboard/audit-logs" className="text-sm text-primary font-medium hover:underline">
+            <h2 className="font-display text-lg font-semibold">Recent cases</h2>
+            <Link href="/dashboard/cases" className="text-sm text-primary font-medium hover:underline">
               View all
             </Link>
           </div>
-          {activity.length === 0 && <p className="text-foreground-muted px-5 py-4">No recent activity.</p>}
-          {activity.length > 0 && (
+          {recentCases.length === 0 && <p className="text-foreground-muted px-5 py-4">No cases yet.</p>}
+          {recentCases.length > 0 && (
             <ul>
-              {activity.map((entry) => (
-                <li key={entry.id} className="px-5 py-3 border-t border-border first:border-t-0 text-sm">
-                  {entry.action}
+              {recentCases.map((c) => (
+                <li key={c.id} className="border-t border-border first:border-t-0">
+                  <Link
+                    href={`/dashboard/cases/${c.id}`}
+                    className="flex items-center justify-between gap-3 px-5 py-3 text-sm hover:bg-muted transition-colors"
+                  >
+                    <span className="min-w-0">
+                      <span className="ref-number text-primary block">{c.reference_number}</span>
+                      <span className="text-foreground-muted truncate block">{c.title}</span>
+                    </span>
+                    <span className={`stamp shrink-0 ${STATUS_COLOR[c.status] || "text-foreground-muted"}`}>{c.status}</span>
+                  </Link>
                 </li>
               ))}
             </ul>

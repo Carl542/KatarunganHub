@@ -87,7 +87,7 @@ export default function LoginPage() {
           className="relative bg-white/90 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-8 w-full max-w-sm"
         >
           <div className="flex justify-center mb-4">
-            <BrandMark size={88} />
+            <BrandMark size={100} />
           </div>
           <h1 className="font-display text-3xl font-semibold text-center text-foreground">Welcome Back!</h1>
           <p className="text-center text-base text-foreground-muted mt-1 mb-6">Sign in to your account</p>

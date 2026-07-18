@@ -42,7 +42,7 @@ export default function DashboardShell({ role, fullName, barangayName, children 
 
       <aside className="w-64 bg-sidebar text-white flex flex-col">
         <div className="flex flex-col items-center text-center gap-2 px-4 pt-8 pb-6 border-b border-brass/20">
-          <BrandMark size={64} />
+          <BrandMark size={72} />
           <div className="leading-tight">
             <span className="font-display text-lg font-semibold tracking-wide block">KatarunganHub</span>
             {barangayName && <span className="text-xs text-white/60 block mt-0.5">{barangayName}</span>}

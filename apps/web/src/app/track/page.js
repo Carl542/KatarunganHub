@@ -36,7 +36,7 @@ export default function TrackCasePage() {
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="bg-white/90 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-8 w-full max-w-sm">
         <div className="flex justify-center mb-3">
-          <BrandMark size={64} />
+          <BrandMark size={72} />
         </div>
         <h1 className="font-display text-xl font-semibold text-center">Track Your Case</h1>
         <p className="text-center text-xs tracking-[0.14em] uppercase text-foreground-muted mt-1 mb-6">

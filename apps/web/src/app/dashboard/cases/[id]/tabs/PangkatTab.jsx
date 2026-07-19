@@ -94,11 +94,11 @@ export default function PangkatTab({ caseId }) {
           </label>
         </div>
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Conflict of interest review notes</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Conflict of interest review notes (optional)</span>
           <textarea
-            required
             value={form.conflictNotes}
             onChange={(e) => setForm({ ...form, conflictNotes: e.target.value })}
+            placeholder="Leave blank if no conflict was found"
             className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           />
         </label>

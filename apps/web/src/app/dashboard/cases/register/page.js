@@ -48,7 +48,7 @@ export default function RegisterCasePage() {
   }
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-4xl">
       <div className="mb-6">
         <h1 className="font-display text-2xl font-semibold">Official Case Registration</h1>
         <p className="text-sm text-foreground-muted mt-1">
@@ -73,15 +73,17 @@ export default function RegisterCasePage() {
             />
           </label>
 
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant</span>
-            <ResidentPicker required role="complainant" value={form.complainantId} onChange={(v) => update("complainantId", v)} />
-          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="flex flex-col gap-1">
+              <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant</span>
+              <ResidentPicker required role="complainant" value={form.complainantId} onChange={(v) => update("complainantId", v)} />
+            </label>
 
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Respondent</span>
-            <ResidentPicker role="respondent" value={form.respondentId} onChange={(v) => update("respondentId", v)} />
-          </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Respondent</span>
+              <ResidentPicker role="respondent" value={form.respondentId} onChange={(v) => update("respondentId", v)} />
+            </label>
+          </div>
 
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Case type</span>
@@ -129,32 +131,34 @@ export default function RegisterCasePage() {
             </label>
           </div>
 
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Narrative</span>
-            <textarea
-              required
-              minLength={20}
-              value={form.narrative}
-              onChange={(e) => update("narrative", e.target.value)}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-            />
-          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="flex flex-col gap-1">
+              <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Narrative</span>
+              <textarea
+                required
+                minLength={20}
+                value={form.narrative}
+                onChange={(e) => update("narrative", e.target.value)}
+                className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              />
+            </label>
 
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Relief requested</span>
-            <textarea
-              value={form.relief}
-              onChange={(e) => update("relief", e.target.value)}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-            />
-          </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Relief requested</span>
+              <textarea
+                value={form.relief}
+                onChange={(e) => update("relief", e.target.value)}
+                className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              />
+            </label>
+          </div>
 
           {error && <p className="text-danger text-sm">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium disabled:opacity-60"
+            className="self-end bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 px-8 py-2 font-medium disabled:opacity-60"
           >
             {loading ? "Saving…" : "Save case & generate reference"}
           </button>

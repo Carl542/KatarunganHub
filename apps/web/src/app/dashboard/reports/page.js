@@ -175,13 +175,13 @@ export default function ReportsPage() {
             <StatCard label="Resolution Rate" value={`${resolutionRate}%`} icon="shield" color="brass" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="bg-white/90 rounded-sm border border-border p-4">
               <h2 className="font-display text-lg font-semibold mb-3">By status</h2>
               {Object.keys(summary.byStatus).length === 0 ? (
                 <p className="text-foreground-muted text-sm">No data for this range.</p>
               ) : (
-                <DonutChart data={summary.byStatus} centerValue={summary.total} centerLabel="Total" />
+                <DonutChart data={summary.byStatus} centerValue={summary.total} centerLabel="Total" size={170} />
               )}
             </div>
             <div className="bg-white/90 rounded-sm border border-border p-4">
@@ -189,7 +189,7 @@ export default function ReportsPage() {
               {byTypeRows.length === 0 ? (
                 <p className="text-foreground-muted text-sm">No data for this range.</p>
               ) : (
-                <ResponsiveContainer width="100%" height={240}>
+                <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={byTypeRows}>
                     <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#786956" }} />
                     <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
@@ -203,15 +203,12 @@ export default function ReportsPage() {
                 </ResponsiveContainer>
               )}
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div className="bg-white/90 rounded-sm border border-border p-4">
               <h2 className="font-display text-lg font-semibold mb-3">By category</h2>
               {Object.keys(summary.byCategory || {}).length === 0 ? (
                 <p className="text-foreground-muted text-sm">No data for this range.</p>
               ) : (
-                <DonutChart data={summary.byCategory} />
+                <DonutChart data={summary.byCategory} size={170} />
               )}
             </div>
             <div className="bg-white/90 rounded-sm border border-border p-4">
@@ -219,19 +216,16 @@ export default function ReportsPage() {
               {Object.keys(summary.byPriority || {}).length === 0 ? (
                 <p className="text-foreground-muted text-sm">No data for this range.</p>
               ) : (
-                <DonutChart data={summary.byPriority} />
+                <DonutChart data={summary.byPriority} size={170} />
               )}
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div className="bg-white/90 rounded-sm border border-border p-4">
               <h2 className="font-display text-lg font-semibold mb-3">By Lupon member</h2>
               <p className="text-xs text-foreground-muted mb-3">Cases each Lupon/Pangkat member has been assigned to.</p>
               {byLuponRows.length === 0 ? (
                 <p className="text-foreground-muted text-sm">No Pangkat formations for this range.</p>
               ) : (
-                <ResponsiveContainer width="100%" height={240}>
+                <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={byLuponRows} layout="vertical" margin={{ left: 24 }}>
                     <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
                     <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 12, fill: "#786956" }} />
@@ -251,7 +245,7 @@ export default function ReportsPage() {
               {byProponentRows.length === 0 ? (
                 <p className="text-foreground-muted text-sm">No data for this range.</p>
               ) : (
-                <ResponsiveContainer width="100%" height={240}>
+                <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={byProponentRows} layout="vertical" margin={{ left: 24 }}>
                     <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
                     <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 12, fill: "#786956" }} />

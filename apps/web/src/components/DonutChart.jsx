@@ -5,17 +5,20 @@ import { tooltipStyle } from "@/lib/chartTheme";
 
 export const CHART_COLORS = ["#0038a8", "#c9a227", "#3f6b4b", "#c8102e", "#786956", "#9c6b1f"];
 
-export default function DonutChart({ data, centerLabel, centerValue }) {
+export default function DonutChart({ data, centerLabel, centerValue, size = 150 }) {
   const rows = Object.entries(data).map(([name, value]) => ({ name, value }));
 
   if (rows.length === 0) return <p className="text-foreground-muted text-sm">No data yet.</p>;
 
+  const innerRadius = Math.round(size * 0.293);
+  const outerRadius = Math.round(size * 0.467);
+
   return (
     <div className="flex items-center gap-5">
-      <div className="relative w-[150px] h-[150px] shrink-0">
+      <div className="relative shrink-0" style={{ width: size, height: size }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={rows} dataKey="value" nameKey="name" innerRadius={44} outerRadius={70} strokeWidth={0}>
+            <Pie data={rows} dataKey="value" nameKey="name" innerRadius={innerRadius} outerRadius={outerRadius} strokeWidth={0}>
               {rows.map((_, i) => (
                 <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
               ))}

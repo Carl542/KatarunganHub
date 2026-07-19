@@ -3,11 +3,13 @@ import express from "express";
 import request from "supertest";
 
 const mockSelect = vi.fn();
+const mockPangkatSelect = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
     from: (table) => {
       if (table === "complaints") return { select: mockSelect };
+      if (table === "pangkat_formations") return { select: mockPangkatSelect };
       return {};
     },
   }),
@@ -37,6 +39,7 @@ function chainable(finalData) {
     gte: () => chain,
     lte: () => chain,
     eq: () => chain,
+    in: () => chain,
     then: (resolve) => resolve({ data: finalData, error: null }),
   };
   return chain;
@@ -45,6 +48,8 @@ function chainable(finalData) {
 describe("GET /reports/summary", () => {
   beforeEach(() => {
     mockSelect.mockReset();
+    mockPangkatSelect.mockReset();
+    mockPangkatSelect.mockReturnValue(chainable([]));
   });
 
   it("rejects citizen roles", async () => {
@@ -83,6 +88,58 @@ describe("GET /reports/summary", () => {
 
     expect(res.body.byCategory).toEqual({ "Family Dispute": 2, Uncategorized: 1 });
     expect(res.body.byPriority).toEqual({ High: 1, Unset: 2 });
+  });
+
+  it("aggregates byProponent from the complainant's name, defaulting when unset", async () => {
+    mockSelect.mockReturnValue(
+      chainable([
+        { id: "c1", status: "New", type: "Lupon", complainant: { full_name: "Maria Santos" } },
+        { id: "c2", status: "New", type: "Lupon", complainant: { full_name: "Maria Santos" } },
+        { id: "c3", status: "Closed", type: "Lupon", complainant: null },
+      ])
+    );
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get("/reports/summary");
+
+    expect(res.body.byProponent).toEqual({ "Maria Santos": 2, Unknown: 1 });
+  });
+
+  it("aggregates byLupon from Pangkat formations tied to the filtered cases", async () => {
+    mockSelect.mockReturnValue(
+      chainable([
+        { id: "c1", status: "New", type: "Lupon" },
+        { id: "c2", status: "Closed", type: "Lupon" },
+      ])
+    );
+    mockPangkatSelect.mockReturnValue(
+      chainable([
+        {
+          complaint_id: "c1",
+          chairperson: { full_name: "Elena Cruz" },
+          secretary: { full_name: "Ben Reyes" },
+          member: { full_name: "Ana Lopez" },
+        },
+        {
+          complaint_id: "c2",
+          chairperson: { full_name: "Elena Cruz" },
+          secretary: { full_name: "Ben Reyes" },
+          member: { full_name: "Ana Lopez" },
+        },
+      ])
+    );
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get("/reports/summary");
+
+    expect(res.body.byLupon).toEqual({ "Elena Cruz": 2, "Ben Reyes": 2, "Ana Lopez": 2 });
+  });
+
+  it("skips the Pangkat formations query when there are no matching cases", async () => {
+    mockSelect.mockReturnValue(chainable([]));
+
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).get("/reports/summary");
+
+    expect(res.body.byLupon).toEqual({});
+    expect(mockPangkatSelect).not.toHaveBeenCalled();
   });
 
   it("applies dateFrom/dateTo/filedBy filters to the query", async () => {

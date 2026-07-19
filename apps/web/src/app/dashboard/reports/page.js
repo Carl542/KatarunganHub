@@ -17,8 +17,15 @@ function toChartData(obj) {
 export default function ReportsPage() {
   const [filters, setFilters] = useState({ dateFrom: "", dateTo: "", filedBy: "" });
   const [summary, setSummary] = useState(null);
+  const [barangay, setBarangay] = useState({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    apiFetch("/settings/public")
+      .then(setBarangay)
+      .catch(() => {});
+  }, []);
 
   async function load() {
     setLoading(true);
@@ -44,6 +51,8 @@ export default function ReportsPage() {
 
   const resolutionRate = summary && summary.total > 0 ? Math.round((summary.closed / summary.total) * 100) : 0;
   const byTypeRows = summary ? toChartData(summary.byType) : [];
+  const byLuponRows = summary ? toChartData(summary.byLupon || {}) : [];
+  const byProponentRows = summary ? toChartData(summary.byProponent || {}) : [];
 
   function exportCsv() {
     if (!summary) return;
@@ -65,6 +74,12 @@ export default function ReportsPage() {
       [],
       ["By Priority"],
       ...Object.entries(summary.byPriority || {}),
+      [],
+      ["By Proponent"],
+      ...Object.entries(summary.byProponent || {}),
+      [],
+      ["By Lupon Member"],
+      ...Object.entries(summary.byLupon || {}),
     ];
     const csv = rows.map((r) => r.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -78,12 +93,34 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <div className="mb-4">
-        <h1 className="font-display text-2xl font-semibold">Reports</h1>
-        <p className="text-sm text-foreground-muted mt-1">Case volume and outcomes across the barangay.</p>
+      <div className="hidden print:block mb-6 text-center">
+        <p className="text-xs tracking-wide uppercase">Republic of the Philippines</p>
+        <p className="font-display text-lg font-semibold mt-1">{barangay.barangay_name || "Barangay"}</p>
+        {barangay.barangay_address && <p className="text-xs mt-0.5">{barangay.barangay_address}</p>}
+        <h1 className="font-display text-xl font-semibold mt-4 uppercase">Case Report</h1>
+        <p className="text-sm mt-1">
+          {filters.dateFrom || filters.dateTo
+            ? `${filters.dateFrom || "…"} to ${filters.dateTo || "…"}`
+            : "All dates"}{" "}
+          &middot; Generated {new Date().toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" })}
+        </p>
       </div>
 
-      <div className="bg-white/90 rounded-sm border border-border p-4 mb-6 flex flex-wrap items-end gap-3">
+      <div className="mb-4 flex items-center justify-between gap-3 print:hidden">
+        <div>
+          <h1 className="font-display text-2xl font-semibold">Reports</h1>
+          <p className="text-sm text-foreground-muted mt-1">Case volume and outcomes across the barangay.</p>
+        </div>
+        <button
+          onClick={() => window.print()}
+          disabled={!summary}
+          className="border border-border rounded-sm hover:bg-muted transition-colors min-h-11 px-4 py-2 font-medium disabled:opacity-60"
+        >
+          Print
+        </button>
+      </div>
+
+      <div className="bg-white/90 rounded-sm border border-border p-4 mb-6 flex flex-wrap items-end gap-3 print:hidden">
         <label className="flex flex-col gap-1">
           <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Filed from</span>
           <input
@@ -183,6 +220,49 @@ export default function ReportsPage() {
                 <p className="text-foreground-muted text-sm">No data for this range.</p>
               ) : (
                 <DonutChart data={summary.byPriority} />
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="bg-white/90 rounded-sm border border-border p-4">
+              <h2 className="font-display text-lg font-semibold mb-3">By Lupon member</h2>
+              <p className="text-xs text-foreground-muted mb-3">Cases each Lupon/Pangkat member has been assigned to.</p>
+              {byLuponRows.length === 0 ? (
+                <p className="text-foreground-muted text-sm">No Pangkat formations for this range.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={byLuponRows} layout="vertical" margin={{ left: 24 }}>
+                    <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
+                    <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 12, fill: "#786956" }} />
+                    <Tooltip {...tooltipStyle} cursor={{ fill: barCursorFill }} />
+                    <Bar dataKey="value" radius={[0, 3, 3, 0]} maxBarSize={24}>
+                      {byLuponRows.map((_, i) => (
+                        <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+            <div className="bg-white/90 rounded-sm border border-border p-4">
+              <h2 className="font-display text-lg font-semibold mb-3">By proponent</h2>
+              <p className="text-xs text-foreground-muted mb-3">Cases filed by each complainant.</p>
+              {byProponentRows.length === 0 ? (
+                <p className="text-foreground-muted text-sm">No data for this range.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={byProponentRows} layout="vertical" margin={{ left: 24 }}>
+                    <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
+                    <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 12, fill: "#786956" }} />
+                    <Tooltip {...tooltipStyle} cursor={{ fill: barCursorFill }} />
+                    <Bar dataKey="value" radius={[0, 3, 3, 0]} maxBarSize={24}>
+                      {byProponentRows.map((_, i) => (
+                        <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               )}
             </div>
           </div>

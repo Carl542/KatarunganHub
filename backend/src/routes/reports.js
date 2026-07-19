@@ -14,7 +14,9 @@ router.get(
 
     let query = supabase
       .from("complaints")
-      .select("status, type, category:complaint_categories(name), priority:priority_levels(name)");
+      .select(
+        "id, status, type, category:complaint_categories(name), priority:priority_levels(name), complainant:profiles!complainant_id(full_name)"
+      );
     if (dateFrom) query = query.gte("filed_at", dateFrom);
     if (dateTo) query = query.lte("filed_at", dateTo);
     if (filedBy) query = query.eq("created_by", filedBy);
@@ -26,6 +28,7 @@ router.get(
     const byType = {};
     const byCategory = {};
     const byPriority = {};
+    const byProponent = {};
     let closed = 0;
 
     for (const row of data) {
@@ -35,7 +38,30 @@ router.get(
       const priorityName = row.priority?.name || "Unset";
       byCategory[categoryName] = (byCategory[categoryName] || 0) + 1;
       byPriority[priorityName] = (byPriority[priorityName] || 0) + 1;
+      const proponentName = row.complainant?.full_name || "Unknown";
+      byProponent[proponentName] = (byProponent[proponentName] || 0) + 1;
       if (row.status === "Closed") closed += 1;
+    }
+
+    const byLupon = {};
+    const complaintIds = data.map((row) => row.id);
+    if (complaintIds.length > 0) {
+      const { data: formations, error: pangkatError } = await supabase
+        .from("pangkat_formations")
+        .select(
+          "complaint_id, chairperson:profiles!chairperson_id(full_name), secretary:profiles!secretary_id(full_name), member:profiles!member_id(full_name)"
+        )
+        .in("complaint_id", complaintIds);
+
+      if (pangkatError) return res.status(500).json({ error: pangkatError.message });
+
+      for (const formation of formations) {
+        for (const person of [formation.chairperson, formation.secretary, formation.member]) {
+          const name = person?.full_name;
+          if (!name) continue;
+          byLupon[name] = (byLupon[name] || 0) + 1;
+        }
+      }
     }
 
     res.json({
@@ -46,6 +72,8 @@ router.get(
       byType,
       byCategory,
       byPriority,
+      byProponent,
+      byLupon,
     });
   }
 );

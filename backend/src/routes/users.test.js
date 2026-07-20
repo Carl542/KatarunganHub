@@ -99,6 +99,24 @@ describe("users admin routes", () => {
     expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ role: "lupon", status: "Active" }));
   });
 
+  it("updates full_name for admin", async () => {
+    mockUpdate.mockReturnValue({
+      eq: () => ({
+        select: () => ({
+          single: () => Promise.resolve({ data: { id: "p1", full_name: "Carl Vincent Amil" }, error: null }),
+        }),
+      }),
+    });
+
+    const res = await request(buildTestApp({ id: "a1", role: "admin" }))
+      .patch("/users/p1")
+      .send({ full_name: "Carl Vincent Amil" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.full_name).toBe("Carl Vincent Amil");
+    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ full_name: "Carl Vincent Amil" }));
+  });
+
   it("updates phone_number for admin", async () => {
     mockUpdate.mockReturnValue({
       eq: () => ({

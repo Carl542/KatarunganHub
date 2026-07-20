@@ -51,6 +51,10 @@ export default function UsersPage() {
     if (value.trim()) updateUser(id, { phone_number: value.trim() });
   }
 
+  function saveFullName(id, value) {
+    if (value.trim()) updateUser(id, { full_name: value.trim() });
+  }
+
   async function handleAddUser(e) {
     e.preventDefault();
     if (!addForm.fullName.trim()) return;
@@ -209,7 +213,11 @@ export default function UsersPage() {
                         >
                           {initialsFor(u.full_name)}
                         </div>
-                        <span className="font-medium">{u.full_name}</span>
+                        <input
+                          defaultValue={u.full_name || ""}
+                          onBlur={(e) => saveFullName(u.id, e.target.value)}
+                          className="font-medium border border-transparent hover:border-border focus:border-border rounded-sm px-2 py-1 -mx-2 bg-transparent focus-visible:outline-3 focus-visible:outline-primary min-w-[10rem]"
+                        />
                       </div>
                     </td>
                     <td className="px-4 py-3">

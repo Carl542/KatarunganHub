@@ -10,6 +10,7 @@ export default function AttendanceTab({ caseId }) {
   const profile = useCurrentProfile();
   const canManage = STAFF_ROLES.includes(profile?.role);
   const [records, setRecords] = useState([]);
+  const [schedules, setSchedules] = useState([]);
   const [form, setForm] = useState({
     scheduleId: "",
     complainantAttendance: "Present",
@@ -31,6 +32,9 @@ export default function AttendanceTab({ caseId }) {
 
   useEffect(() => {
     load();
+    apiFetch(`/complaints/${caseId}/schedules`)
+      .then(setSchedules)
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [caseId]);
 
@@ -53,12 +57,19 @@ export default function AttendanceTab({ caseId }) {
         <h2 className="font-display text-lg font-semibold">Record Attendance</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Schedule ID</span>
-            <input
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Schedule</span>
+            <select
               value={form.scheduleId}
               onChange={(e) => setForm({ ...form, scheduleId: e.target.value })}
               className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-            />
+            >
+              <option value="">No specific schedule</option>
+              {schedules.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.type} — {new Date(s.scheduled_at).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Lupon/Pangkat attendance</span>

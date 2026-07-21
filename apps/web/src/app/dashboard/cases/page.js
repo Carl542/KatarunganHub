@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
+import Icon from "@/components/Icon";
 
 const STATUS_COLOR = {
   Closed: "text-accent",
@@ -44,13 +45,19 @@ export default function CasesPage() {
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {cases.length > 0 && (
-            <input
-              type="search"
-              placeholder="Search by reference, title, or status…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white w-full sm:w-72 focus-visible:outline-3 focus-visible:outline-primary"
-            />
+            <div className="relative w-full sm:w-72">
+              <Icon
+                name="search"
+                className="w-4 h-4 text-foreground-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              />
+              <input
+                type="search"
+                placeholder="Search by reference, title, or status…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white w-full focus-visible:outline-3 focus-visible:outline-primary"
+              />
+            </div>
           )}
           {profile?.role === "secretary" && (
             <Link

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
 import { ROLES } from "@/lib/roles";
+import Icon from "@/components/Icon";
 
 function initialsFor(fullName) {
   return (fullName || "")
@@ -96,13 +97,19 @@ export default function UsersPage() {
           <p className="text-sm text-foreground-muted mt-1">{users.length} registered account{users.length === 1 ? "" : "s"}</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <input
-            type="search"
-            placeholder="Search by name…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white w-full sm:w-64 focus-visible:outline-3 focus-visible:outline-primary"
-          />
+          <div className="relative w-full sm:w-64">
+            <Icon
+              name="search"
+              className="w-4 h-4 text-foreground-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+            />
+            <input
+              type="search"
+              placeholder="Search by name…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white w-full focus-visible:outline-3 focus-visible:outline-primary"
+            />
+          </div>
           <button
             onClick={() => (showAddForm ? closeAddForm() : setShowAddForm(true))}
             className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 px-4 py-2 text-sm font-medium whitespace-nowrap"

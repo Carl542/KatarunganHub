@@ -31,6 +31,12 @@ function chunk(arr, size) {
 
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
+// Stages where the barangay may hold multiple hearings before deciding whether
+// to escalate — confirmed via Lupon member interviews (up to 3 hearings is
+// common local practice, though not an explicit statutory cap).
+const MAX_ADVISORY_SESSIONS = 3;
+const MULTI_SESSION_STAGES = ["Punong Barangay mediation", "Pangkat conciliation"];
+
 export default function WorkflowTab({ caseId, caseData, onUpdated }) {
   const profile = useCurrentProfile();
   const canManage = STAFF_ROLES.includes(profile?.role);
@@ -51,10 +57,22 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
   const [checked, setChecked] = useState({});
   const [actionError, setActionError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [schedules, setSchedules] = useState([]);
+  const [attendance, setAttendance] = useState([]);
 
   useEffect(() => {
     setChecked({});
   }, [currentStage]);
+
+  useEffect(() => {
+    Promise.all([
+      apiFetch(`/complaints/${caseId}/schedules`).catch(() => []),
+      apiFetch(`/complaints/${caseId}/attendance`).catch(() => []),
+    ]).then(([sched, att]) => {
+      setSchedules(sched);
+      setAttendance(att);
+    });
+  }, [caseId, caseData.workflow_stage]);
 
   function resetForm() {
     setOutcome("");
@@ -92,6 +110,17 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
       : null;
   const stageDate = latestLog?.created_at || caseData.filed_at;
   const stageRecordedBy = latestLog?.actor?.full_name || caseData.creator?.full_name || "—";
+
+  const showSessionProgress = !isNonLupon && MULTI_SESSION_STAGES.includes(currentStage);
+  const stageSessions = schedules.filter((s) => s.type === currentStage);
+  const sessionCount = stageSessions.length;
+  const stageScheduleIds = new Set(stageSessions.map((s) => s.id));
+  const sessionsWithNonAppearance = attendance.filter(
+    (a) =>
+      stageScheduleIds.has(a.schedule_id) &&
+      (a.complainant_attendance === "Absent" || a.respondent_attendance === "Absent")
+  );
+  const maxSessionsReached = sessionCount >= MAX_ADVISORY_SESSIONS;
 
   const stepRows = chunk(displaySteps, 4);
   const currentIdx = stages.indexOf(currentStage);
@@ -239,6 +268,38 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
               </div>
             </dl>
           </div>
+
+          {showSessionProgress && (
+            <div className="bg-white/90 rounded-sm border border-border p-5">
+              <h2 className="font-display text-lg font-semibold mb-1">Session Progress</h2>
+              <p className="text-xs text-foreground-muted mb-3">
+                Based on common Lupon practice (up to {MAX_ADVISORY_SESSIONS} hearings) — advisory only, not a
+                statutory requirement.
+              </p>
+              <div className="flex items-center gap-2 mb-3">
+                {Array.from({ length: MAX_ADVISORY_SESSIONS }).map((_, i) => (
+                  <span
+                    key={i}
+                    className={`flex-1 h-2 rounded-full ${i < sessionCount ? "bg-primary" : "bg-border"}`}
+                  />
+                ))}
+                <span className="text-sm font-medium shrink-0 ml-1">
+                  {Math.min(sessionCount, MAX_ADVISORY_SESSIONS)}/{MAX_ADVISORY_SESSIONS}
+                </span>
+              </div>
+              {sessionsWithNonAppearance.length > 0 && (
+                <p className="stamp text-danger inline-block mb-2">
+                  {sessionsWithNonAppearance.length} session{sessionsWithNonAppearance.length === 1 ? "" : "s"} with non-appearance
+                </p>
+              )}
+              {maxSessionsReached && (
+                <p className="text-sm text-danger">
+                  Maximum hearings reached ({sessionCount}/{MAX_ADVISORY_SESSIONS}) — consider issuing a Certificate
+                  to File Action if still unsettled.
+                </p>
+              )}
+            </div>
+          )}
 
           {canManage && !isClosed && (
             <div className="bg-white/90 rounded-sm border border-border p-5">

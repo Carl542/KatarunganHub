@@ -11,11 +11,16 @@ export default function AttendanceTab({ caseId }) {
   const canManage = STAFF_ROLES.includes(profile?.role);
   const [records, setRecords] = useState([]);
   const [schedules, setSchedules] = useState([]);
+  const [pangkat, setPangkat] = useState(null);
+  const [pangkatAttendance, setPangkatAttendance] = useState({
+    chairperson: "Present",
+    secretary: "Present",
+    member: "Present",
+  });
   const [form, setForm] = useState({
     scheduleId: "",
     complainantAttendance: "Present",
     respondentAttendance: "Present",
-    luponAttendance: "",
     result: "Complete",
     remarks: "",
   });
@@ -35,6 +40,9 @@ export default function AttendanceTab({ caseId }) {
     apiFetch(`/complaints/${caseId}/schedules`)
       .then(setSchedules)
       .catch(() => {});
+    apiFetch(`/complaints/${caseId}/pangkat`)
+      .then((formations) => setPangkat(formations[0] || null))
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [caseId]);
 
@@ -42,7 +50,20 @@ export default function AttendanceTab({ caseId }) {
     e.preventDefault();
     setError("");
     try {
-      await apiFetch(`/complaints/${caseId}/attendance`, { method: "POST", body: JSON.stringify(form) });
+      const luponAttendance = pangkat
+        ? [
+            pangkat.chairperson?.full_name && `${pangkat.chairperson.full_name} (Chairperson): ${pangkatAttendance.chairperson}`,
+            pangkat.secretary?.full_name && `${pangkat.secretary.full_name} (Secretary): ${pangkatAttendance.secretary}`,
+            pangkat.member?.full_name && `${pangkat.member.full_name} (Member): ${pangkatAttendance.member}`,
+          ]
+            .filter(Boolean)
+            .join("; ")
+        : "";
+
+      await apiFetch(`/complaints/${caseId}/attendance`, {
+        method: "POST",
+        body: JSON.stringify({ ...form, luponAttendance }),
+      });
       setForm({ ...form, scheduleId: "", remarks: "" });
       load();
     } catch (err) {
@@ -72,15 +93,6 @@ export default function AttendanceTab({ caseId }) {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Lupon/Pangkat attendance</span>
-            <input
-              required
-              value={form.luponAttendance}
-              onChange={(e) => setForm({ ...form, luponAttendance: e.target.value })}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant attendance</span>
             <select
               value={form.complainantAttendance}
@@ -105,6 +117,38 @@ export default function AttendanceTab({ caseId }) {
             </select>
           </label>
         </div>
+
+        {pangkat && (
+          <div>
+            <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Pangkat attendance</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-1">
+              {[
+                { key: "chairperson", label: "Chairperson", name: pangkat.chairperson?.full_name },
+                { key: "secretary", label: "Secretary", name: pangkat.secretary?.full_name },
+                { key: "member", label: "Member", name: pangkat.member?.full_name },
+              ].map(
+                ({ key, label, name }) =>
+                  name && (
+                    <label key={key} className="flex flex-col gap-1">
+                      <span className="text-xs text-foreground-muted">
+                        {label} — {name}
+                      </span>
+                      <select
+                        value={pangkatAttendance[key]}
+                        onChange={(e) => setPangkatAttendance({ ...pangkatAttendance, [key]: e.target.value })}
+                        className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                      >
+                        <option>Present</option>
+                        <option>Absent</option>
+                        <option>Excused</option>
+                      </select>
+                    </label>
+                  )
+              )}
+            </div>
+          </div>
+        )}
+
         <label className="flex flex-col gap-1">
           <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Remarks</span>
           <textarea

@@ -34,7 +34,7 @@ function SignatureLine({ label }) {
   );
 }
 
-function DocumentBody({ type, caseData, upcomingSchedule, barangayName }) {
+function DocumentBody({ type, caseData, upcomingSchedule, schedules, attendance }) {
   const complainantName = caseData.complainant?.full_name || "the complainant";
   const respondentName = caseData.respondent?.full_name || "the respondent";
 
@@ -121,6 +121,52 @@ function DocumentBody({ type, caseData, upcomingSchedule, barangayName }) {
     );
   }
 
+  if (type === "Mediation minutes") {
+    const sessions = [...attendance].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    return (
+      <>
+        <h2 className="text-center font-display text-xl font-semibold uppercase mb-2">Minutes of Mediation Proceedings</h2>
+        <p className="text-center text-sm text-foreground-muted mb-8">
+          {caseData.title} (Reference No. {caseData.reference_number})
+        </p>
+        {sessions.length === 0 && <p className="text-foreground-muted mb-6">No hearing sessions recorded yet.</p>}
+        {sessions.map((a, i) => {
+          const schedule = schedules.find((s) => s.id === a.schedule_id);
+          return (
+            <div key={a.id} className="mb-6 pb-6 border-b border-foreground/20 last:border-0">
+              <p className="font-semibold mb-2">
+                Session {i + 1} — {schedule ? formatDate(schedule.scheduled_at) : formatDate(a.created_at)}
+              </p>
+              <table className="w-full text-sm mb-3">
+                <tbody>
+                  <tr>
+                    <td className="py-1 pr-4 text-foreground-muted w-40">Complainant</td>
+                    <td className="py-1">{a.complainant_attendance || "—"}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-1 pr-4 text-foreground-muted">Respondent</td>
+                    <td className="py-1">{a.respondent_attendance || "—"}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-1 pr-4 text-foreground-muted align-top">Pangkat/Lupon</td>
+                    <td className="py-1">{a.lupon_attendance || "—"}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p className="text-sm">
+                <span className="text-foreground-muted">Decision/Remarks:</span> {a.remarks || "None recorded"}
+              </p>
+            </div>
+          );
+        })}
+        <div className="grid grid-cols-2 gap-8 mt-4">
+          <SignatureLine label="Punong Barangay / Pangkat Chairperson" />
+          <SignatureLine label="Barangay/Lupon Secretary" />
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <h2 className="text-center font-display text-xl font-semibold uppercase mb-8">Case Summary</h2>
@@ -163,6 +209,7 @@ function PrintDocument({ id }) {
 
   const [caseData, setCaseData] = useState(null);
   const [schedules, setSchedules] = useState([]);
+  const [attendance, setAttendance] = useState([]);
   const [barangay, setBarangay] = useState({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -171,11 +218,13 @@ function PrintDocument({ id }) {
     Promise.all([
       apiFetch(`/complaints/${id}`),
       apiFetch(`/complaints/${id}/schedules`).catch(() => []),
+      apiFetch(`/complaints/${id}/attendance`).catch(() => []),
       apiFetch("/settings/public").catch(() => ({})),
     ])
-      .then(([complaint, sched, settings]) => {
+      .then(([complaint, sched, att, settings]) => {
         setCaseData(complaint);
         setSchedules(sched);
+        setAttendance(att);
         setBarangay(settings);
       })
       .catch((err) => setError(err.message))
@@ -238,7 +287,13 @@ function PrintDocument({ id }) {
           <span className="float-right">{formatDate(new Date())}</span>
         </p>
 
-        <DocumentBody type={type} caseData={caseData} upcomingSchedule={upcomingSchedule} barangayName={barangay.barangay_name} />
+        <DocumentBody
+          type={type}
+          caseData={caseData}
+          upcomingSchedule={upcomingSchedule}
+          schedules={schedules}
+          attendance={attendance}
+        />
       </div>
     </div>
   );

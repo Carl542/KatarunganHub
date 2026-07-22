@@ -19,4 +19,5 @@ export const PRINTABLE_TYPES = [
   "Notice of hearing",
   "Amicable settlement",
   "Certification to File Action",
+  "Mediation minutes",
 ];

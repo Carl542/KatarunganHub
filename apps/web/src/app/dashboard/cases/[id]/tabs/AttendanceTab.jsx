@@ -3,9 +3,18 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
-import Icon from "@/components/Icon";
 
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
+
+function CheckBadge() {
+  return (
+    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-accent text-white shrink-0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-2.5 h-2.5">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    </span>
+  );
+}
 
 function AttendanceSelect({ value, onChange }) {
   return (
@@ -20,10 +29,9 @@ function AttendanceSelect({ value, onChange }) {
         <option>Excused</option>
       </select>
       {value === "Present" && (
-        <Icon
-          name="check-circle"
-          className="w-4 h-4 text-accent absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none"
-        />
+        <span className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none">
+          <CheckBadge />
+        </span>
       )}
     </div>
   );
@@ -32,7 +40,7 @@ function AttendanceSelect({ value, onChange }) {
 function AttendanceBadge({ value }) {
   return (
     <span className="inline-flex items-center gap-1.5">
-      {value === "Present" && <Icon name="check-circle" className="w-4 h-4 text-accent shrink-0" />}
+      {value === "Present" && <CheckBadge />}
       {value || "—"}
     </span>
   );
@@ -215,9 +223,7 @@ export default function AttendanceTab({ caseId }) {
                       <ul className="space-y-0.5">
                         {r.lupon_attendance.split("; ").map((line, i) => (
                           <li key={i} className="flex items-center gap-1.5">
-                            {line.trim().endsWith("Present") && (
-                              <Icon name="check-circle" className="w-4 h-4 text-accent shrink-0" />
-                            )}
+                            {line.trim().endsWith("Present") && <CheckBadge />}
                             {line}
                           </li>
                         ))}

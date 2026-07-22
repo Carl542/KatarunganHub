@@ -3,8 +3,40 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
+import Icon from "@/components/Icon";
 
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
+
+function AttendanceSelect({ value, onChange }) {
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={onChange}
+        className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white w-full focus-visible:outline-3 focus-visible:outline-primary"
+      >
+        <option>Present</option>
+        <option>Absent</option>
+        <option>Excused</option>
+      </select>
+      {value === "Present" && (
+        <Icon
+          name="check-circle"
+          className="w-4 h-4 text-accent absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none"
+        />
+      )}
+    </div>
+  );
+}
+
+function AttendanceBadge({ value }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      {value === "Present" && <Icon name="check-circle" className="w-4 h-4 text-accent shrink-0" />}
+      {value || "—"}
+    </span>
+  );
+}
 
 export default function AttendanceTab({ caseId }) {
   const profile = useCurrentProfile();
@@ -94,27 +126,17 @@ export default function AttendanceTab({ caseId }) {
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Complainant attendance</span>
-            <select
+            <AttendanceSelect
               value={form.complainantAttendance}
               onChange={(e) => setForm({ ...form, complainantAttendance: e.target.value })}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-            >
-              <option>Present</option>
-              <option>Absent</option>
-              <option>Excused</option>
-            </select>
+            />
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Respondent attendance</span>
-            <select
+            <AttendanceSelect
               value={form.respondentAttendance}
               onChange={(e) => setForm({ ...form, respondentAttendance: e.target.value })}
-              className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-            >
-              <option>Present</option>
-              <option>Absent</option>
-              <option>Excused</option>
-            </select>
+            />
           </label>
         </div>
 
@@ -133,15 +155,10 @@ export default function AttendanceTab({ caseId }) {
                       <span className="text-xs text-foreground-muted">
                         {label} — {name}
                       </span>
-                      <select
+                      <AttendanceSelect
                         value={pangkatAttendance[key]}
                         onChange={(e) => setPangkatAttendance({ ...pangkatAttendance, [key]: e.target.value })}
-                        className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-                      >
-                        <option>Present</option>
-                        <option>Absent</option>
-                        <option>Excused</option>
-                      </select>
+                      />
                     </label>
                   )
               )}
@@ -187,13 +204,22 @@ export default function AttendanceTab({ caseId }) {
               )}
               {records.map((r) => (
                 <tr key={r.id} className="border-t">
-                  <td className="px-4 py-2">{r.complainant_attendance}</td>
-                  <td className="px-4 py-2">{r.respondent_attendance}</td>
+                  <td className="px-4 py-2">
+                    <AttendanceBadge value={r.complainant_attendance} />
+                  </td>
+                  <td className="px-4 py-2">
+                    <AttendanceBadge value={r.respondent_attendance} />
+                  </td>
                   <td className="px-4 py-2">
                     {r.lupon_attendance ? (
                       <ul className="space-y-0.5">
                         {r.lupon_attendance.split("; ").map((line, i) => (
-                          <li key={i}>{line}</li>
+                          <li key={i} className="flex items-center gap-1.5">
+                            {line.trim().endsWith("Present") && (
+                              <Icon name="check-circle" className="w-3.5 h-3.5 text-accent shrink-0" />
+                            )}
+                            {line}
+                          </li>
                         ))}
                       </ul>
                     ) : (

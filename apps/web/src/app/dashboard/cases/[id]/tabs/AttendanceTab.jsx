@@ -216,7 +216,7 @@ export default function AttendanceTab({ caseId }) {
                         {r.lupon_attendance.split("; ").map((line, i) => (
                           <li key={i} className="flex items-center gap-1.5">
                             {line.trim().endsWith("Present") && (
-                              <Icon name="check-circle" className="w-3.5 h-3.5 text-accent shrink-0" />
+                              <Icon name="check-circle" className="w-4 h-4 text-accent shrink-0" />
                             )}
                             {line}
                           </li>

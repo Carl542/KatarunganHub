@@ -149,7 +149,17 @@ function DocumentBody({ type, caseData, upcomingSchedule, schedules, attendance 
                   </tr>
                   <tr>
                     <td className="py-1 pr-4 text-foreground-muted align-top">Pangkat/Lupon</td>
-                    <td className="py-1">{a.lupon_attendance || "—"}</td>
+                    <td className="py-1">
+                      {a.lupon_attendance ? (
+                        <ul>
+                          {a.lupon_attendance.split("; ").map((line, li) => (
+                            <li key={li}>{line}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
                   </tr>
                 </tbody>
               </table>

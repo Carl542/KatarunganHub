@@ -189,7 +189,17 @@ export default function AttendanceTab({ caseId }) {
                 <tr key={r.id} className="border-t">
                   <td className="px-4 py-2">{r.complainant_attendance}</td>
                   <td className="px-4 py-2">{r.respondent_attendance}</td>
-                  <td className="px-4 py-2">{r.lupon_attendance}</td>
+                  <td className="px-4 py-2">
+                    {r.lupon_attendance ? (
+                      <ul className="space-y-0.5">
+                        {r.lupon_attendance.split("; ").map((line, i) => (
+                          <li key={i}>{line}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                   <td className="px-4 py-2">{r.remarks}</td>
                 </tr>
               ))}

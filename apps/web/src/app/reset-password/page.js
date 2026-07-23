@@ -10,6 +10,8 @@ export default function ResetPasswordPage() {
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -67,13 +69,21 @@ export default function ResetPasswordPage() {
               <Icon name="lock" className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
               <input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full min-h-11 border border-border rounded-sm pl-9 pr-3 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                className="w-full min-h-11 border border-border rounded-sm pl-9 pr-10 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground"
+              >
+                <Icon name={showPassword ? "eye-off" : "eye"} className="w-4 h-4" />
+              </button>
             </div>
 
             <label className="block text-xs font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="confirmPassword">
@@ -83,13 +93,21 @@ export default function ResetPasswordPage() {
               <Icon name="lock" className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
               <input
                 id="confirmPassword"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 required
                 minLength={6}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full min-h-11 border border-border rounded-sm pl-9 pr-3 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                className="w-full min-h-11 border border-border rounded-sm pl-9 pr-10 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((v) => !v)}
+                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground"
+              >
+                <Icon name={showConfirmPassword ? "eye-off" : "eye"} className="w-4 h-4" />
+              </button>
             </div>
 
             {error && (

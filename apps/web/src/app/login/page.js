@@ -24,6 +24,7 @@ export default function LoginPage() {
   const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -135,12 +136,20 @@ export default function LoginPage() {
             <Icon name="lock" className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
             <input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full min-h-12 text-base border border-border rounded-sm pl-10 pr-3 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              className="w-full min-h-12 text-base border border-border rounded-sm pl-10 pr-11 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground"
+            >
+              <Icon name={showPassword ? "eye-off" : "eye"} className="w-5 h-5" />
+            </button>
           </div>
 
           <div className="flex items-center justify-between mb-5 text-base">

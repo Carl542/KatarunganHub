@@ -9,7 +9,7 @@ const COLOR_MAP = {
   brass: { bg: "bg-[#f5eacb]", text: "text-[#9c7d1e]" },
 };
 
-export default function StatCard({ label, value, icon, href, color = "primary" }) {
+export default function StatCard({ label, value, icon, href, color = "primary", subtitle }) {
   const c = COLOR_MAP[color] || COLOR_MAP.primary;
 
   return (
@@ -21,6 +21,7 @@ export default function StatCard({ label, value, icon, href, color = "primary" }
         <span className="text-xs tracking-wide uppercase text-foreground-muted">{label}</span>
       </div>
       <p className="font-display text-3xl font-semibold">{value}</p>
+      {subtitle && <p className="text-sm text-foreground-muted mt-1">{subtitle}</p>}
       {href && (
         <Link href={href} className="text-sm text-primary font-medium hover:underline">
           View details

@@ -11,19 +11,79 @@ function workflowModuleFor(type) {
   return type === "Non-Lupon" ? nonLuponWorkflow : luponWorkflow;
 }
 
+function titleCase(s) {
+  return (s || "").replace(/\w\S*/g, (t) => t[0].toUpperCase() + t.slice(1));
+}
+
 const router = Router();
 
 // Public — no requireAuth. Registered before the auth-gated routes below.
-router.get("/track/:referenceNumber", async (req, res) => {
+// A second identifier (last name substring or exact mobile number) is
+// required before any party names or case details are returned, so knowing
+// only the reference number isn't enough to see who's involved.
+router.post("/track", async (req, res) => {
+  const { referenceNumber, verify } = req.body;
+  if (!referenceNumber || !verify) {
+    return res.status(400).json({ error: "Reference number and last name or mobile number are required" });
+  }
+
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("complaints")
-    .select("reference_number, status, type, title, filed_at")
-    .eq("reference_number", req.params.referenceNumber)
+    .select(
+      "id, reference_number, status, workflow_stage, type, title, filed_at, category:complaint_categories(name), complainant:profiles!complainant_id(full_name, phone_number), respondent:profiles!respondent_id(full_name, phone_number), status_logs:case_status_logs(next_stage, created_at)"
+    )
+    .eq("reference_number", referenceNumber)
     .single();
 
   if (error || !data) return res.status(404).json({ error: "Case not found" });
-  res.json(data);
+
+  const verifyValue = verify.trim();
+  const verifyLower = verifyValue.toLowerCase();
+  const matchesParty = [data.complainant, data.respondent].some((p) => {
+    if (!p) return false;
+    const nameMatch = p.full_name && p.full_name.toLowerCase().includes(verifyLower);
+    const phoneMatch = p.phone_number && p.phone_number === verifyValue;
+    return nameMatch || phoneMatch;
+  });
+
+  // Same 404 whether the reference number was wrong or the identifier didn't
+  // match, so a guesser can't tell which case it was.
+  if (!matchesParty) return res.status(404).json({ error: "Case not found" });
+
+  const [{ data: schedules }, { data: notifs }] = await Promise.all([
+    supabase
+      .from("mediation_schedules")
+      .select("type, scheduled_at, venue")
+      .eq("complaint_id", data.id)
+      .gte("scheduled_at", new Date().toISOString())
+      .order("scheduled_at", { ascending: true })
+      .limit(1),
+    supabase.from("notifications").select("message").eq("complaint_id", data.id).order("created_at", { ascending: false }).limit(1),
+  ]);
+
+  const timeline = [
+    { label: "Case Encoded", date: data.filed_at },
+    ...(data.status_logs || [])
+      .slice()
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+      .map((log) => ({ label: titleCase(log.next_stage), date: log.created_at })),
+  ];
+
+  res.json({
+    reference_number: data.reference_number,
+    status: data.status,
+    type: data.type,
+    title: data.title,
+    filed_at: data.filed_at,
+    category: data.category?.name || null,
+    complainant_name: data.complainant?.full_name || null,
+    respondent_name: data.respondent?.full_name || null,
+    assigned_to: data.type === "Non-Lupon" ? "Barangay Office" : "Lupong Tagapamayapa",
+    timeline,
+    next_schedule: schedules?.[0] || null,
+    latest_update: notifs?.[0]?.message || null,
+  });
 });
 
 router.post("/", requireAuth, requireRole("secretary"), async (req, res) => {

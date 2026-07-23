@@ -6,6 +6,19 @@ const mockSelectCount = vi.fn();
 const mockInsert = vi.fn();
 const mockUpdate = vi.fn();
 const mockLogInsert = vi.fn();
+const mockSchedulesSelect = vi.fn();
+const mockNotificationsSelect = vi.fn();
+
+function chainable(finalData) {
+  const chain = {
+    eq: () => chain,
+    gte: () => chain,
+    order: () => chain,
+    limit: () => chain,
+    then: (resolve) => resolve({ data: finalData, error: null }),
+  };
+  return chain;
+}
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
@@ -19,6 +32,12 @@ vi.mock("@supabase/supabase-js", () => ({
       }
       if (table === "case_status_logs") {
         return { insert: mockLogInsert };
+      }
+      if (table === "mediation_schedules") {
+        return { select: mockSchedulesSelect };
+      }
+      if (table === "notifications") {
+        return { select: mockNotificationsSelect };
       }
       return {};
     },
@@ -48,6 +67,129 @@ function buildTestApp(user) {
   app.use("/complaints", complaintsRouter);
   return app;
 }
+
+describe("POST /complaints/track", () => {
+  beforeEach(() => {
+    mockSelectCount.mockReset();
+    mockSchedulesSelect.mockReset();
+    mockNotificationsSelect.mockReset();
+    mockSchedulesSelect.mockReturnValue(chainable([]));
+    mockNotificationsSelect.mockReturnValue(chainable([]));
+  });
+
+  it("returns 400 when referenceNumber or verify is missing", async () => {
+    const res = await request(buildTestApp(null)).post("/complaints/track").send({ referenceNumber: "REF-1" });
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 404 when the reference number does not exist", async () => {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({ single: () => Promise.resolve({ data: null, error: { message: "not found" } }) }),
+    });
+
+    const res = await request(buildTestApp(null))
+      .post("/complaints/track")
+      .send({ referenceNumber: "REF-does-not-exist", verify: "Cruz" });
+
+    expect(res.status).toBe(404);
+  });
+
+  it("returns 404 when verify does not match either party", async () => {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({
+        single: () =>
+          Promise.resolve({
+            data: {
+              id: "case-1",
+              reference_number: "REF-2026-000042",
+              complainant: { full_name: "Juan Dela Cruz", phone_number: "09171234567" },
+              respondent: { full_name: "Pedro Reyes", phone_number: "09179876543" },
+            },
+            error: null,
+          }),
+      }),
+    });
+
+    const res = await request(buildTestApp(null))
+      .post("/complaints/track")
+      .send({ referenceNumber: "REF-2026-000042", verify: "Santos" });
+
+    expect(res.status).toBe(404);
+  });
+
+  it("returns full case details when verify matches the complainant's name", async () => {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({
+        single: () =>
+          Promise.resolve({
+            data: {
+              id: "case-1",
+              reference_number: "REF-2026-000042",
+              status: "Under Mediation",
+              workflow_stage: "Punong Barangay mediation",
+              type: "Lupon",
+              title: "Noise Disturbance",
+              filed_at: "2026-06-01T09:15:00Z",
+              category: { name: "Family Dispute" },
+              complainant: { full_name: "Juan Dela Cruz", phone_number: "09171234567" },
+              respondent: { full_name: "Pedro Reyes", phone_number: "09179876543" },
+              status_logs: [
+                { next_stage: "Jurisdiction review", created_at: "2026-06-01T09:30:00Z" },
+                { next_stage: "Punong Barangay mediation", created_at: "2026-06-01T10:00:00Z" },
+              ],
+            },
+            error: null,
+          }),
+      }),
+    });
+    mockSchedulesSelect.mockReturnValue(
+      chainable([{ type: "Punong Barangay mediation", scheduled_at: "2026-06-03T10:00:00Z", venue: "Barangay Hall" }])
+    );
+    mockNotificationsSelect.mockReturnValue(chainable([{ message: "Mediation has been scheduled." }]));
+
+    const res = await request(buildTestApp(null))
+      .post("/complaints/track")
+      .send({ referenceNumber: "REF-2026-000042", verify: "Dela Cruz" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.complainant_name).toBe("Juan Dela Cruz");
+    expect(res.body.respondent_name).toBe("Pedro Reyes");
+    expect(res.body.timeline).toHaveLength(3);
+    expect(res.body.next_schedule.venue).toBe("Barangay Hall");
+    expect(res.body.latest_update).toBe("Mediation has been scheduled.");
+  });
+
+  it("matches on phone number too", async () => {
+    mockSelectCount.mockReturnValue({
+      eq: () => ({
+        single: () =>
+          Promise.resolve({
+            data: {
+              id: "case-1",
+              reference_number: "REF-2026-000042",
+              status: "New",
+              workflow_stage: null,
+              type: "Lupon",
+              title: "Noise Disturbance",
+              filed_at: "2026-06-01T09:15:00Z",
+              category: null,
+              complainant: { full_name: "Juan Dela Cruz", phone_number: "09171234567" },
+              respondent: { full_name: "Pedro Reyes", phone_number: "09179876543" },
+              status_logs: [],
+            },
+            error: null,
+          }),
+      }),
+    });
+
+    const res = await request(buildTestApp(null))
+      .post("/complaints/track")
+      .send({ referenceNumber: "REF-2026-000042", verify: "09179876543" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.respondent_name).toBe("Pedro Reyes");
+  });
+});
 
 describe("POST /complaints", () => {
   beforeEach(() => {

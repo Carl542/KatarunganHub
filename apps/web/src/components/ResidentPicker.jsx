@@ -6,7 +6,14 @@ import UserPicker from "./UserPicker";
 
 export default function ResidentPicker({ role, value, onChange, required }) {
   const [mode, setMode] = useState("existing");
-  const [form, setForm] = useState({ fullName: "", email: "", phoneNumber: "" });
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
+    idType: "",
+    idNumber: "",
+  });
   const [creating, setCreating] = useState(false);
   const [credentials, setCredentials] = useState(null);
   const [error, setError] = useState("");
@@ -20,7 +27,7 @@ export default function ResidentPicker({ role, value, onChange, required }) {
 
   async function handleCreate(e) {
     e.preventDefault();
-    if (!form.fullName.trim()) return;
+    if (!form.fullName.trim() || !form.address.trim() || !form.idType || !form.idNumber.trim()) return;
     setError("");
     setCreating(true);
     try {
@@ -30,6 +37,9 @@ export default function ResidentPicker({ role, value, onChange, required }) {
           fullName: form.fullName.trim(),
           email: form.email.trim() || undefined,
           phoneNumber: form.phoneNumber.trim() || undefined,
+          address: form.address.trim(),
+          idType: form.idType,
+          idNumber: form.idNumber.trim(),
           role,
         }),
       });
@@ -91,11 +101,45 @@ export default function ResidentPicker({ role, value, onChange, required }) {
             onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
             className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
           />
+          <input
+            placeholder="Complete address"
+            value={form.address}
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
+            className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
+          />
+          <div className="grid grid-cols-2 gap-2">
+            <select
+              value={form.idType}
+              onChange={(e) => setForm({ ...form, idType: e.target.value })}
+              className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
+            >
+              <option value="">Valid ID presented…</option>
+              <option>Voter's ID</option>
+              <option>Barangay ID</option>
+              <option>National ID (PhilSys)</option>
+              <option>Driver's License</option>
+              <option>Passport</option>
+              <option>UMID</option>
+              <option>Postal ID</option>
+              <option>Senior Citizen ID</option>
+              <option>PWD ID</option>
+              <option>Other</option>
+            </select>
+            <input
+              placeholder="ID number"
+              value={form.idNumber}
+              onChange={(e) => setForm({ ...form, idNumber: e.target.value })}
+              className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
+            />
+          </div>
+          <p className="text-xs text-foreground-muted">
+            Address and a valid ID are required to confirm barangay jurisdiction and identity for new residents.
+          </p>
           {error && <p className="text-danger text-xs">{error}</p>}
           <button
             type="button"
             onClick={handleCreate}
-            disabled={creating || !form.fullName.trim()}
+            disabled={creating || !form.fullName.trim() || !form.address.trim() || !form.idType || !form.idNumber.trim()}
             className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-9 py-1.5 text-sm font-medium disabled:opacity-60"
           >
             {creating ? "Registering…" : "Register account"}

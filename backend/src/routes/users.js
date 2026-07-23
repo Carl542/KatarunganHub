@@ -37,7 +37,7 @@ router.get(
 );
 
 router.post("/", requireAuth, requireRole("admin", "secretary"), async (req, res) => {
-  const { fullName, email, phoneNumber, role } = req.body;
+  const { fullName, email, phoneNumber, role, address, idType, idNumber } = req.body;
 
   if (req.user.role === "secretary" && !SECRETARY_CREATABLE_ROLES.includes(role)) {
     return res.status(403).json({ error: "Secretary can only register complainant or respondent accounts" });
@@ -56,7 +56,15 @@ router.post("/", requireAuth, requireRole("admin", "secretary"), async (req, res
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .insert({ id: authData.user.id, full_name: fullName, role, phone_number: phoneNumber || null })
+    .insert({
+      id: authData.user.id,
+      full_name: fullName,
+      role,
+      phone_number: phoneNumber || null,
+      address: address || null,
+      id_type: idType || null,
+      id_number: idNumber || null,
+    })
     .select()
     .single();
   if (profileError) return res.status(500).json({ error: profileError.message });

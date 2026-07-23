@@ -175,6 +175,33 @@ describe("users admin routes", () => {
     );
   });
 
+  it("stores address, ID type, and ID number when provided", async () => {
+    mockCreateUser.mockResolvedValue({ data: { user: { id: "new-3" } }, error: null });
+    mockInsert.mockReturnValue({
+      select: () => ({
+        single: () => Promise.resolve({ data: { id: "new-3", full_name: "Maria Santos", role: "complainant" }, error: null }),
+      }),
+    });
+
+    await request(buildTestApp({ id: "s1", role: "secretary" }))
+      .post("/users")
+      .send({
+        fullName: "Maria Santos",
+        role: "complainant",
+        address: "Purok 3, Zone 1",
+        idType: "Voter's ID",
+        idNumber: "1234-5678-9012",
+      });
+
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        address: "Purok 3, Zone 1",
+        id_type: "Voter's ID",
+        id_number: "1234-5678-9012",
+      })
+    );
+  });
+
   it("lets admin register any role, using a provided email as-is", async () => {
     mockCreateUser.mockResolvedValue({ data: { user: { id: "new-2" } }, error: null });
     mockInsert.mockReturnValue({

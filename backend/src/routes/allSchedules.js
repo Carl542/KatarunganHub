@@ -17,15 +17,11 @@ router.get("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
   res.json(data);
 });
 
-// Called once a day by an external scheduler (Render Cron Job or similar),
-// not by a signed-in user — a shared secret guards it instead of requireAuth.
-// Sends a reminder SMS one day before each schedule and marks it sent so a
-// second cron run the same day doesn't double-text anyone.
-router.post("/send-reminders", async (req, res) => {
-  if (!process.env.CRON_SECRET || req.headers["x-cron-secret"] !== process.env.CRON_SECRET) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
+// Admin-triggered (Settings page "Send Reminders Now" button) rather than an
+// external daily cron, so it needs no extra hosted infrastructure. Sends a
+// reminder SMS one day before each schedule and marks it sent so re-clicking
+// later the same day doesn't double-text anyone.
+router.post("/send-reminders", requireAuth, requireRole("admin"), async (req, res) => {
   const supabase = getSupabaseClient();
   const startOfTomorrow = new Date();
   startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);

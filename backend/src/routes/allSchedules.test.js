@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import express from "express";
 import request from "supertest";
 
@@ -70,8 +70,6 @@ describe("GET /schedules", () => {
 });
 
 describe("POST /schedules/send-reminders", () => {
-  const OLD_ENV = process.env.CRON_SECRET;
-
   beforeEach(() => {
     mockSelect.mockReset();
     mockUpdate.mockReset();
@@ -80,16 +78,11 @@ describe("POST /schedules/send-reminders", () => {
       select: () => ({ single: () => Promise.resolve({ data: { id: "notif-1" }, error: null }) }),
     });
     mockUpdate.mockReturnValue({ eq: () => Promise.resolve({ error: null }) });
-    process.env.CRON_SECRET = "test-secret";
   });
 
-  afterAll(() => {
-    process.env.CRON_SECRET = OLD_ENV;
-  });
-
-  it("rejects requests without the correct cron secret", async () => {
-    const res = await request(buildTestApp(null)).post("/schedules/send-reminders").set("x-cron-secret", "wrong");
-    expect(res.status).toBe(401);
+  it("rejects non-admin roles", async () => {
+    const res = await request(buildTestApp({ id: "sec-1", role: "secretary" })).post("/schedules/send-reminders");
+    expect(res.status).toBe(403);
   });
 
   it("sends a reminder for schedules happening tomorrow and marks them sent", async () => {
@@ -120,7 +113,7 @@ describe("POST /schedules/send-reminders", () => {
       }),
     });
 
-    const res = await request(buildTestApp(null)).post("/schedules/send-reminders").set("x-cron-secret", "test-secret");
+    const res = await request(buildTestApp({ id: "a1", role: "admin" })).post("/schedules/send-reminders");
 
     expect(res.status).toBe(200);
     expect(res.body.remindersSent).toBe(1);

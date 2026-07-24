@@ -198,8 +198,35 @@ export default function TrackCasePage() {
 
         <div className="flex-1 p-6 lg:p-10">
           {!result ? (
-            <div className="h-full flex items-center justify-center text-foreground-muted text-sm">
-              Enter your case details on the left to view its status.
+            <div className="h-full flex items-center justify-center">
+              <div className="bg-white/90 border border-border rounded-sm p-10 max-w-md w-full text-center">
+                <div className="w-14 h-14 rounded-full bg-[#e3eaf7] text-[#0038a8] flex items-center justify-center mx-auto mb-4">
+                  <Icon name="search" className="w-6 h-6" />
+                </div>
+                <h2 className="font-display text-lg font-semibold mb-2">No case selected yet</h2>
+                <p className="text-sm text-foreground-muted mb-6">
+                  Enter your reference number and last name or mobile number on the left, then click{" "}
+                  <span className="font-medium text-foreground">Search Case</span> to view your status.
+                </p>
+                <ul className="text-sm text-left flex flex-col gap-2.5 border-t border-border pt-5">
+                  <li className="flex items-center gap-2.5">
+                    <Icon name="file-text" className="w-4 h-4 text-primary shrink-0" />
+                    Case information &amp; parties
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Icon name="clock" className="w-4 h-4 text-primary shrink-0" />
+                    Full status timeline
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Icon name="calendar" className="w-4 h-4 text-primary shrink-0" />
+                    Next scheduled hearing
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Icon name="mail" className="w-4 h-4 text-primary shrink-0" />
+                    Latest update on your case
+                  </li>
+                </ul>
+              </div>
             </div>
           ) : (
             <div className="bg-white/90 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-8 max-w-4xl">

@@ -157,7 +157,7 @@ export default function TrackCasePage() {
                 <h2 className="font-display text-lg font-semibold">Case Status Result</h2>
                 <button
                   onClick={newSearch}
-                  className="border border-border rounded-sm px-4 min-h-10 text-sm font-medium hover:bg-muted transition-colors flex items-center gap-2"
+                  className="bg-primary text-white rounded-sm px-4 min-h-10 text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2"
                 >
                   <Icon name="search" className="w-4 h-4" />
                   New Search

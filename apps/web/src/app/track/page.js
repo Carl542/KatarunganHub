@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { apiFetch } from "@/lib/apiClient";
 import BrandMark from "@/components/BrandMark";
@@ -40,20 +40,12 @@ function iconForStage(label) {
 }
 
 export default function TrackCasePage() {
-  const [searchMode, setSearchMode] = useState("reference");
   const [referenceNumber, setReferenceNumber] = useState("");
   const [verify, setVerify] = useState("");
   const [result, setResult] = useState(null);
   const [lookedUpAt, setLookedUpAt] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [barangay, setBarangay] = useState(null);
-
-  useEffect(() => {
-    apiFetch("/settings/public")
-      .then(setBarangay)
-      .catch(() => {});
-  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -81,12 +73,6 @@ export default function TrackCasePage() {
     setVerify("");
   }
 
-  function switchMode(mode) {
-    setSearchMode(mode);
-    setVerify("");
-    setNotFound(false);
-  }
-
   return (
     <main className="min-h-screen flex flex-col">
       <header role="banner" className="h-14 bg-white/90 border-b border-brass/30 flex items-center px-6 shrink-0">
@@ -96,137 +82,74 @@ export default function TrackCasePage() {
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row">
-        <div className="lg:w-[380px] shrink-0 relative overflow-hidden flex flex-col bg-sidebar text-white">
-          <div className="flex items-center gap-3 px-6 pt-6 pb-4 relative z-10">
-            <BrandMark size={44} />
-            <div className="leading-tight">
-              <span className="font-display text-base font-semibold block">KatarunganHub</span>
-              {barangay?.barangay_name && <span className="text-xs text-white/60 block mt-0.5">{barangay.barangay_name}</span>}
-            </div>
-          </div>
-
-          <div className="relative flex-1 min-h-[220px]">
-            <Image
-              src="/images/barangay-hall.png"
-              alt="Barangay hall"
-              fill
-              sizes="380px"
-              className="object-cover object-[center_65%]"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-sidebar via-sidebar/60 to-sidebar/10" />
-          </div>
-
-          <div className="relative z-10 px-6 pb-8 -mt-4">
-            <h1 className="font-display text-2xl font-semibold leading-snug mb-2">Track Your Case</h1>
-            <p className="text-white/75 text-sm mb-5">
+        <div className="lg:w-[42%] shrink-0 relative overflow-hidden min-h-[280px] hidden sm:block">
+          <Image
+            src="/images/barangay-hall.png"
+            alt="Barangay hall"
+            fill
+            sizes="42vw"
+            className="object-cover object-[center_65%]"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050c1e] via-[#050c1e]/25 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-10">
+            <h1 className="font-display text-3xl font-semibold text-white leading-snug mb-2">Track Your Case</h1>
+            <p className="text-white/80 text-sm max-w-sm">
               Enter your reference number and last name or mobile number to check your case status.
             </p>
+          </div>
+        </div>
 
-            <div className="flex mb-4 border-b border-white/20">
-              <button
-                type="button"
-                onClick={() => switchMode("reference")}
-                className={`px-3 py-2 text-xs font-medium border-b-2 -mb-px transition-colors ${
-                  searchMode === "reference" ? "border-white text-white" : "border-transparent text-white/60 hover:text-white/85"
-                }`}
-              >
-                By Reference Number
-              </button>
-              <button
-                type="button"
-                onClick={() => switchMode("mobile")}
-                className={`px-3 py-2 text-xs font-medium border-b-2 -mb-px transition-colors ${
-                  searchMode === "mobile" ? "border-white text-white" : "border-transparent text-white/60 hover:text-white/85"
-                }`}
-              >
-                By Mobile Number
-              </button>
-            </div>
+        <div className="flex-1 p-6 lg:p-10 flex items-center justify-center">
+          {!result ? (
+            <div className="bg-white/90 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-8 w-full max-w-sm">
+              <div className="flex justify-center mb-3">
+                <BrandMark size={64} />
+              </div>
+              <h2 className="font-display text-xl font-semibold text-center">Track Case Status</h2>
+              <div className="h-px bg-brass/40 my-5" aria-hidden="true" />
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-              <label className="flex flex-col gap-1">
-                <span className="text-xs font-medium tracking-wide uppercase text-white/70">Reference Number</span>
-                <div className="relative">
-                  <Icon name="search" className="w-4 h-4 text-foreground-muted absolute left-3 top-1/2 -translate-y-1/2" />
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <label className="flex flex-col gap-1">
+                  <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Reference Number *</span>
                   <input
                     required
                     value={referenceNumber}
                     onChange={(e) => setReferenceNumber(e.target.value)}
-                    placeholder="Enter reference number"
-                    className="ref-number w-full border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white text-foreground focus-visible:outline-3 focus-visible:outline-primary"
+                    placeholder="e.g. REF-2026-000007"
+                    className="ref-number border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                   />
-                </div>
-                <span className="text-[0.7rem] text-white/50">e.g. REF-2026-000007</span>
-              </label>
-
-              <label className="flex flex-col gap-1">
-                <span className="text-xs font-medium tracking-wide uppercase text-white/70">
-                  {searchMode === "reference" ? "Last Name" : "Mobile Number"}
-                </span>
-                <div className="relative">
-                  <Icon name="user" className="w-4 h-4 text-foreground-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">
+                    Last Name or Mobile Number *
+                  </span>
                   <input
                     required
-                    type={searchMode === "mobile" ? "tel" : "text"}
                     value={verify}
                     onChange={(e) => setVerify(e.target.value)}
-                    placeholder={searchMode === "reference" ? "Enter last name" : "Enter mobile number"}
-                    className="w-full border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white text-foreground focus-visible:outline-3 focus-visible:outline-primary"
+                    placeholder="e.g. Dela Cruz or 09171234567"
+                    className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                   />
-                </div>
-                <span className="text-[0.7rem] text-white/50">{searchMode === "reference" ? "e.g. Dela Cruz" : "e.g. 09171234567"}</span>
-              </label>
+                </label>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-primary text-white rounded-sm py-2 min-h-11 font-medium tracking-wide disabled:opacity-60 hover:bg-primary/90 transition-colors mt-2 flex items-center justify-center gap-2"
-              >
-                <Icon name="search" className="w-4 h-4" />
-                {loading ? "Searching…" : "Search Case"}
-              </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-primary text-white rounded-sm py-2 min-h-11 font-medium tracking-wide disabled:opacity-60 hover:bg-primary/90 transition-colors mt-1"
+                >
+                  {loading ? "Searching…" : "Track Case"}
+                </button>
 
-              {notFound && (
-                <p className="text-danger-light text-sm" style={{ color: "#ff9b9b" }}>
-                  No matching case found. Please check your details.
-                </p>
-              )}
-            </form>
-          </div>
-        </div>
+                {notFound && (
+                  <p className="text-danger text-sm">No matching case found. Please check your details.</p>
+                )}
+              </form>
 
-        <div className="flex-1 p-6 lg:p-10">
-          {!result ? (
-            <div className="h-full flex items-center justify-center">
-              <div className="bg-white/90 border border-border rounded-sm p-10 max-w-md w-full text-center">
-                <div className="w-14 h-14 rounded-full bg-[#e3eaf7] text-[#0038a8] flex items-center justify-center mx-auto mb-4">
-                  <Icon name="search" className="w-6 h-6" />
-                </div>
-                <h2 className="font-display text-lg font-semibold mb-2">No case selected yet</h2>
-                <p className="text-sm text-foreground-muted mb-6">
-                  Enter your reference number and last name or mobile number on the left, then click{" "}
-                  <span className="font-medium text-foreground">Search Case</span> to view your status.
-                </p>
-                <ul className="text-sm text-left flex flex-col gap-2.5 border-t border-border pt-5">
-                  <li className="flex items-center gap-2.5">
-                    <Icon name="file-text" className="w-4 h-4 text-primary shrink-0" />
-                    Case information &amp; parties
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Icon name="clock" className="w-4 h-4 text-primary shrink-0" />
-                    Full status timeline
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Icon name="calendar" className="w-4 h-4 text-primary shrink-0" />
-                    Next scheduled hearing
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Icon name="mail" className="w-4 h-4 text-primary shrink-0" />
-                    Latest update on your case
-                  </li>
-                </ul>
-              </div>
+              <p className="text-center text-xs text-foreground-muted mt-5 flex items-center justify-center gap-1.5">
+                <Icon name="lock" className="w-3.5 h-3.5 shrink-0" />
+                Your information is secure and will not be shared.
+              </p>
             </div>
           ) : (
             <div className="bg-white/90 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-8 max-w-4xl">

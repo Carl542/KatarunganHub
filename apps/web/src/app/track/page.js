@@ -179,25 +179,40 @@ export default function TrackCasePage() {
                     Case Information
                   </h3>
                   <dl className="text-sm flex flex-col gap-3">
-                    <div>
-                      <dt className="text-foreground-muted text-xs">Complainant</dt>
-                      <dd className="font-medium">{result.complainant_name || "—"}</dd>
+                    <div className="flex gap-2.5">
+                      <Icon name="user" className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <dt className="text-foreground-muted text-xs">Complainant</dt>
+                        <dd className="font-medium">{result.complainant_name || "—"}</dd>
+                      </div>
                     </div>
-                    <div>
-                      <dt className="text-foreground-muted text-xs">Respondent</dt>
-                      <dd className="font-medium">{result.respondent_name || "—"}</dd>
+                    <div className="flex gap-2.5">
+                      <Icon name="user" className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <dt className="text-foreground-muted text-xs">Respondent</dt>
+                        <dd className="font-medium">{result.respondent_name || "—"}</dd>
+                      </div>
                     </div>
-                    <div>
-                      <dt className="text-foreground-muted text-xs">Case Type</dt>
-                      <dd className="font-medium">{result.category || result.type}</dd>
+                    <div className="flex gap-2.5">
+                      <Icon name="file-text" className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <dt className="text-foreground-muted text-xs">Case Type</dt>
+                        <dd className="font-medium">{result.category || result.type}</dd>
+                      </div>
                     </div>
-                    <div>
-                      <dt className="text-foreground-muted text-xs">Date Filed</dt>
-                      <dd className="font-medium">{formatDate(result.filed_at)}</dd>
+                    <div className="flex gap-2.5">
+                      <Icon name="calendar" className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <dt className="text-foreground-muted text-xs">Date Filed</dt>
+                        <dd className="font-medium">{formatDate(result.filed_at)}</dd>
+                      </div>
                     </div>
-                    <div>
-                      <dt className="text-foreground-muted text-xs">Assigned To</dt>
-                      <dd className="font-medium">{result.assigned_to}</dd>
+                    <div className="flex gap-2.5">
+                      <Icon name="shield" className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <dt className="text-foreground-muted text-xs">Assigned To</dt>
+                        <dd className="font-medium">{result.assigned_to}</dd>
+                      </div>
                     </div>
                   </dl>
                 </div>

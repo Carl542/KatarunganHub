@@ -1,13 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
 import express from "express";
 import request from "supertest";
 
 const mockSelect = vi.fn();
+const mockUpdate = vi.fn();
+const mockNotificationsInsert = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
     from: (table) => {
-      if (table === "mediation_schedules") return { select: mockSelect };
+      if (table === "mediation_schedules") return { select: mockSelect, update: mockUpdate };
+      if (table === "notifications") {
+        return { insert: mockNotificationsInsert };
+      }
       return {};
     },
   }),
@@ -61,5 +66,64 @@ describe("GET /schedules", () => {
     expect(res.body).toHaveLength(1);
     expect(res.body[0].complaint.reference_number).toBe("REF-2026-000001");
     expect(mockSelect).toHaveBeenCalledWith(expect.stringContaining("complaint"));
+  });
+});
+
+describe("POST /schedules/send-reminders", () => {
+  const OLD_ENV = process.env.CRON_SECRET;
+
+  beforeEach(() => {
+    mockSelect.mockReset();
+    mockUpdate.mockReset();
+    mockNotificationsInsert.mockReset();
+    mockNotificationsInsert.mockReturnValue({
+      select: () => ({ single: () => Promise.resolve({ data: { id: "notif-1" }, error: null }) }),
+    });
+    mockUpdate.mockReturnValue({ eq: () => Promise.resolve({ error: null }) });
+    process.env.CRON_SECRET = "test-secret";
+  });
+
+  afterAll(() => {
+    process.env.CRON_SECRET = OLD_ENV;
+  });
+
+  it("rejects requests without the correct cron secret", async () => {
+    const res = await request(buildTestApp(null)).post("/schedules/send-reminders").set("x-cron-secret", "wrong");
+    expect(res.status).toBe(401);
+  });
+
+  it("sends a reminder for schedules happening tomorrow and marks them sent", async () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(10, 0, 0, 0);
+
+    mockSelect.mockReturnValue({
+      is: () => ({
+        eq: () => ({
+          gte: () => ({
+            lt: () =>
+              Promise.resolve({
+                data: [
+                  {
+                    id: "sched-1",
+                    type: "Punong Barangay mediation",
+                    scheduled_at: tomorrow.toISOString(),
+                    venue: "Barangay Hall",
+                    complaint_id: "case-1",
+                    complaint: { reference_number: "REF-2026-000001", complainant_id: "u1", respondent_id: "u2" },
+                  },
+                ],
+                error: null,
+              }),
+          }),
+        }),
+      }),
+    });
+
+    const res = await request(buildTestApp(null)).post("/schedules/send-reminders").set("x-cron-secret", "test-secret");
+
+    expect(res.status).toBe(200);
+    expect(res.body.remindersSent).toBe(1);
+    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ reminder_sent_at: expect.any(String) }));
   });
 });

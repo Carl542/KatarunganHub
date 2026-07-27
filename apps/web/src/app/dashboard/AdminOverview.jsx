@@ -64,19 +64,17 @@ export default function AdminOverview() {
   useEffect(() => {
     Promise.all([
       apiFetch("/users"),
-      apiFetch("/lupon-profiles"),
       apiFetch("/audit-logs"),
       apiFetch("/reports/summary"),
       apiFetch("/schedules"),
     ])
-      .then(([users, luponProfiles, auditLogs, caseSummary, schedules]) => {
+      .then(([users, auditLogs, caseSummary, schedules]) => {
         const byRole = {};
         for (const u of users) byRole[u.role] = (byRole[u.role] || 0) + 1;
 
         setStats({
           totalUsers: users.length,
           activeUsers: users.filter((u) => u.status === "Active" || !u.status).length,
-          lupon: luponProfiles.length,
           totalCases: caseSummary.total,
           activeCases: caseSummary.active,
           byRole,

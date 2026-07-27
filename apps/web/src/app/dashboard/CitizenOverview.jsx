@@ -40,9 +40,9 @@ export default function CitizenOverview() {
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <StatCard label="Total Cases" value={cases.length} icon="clipboard-list" color="primary" />
-        <StatCard label="Active" value={active} icon="info" color="warning" />
-        <StatCard label="Closed" value={closed} icon="check-circle" color="accent" />
+        <StatCard label="Total Cases" value={cases.length} href="/dashboard/my-cases" icon="clipboard-list" color="primary" />
+        <StatCard label="Active" value={active} href="/dashboard/my-cases" icon="info" color="warning" />
+        <StatCard label="Closed" value={closed} href="/dashboard/my-cases" icon="check-circle" color="accent" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

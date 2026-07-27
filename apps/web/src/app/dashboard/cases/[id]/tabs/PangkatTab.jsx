@@ -6,10 +6,13 @@ import UserPicker from "@/components/UserPicker";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
 
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
+// Mirrors backend/src/routes/pangkat.js requireRole("punong", "secretary") —
+// only these two roles may create a Pangkat Formation record.
+const CAN_MANAGE_ROLES = ["punong", "secretary"];
 
 export default function PangkatTab({ caseId }) {
   const profile = useCurrentProfile();
-  const canManage = STAFF_ROLES.includes(profile?.role);
+  const canManage = CAN_MANAGE_ROLES.includes(profile?.role);
   const [formations, setFormations] = useState([]);
   const [form, setForm] = useState({
     formationDate: "",

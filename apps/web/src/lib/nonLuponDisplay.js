@@ -28,3 +28,7 @@ export const CHECKLIST_BY_STAGE = {
 };
 
 export const NON_LUPON_DISPLAY_STEPS = NON_LUPON_STAGES.map((s) => ({ label: s, stages: [s] }));
+
+// Mirrors backend/src/lib/nonLuponDefinitions.js ACTORS — the same two roles
+// can act on any non-closed Non-Lupon stage (unlike Lupon, which is per-stage).
+export const ACTORS = ["secretary", "admin"];

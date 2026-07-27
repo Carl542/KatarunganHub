@@ -10,6 +10,7 @@ import {
   NEXT_STAGE_BY_OUTCOME as LUPON_NEXT_STAGE_BY_OUTCOME,
   CHECKLIST_BY_STAGE as LUPON_CHECKLIST_BY_STAGE,
   LUPON_DISPLAY_STEPS,
+  STAGE_ACTORS,
 } from "@/lib/workflowDisplay";
 import {
   NON_LUPON_STAGES,
@@ -17,6 +18,7 @@ import {
   NEXT_STAGE_BY_OUTCOME as NON_LUPON_NEXT_STAGE_BY_OUTCOME,
   CHECKLIST_BY_STAGE as NON_LUPON_CHECKLIST_BY_STAGE,
   NON_LUPON_DISPLAY_STEPS,
+  ACTORS as NON_LUPON_ACTORS,
 } from "@/lib/nonLuponDisplay";
 
 function titleCase(s) {
@@ -29,8 +31,6 @@ function chunk(arr, size) {
   return out;
 }
 
-const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
-
 // Stages where the barangay may hold multiple hearings before deciding whether
 // to escalate — confirmed via Lupon member interviews (up to 3 hearings is
 // common local practice, though not an explicit statutory cap).
@@ -39,7 +39,6 @@ const MULTI_SESSION_STAGES = ["Punong Barangay mediation", "Pangkat conciliation
 
 export default function WorkflowTab({ caseId, caseData, onUpdated }) {
   const profile = useCurrentProfile();
-  const canManage = STAFF_ROLES.includes(profile?.role);
   const isNonLupon = caseData.type === "Non-Lupon";
   const stages = isNonLupon ? NON_LUPON_STAGES : LUPON_STAGES;
   const outcomesByStage = isNonLupon ? NON_LUPON_OUTCOMES_BY_STAGE : LUPON_OUTCOMES_BY_STAGE;
@@ -51,6 +50,13 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
   const isClosed = currentStage === "Closed";
   const availableOutcomes = outcomesByStage[currentStage] || [];
   const checklist = checklistByStage[currentStage] || [];
+
+  // Mirrors backend canActOnStage() exactly: Lupon-type stages each allow a
+  // specific role (e.g. only "lupon" on Pangkat conciliation), while
+  // Non-Lupon allows secretary/admin on any stage that isn't Closed.
+  const canManage = isNonLupon
+    ? !isClosed && NON_LUPON_ACTORS.includes(profile?.role)
+    : (STAGE_ACTORS[currentStage] || []).includes(profile?.role);
 
   const [outcome, setOutcome] = useState("");
   const [notes, setNotes] = useState("");

@@ -68,6 +68,21 @@ export const CHECKLIST_BY_STAGE = {
   Closed: [],
 };
 
+// Mirrors backend/src/lib/workflowDefinitions.js STAGE_ACTORS — used to hide
+// the transition form from roles the server would reject anyway, since the
+// allowed actor differs per stage (e.g. only "lupon" on Pangkat conciliation).
+export const STAGE_ACTORS = {
+  "Official complaint encoded": ["secretary"],
+  "Jurisdiction review": ["punong", "secretary"],
+  "Summons issued": ["punong", "secretary"],
+  "Punong Barangay mediation": ["punong"],
+  "Pangkat formation": ["punong", "secretary"],
+  "Pangkat conciliation": ["lupon"],
+  "Settlement monitoring": ["secretary"],
+  "Proper disposition": ["punong", "secretary"],
+  Closed: [],
+};
+
 // Groups the 9 real stages into 8 display steps for the stepper (Proper disposition
 // and Closed share a step) — purely a display grouping, not a change to real stage data.
 export const LUPON_DISPLAY_STEPS = [

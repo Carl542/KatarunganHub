@@ -43,6 +43,12 @@ export default function CaseDetailsPage({ params }) {
   if (!caseData) return null;
 
   const hasWorkflow = caseData.type === "Lupon" || caseData.type === "Non-Lupon";
+  // Complainants/respondents only have "My Cases" in their sidebar nav (not
+  // the staff-facing "Cases" list), so send them back to the page they
+  // actually navigated from.
+  const isCaseParty = ["complainant", "respondent"].includes(profile?.role);
+  const backHref = isCaseParty ? "/dashboard/my-cases" : "/dashboard/cases";
+  const backLabel = isCaseParty ? "Back to My Cases" : "Back to Cases";
 
   return (
     <div>
@@ -68,11 +74,11 @@ export default function CaseDetailsPage({ params }) {
             </Link>
           )}
           <Link
-            href="/dashboard/cases"
+            href={backHref}
             className="bg-primary text-white rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-primary/90 transition-colors"
           >
             <Icon name="chevron-right" className="w-4 h-4 rotate-180" />
-            Back to Cases
+            {backLabel}
           </Link>
         </div>
       </div>

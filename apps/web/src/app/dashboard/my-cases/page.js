@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
+import Icon from "@/components/Icon";
 
 const STATUS_COLOR = {
   Closed: "text-accent",
@@ -15,6 +16,7 @@ const STATUS_COLOR = {
 export default function MyCasesPage() {
   const profile = useCurrentProfile();
   const [cases, setCases] = useState([]);
+  const [query, setQuery] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -25,11 +27,37 @@ export default function MyCasesPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const filtered = cases.filter((c) => {
+    const q = query.toLowerCase();
+    return (
+      (c.reference_number || "").toLowerCase().includes(q) ||
+      (c.title || "").toLowerCase().includes(q) ||
+      (c.status || "").toLowerCase().includes(q)
+    );
+  });
+
   return (
     <div>
-      <div className="mb-4">
-        <h1 className="font-display text-2xl font-semibold">My Cases</h1>
-        <p className="text-sm text-foreground-muted mt-1">Complaints you filed or are named in.</p>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-semibold">My Cases</h1>
+          <p className="text-sm text-foreground-muted mt-1">Complaints you filed or are named in.</p>
+        </div>
+        {cases.length > 0 && (
+          <div className="relative w-full sm:w-64">
+            <Icon
+              name="search"
+              className="w-4 h-4 text-foreground-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+            />
+            <input
+              type="search"
+              placeholder="Search by reference, title, or status…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white w-full focus-visible:outline-3 focus-visible:outline-primary"
+            />
+          </div>
+        )}
       </div>
 
       {loading && <p className="text-foreground-muted">Loading…</p>}
@@ -38,8 +66,11 @@ export default function MyCasesPage() {
       {!loading && !error && cases.length === 0 && (
         <p className="text-foreground-muted">You have no cases on record.</p>
       )}
+      {!loading && cases.length > 0 && filtered.length === 0 && (
+        <p className="text-foreground-muted">No cases match &ldquo;{query}&rdquo;.</p>
+      )}
 
-      {cases.length > 0 && (
+      {filtered.length > 0 && (
         <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left border-b-2 border-brass/40">
@@ -51,7 +82,7 @@ export default function MyCasesPage() {
               </tr>
             </thead>
             <tbody>
-              {cases.map((c) => (
+              {filtered.map((c) => (
                 <tr key={c.id} className="border-t border-border hover:bg-muted/60 transition-colors">
                   <td className="px-4 py-3">
                     <Link href={`/dashboard/cases/${c.id}`} className="ref-number text-primary hover:underline font-medium">

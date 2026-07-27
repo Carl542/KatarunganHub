@@ -48,7 +48,12 @@ export default function CaseOverview() {
   if (error) return <p className="text-danger">{error}</p>;
 
   const pending = cases.filter((c) => c.status === "New").length;
-  const underMediation = cases.filter((c) => c.status === "Under Mediation" || c.status === "Active").length;
+  // "Under Mediation" (Lupon) and "Active" (Non-Lupon) are the two statuses a
+  // case can carry once it's past intake and not yet closed. They're
+  // different processes under the hood, so this card is labeled "In
+  // Progress" rather than "Under Mediation" — Non-Lupon cases are never
+  // actually mediated.
+  const inProgress = cases.filter((c) => c.status === "Under Mediation" || c.status === "Active").length;
   const resolved = cases.filter((c) => c.status === "Closed").length;
 
   const byStatus = {};
@@ -83,7 +88,7 @@ export default function CaseOverview() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <StatCard label="Total Cases" value={cases.length} href="/dashboard/cases" icon="clipboard-list" color="primary" />
         <StatCard label="Pending Cases" value={pending} href="/dashboard/cases" icon="file-text" color="warning" />
-        <StatCard label="Under Mediation" value={underMediation} href="/dashboard/cases" icon="info" color="brass" />
+        <StatCard label="In Progress" value={inProgress} href="/dashboard/cases" icon="info" color="brass" />
         <StatCard label="Resolved Cases" value={resolved} href="/dashboard/cases" icon="check-circle" color="accent" />
       </div>
 

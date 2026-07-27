@@ -64,7 +64,11 @@ export default function CaseOverview() {
   }));
 
   const priority = cases
-    .filter((c) => c.status !== "Closed")
+    // The 15-day statutory mediation period only applies to cases actually
+    // covered by the Katarungang Pambarangay process. Non-Lupon cases are
+    // referred straight to the proper office/court and were never on this
+    // clock, so they must not compete for "priority" here.
+    .filter((c) => c.status !== "Closed" && c.type === "Lupon")
     .map((c) => {
       const daysElapsed = Math.floor((Date.now() - new Date(c.filed_at)) / 86400000);
       return { ...c, daysLeft: MEDIATION_PERIOD_DAYS - daysElapsed };

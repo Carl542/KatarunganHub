@@ -8,8 +8,6 @@
     "backend"
   ],
   "scripts": {
-    "build": "npm run build -w apps/web",
-    "vercel-build": "npm run build -w apps/web",
     "dev": "concurrently -n web,api -c blue,green \"npm:dev -w apps/web\" \"npm:dev -w backend\"",
     "test": "npm run test -w apps/web && npm run test -w backend"
   },

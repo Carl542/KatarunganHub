@@ -6,10 +6,11 @@ const mockSelect = vi.fn();
 const mockUpdate = vi.fn();
 const mockInsert = vi.fn();
 const mockCreateUser = vi.fn();
+const mockUpdateUserById = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
-    auth: { admin: { createUser: mockCreateUser } },
+    auth: { admin: { createUser: mockCreateUser, updateUserById: mockUpdateUserById } },
     from: (table) => {
       if (table === "profiles") return { select: mockSelect, update: mockUpdate, insert: mockInsert };
       return {};
@@ -228,5 +229,21 @@ describe("users admin routes", () => {
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Email already registered");
+  });
+
+  it("rejects POST /users/:id/reset-password for non-admin", async () => {
+    const res = await request(buildTestApp({ id: "s1", role: "secretary" })).post("/users/p1/reset-password");
+    expect(res.status).toBe(403);
+  });
+
+  it("allows admin to reset user password and returns temporary password", async () => {
+    mockUpdateUserById.mockResolvedValue({ error: null });
+
+    const res = await request(buildTestApp({ id: "a1", role: "admin" })).post("/users/p1/reset-password");
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe("Password reset successfully");
+    expect(res.body.tempPassword).toBeDefined();
+    expect(mockUpdateUserById).toHaveBeenCalledWith("p1", expect.objectContaining({ password: expect.any(String) }));
   });
 });

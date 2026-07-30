@@ -114,4 +114,35 @@ describe("notify", () => {
     expect(mockProfilesSelect).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
   });
+
+  it("sends an SMS via Textbee.dev when TEXTBEE_API_KEY and TEXTBEE_DEVICE_ID are configured", async () => {
+    delete process.env.SEMAPHORE_API_KEY;
+    process.env.TEXTBEE_API_KEY = "textbee-test-key";
+    process.env.TEXTBEE_DEVICE_ID = "device-123";
+
+    mockProfilesSelect.mockReturnValue({
+      eq: () => ({ single: () => Promise.resolve({ data: { phone_number: "09171234567" }, error: null }) }),
+    });
+
+    await notify({ recipientId: "u1", complaintId: "case-1", message: "Hello via Textbee" });
+
+    expect(fetch).toHaveBeenCalledWith(
+      "https://api.textbee.dev/api/v1/gateway/devices/device-123/send-sms",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          "x-api-key": "textbee-test-key",
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify({
+          recipients: ["+639171234567"],
+          message: "Hello via Textbee",
+        }),
+      })
+    );
+    expect(mockNotificationsUpdate).toHaveBeenCalledWith({ status: "Sent" });
+
+    delete process.env.TEXTBEE_API_KEY;
+    delete process.env.TEXTBEE_DEVICE_ID;
+  });
 });

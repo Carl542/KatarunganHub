@@ -2,9 +2,18 @@ import { getSupabaseClient } from "./supabaseClient.js";
 
 const SEMAPHORE_API_URL = "https://api.semaphore.co/api/v4/messages";
 
-// Writes a queued notification record, then (SMS channel only, and only when
-// SEMAPHORE_API_KEY is configured) sends it through Semaphore and updates the
-// row's status to Sent/Failed. Callers never change regardless of provider.
+// Formats Philippine local mobile numbers (09XXXXXXXXX) into E.164 (+639XXXXXXXXX)
+function formatPhNumber(num) {
+  if (!num) return "";
+  let clean = num.replace(/[^\d+]/g, "");
+  if (clean.startsWith("09")) {
+    clean = "+63" + clean.slice(1);
+  }
+  return clean;
+}
+
+// Writes a queued notification record, then sends through Textbee.dev or Semaphore
+// if configured, updating the row's status to Sent/Failed.
 export async function notify({ recipientId, complaintId, message, channel = "SMS" }) {
   if (!recipientId) return;
 
@@ -22,15 +31,60 @@ export async function notify({ recipientId, complaintId, message, channel = "SMS
       .select()
       .single();
 
-    if (channel === "SMS" && process.env.SEMAPHORE_API_KEY) {
-      await sendSms(supabase, record.id, recipientId, message);
+    if (channel === "SMS") {
+      if (process.env.TEXTBEE_API_KEY && process.env.TEXTBEE_DEVICE_ID) {
+        await sendTextbeeSms(supabase, record.id, recipientId, message);
+      } else if (process.env.SEMAPHORE_API_KEY) {
+        await sendSemaphoreSms(supabase, record.id, recipientId, message);
+      }
     }
   } catch (err) {
     console.error("notify() failed:", err.message);
   }
 }
 
-async function sendSms(supabase, notificationId, recipientId, message) {
+async function sendTextbeeSms(supabase, notificationId, recipientId, message) {
+  try {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("phone_number")
+      .eq("id", recipientId)
+      .single();
+
+    if (!profile?.phone_number) {
+      await supabase.from("notifications").update({ status: "Failed" }).eq("id", notificationId);
+      return;
+    }
+
+    const formattedNumber = formatPhNumber(profile.phone_number);
+    const deviceId = process.env.TEXTBEE_DEVICE_ID;
+    const apiKey = process.env.TEXTBEE_API_KEY;
+
+    const url = `https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        recipients: [formattedNumber],
+        message: message,
+      }),
+    });
+
+    await supabase
+      .from("notifications")
+      .update({ status: response.ok ? "Sent" : "Failed" })
+      .eq("id", notificationId);
+  } catch (err) {
+    console.error("sendTextbeeSms() failed:", err.message);
+    await supabase.from("notifications").update({ status: "Failed" }).eq("id", notificationId);
+  }
+}
+
+async function sendSemaphoreSms(supabase, notificationId, recipientId, message) {
   try {
     const { data: profile } = await supabase
       .from("profiles")
@@ -57,7 +111,7 @@ async function sendSms(supabase, notificationId, recipientId, message) {
       .update({ status: response.ok ? "Sent" : "Failed" })
       .eq("id", notificationId);
   } catch (err) {
-    console.error("sendSms() failed:", err.message);
+    console.error("sendSemaphoreSms() failed:", err.message);
     await supabase.from("notifications").update({ status: "Failed" }).eq("id", notificationId);
   }
 }

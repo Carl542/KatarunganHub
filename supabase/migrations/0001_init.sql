@@ -44,7 +44,7 @@ create table public.case_assignments (
 );
 
 create table public.case_status_logs (
-  id uuid primary key default gen_random_uuid(),
+  id uuid primary key default gen_random_uuid(),  
   complaint_id uuid references public.complaints(id) on delete cascade,
   previous_stage text,
   outcome text,

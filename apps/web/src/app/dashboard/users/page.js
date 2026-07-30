@@ -19,7 +19,6 @@ const STAFF_ROLE_OPTIONS = ["admin", "punong", "secretary", "lupon"];
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -27,8 +26,6 @@ export default function UsersPage() {
   const [addError, setAddError] = useState("");
   const [adding, setAdding] = useState(false);
   const [addedCredentials, setAddedCredentials] = useState(null);
-  const [resetCredentials, setResetCredentials] = useState(null);
-  const [resettingId, setResettingId] = useState(null);
 
   function load() {
     setLoading(true);
@@ -57,20 +54,6 @@ export default function UsersPage() {
 
   function saveFullName(id, value) {
     if (value.trim()) updateUser(id, { full_name: value.trim() });
-  }
-
-  async function handleResetPassword(user) {
-    if (!confirm(`Reset password for ${user.full_name}? A new temporary password will be generated.`)) return;
-    setResettingId(user.id);
-    setError("");
-    try {
-      const res = await apiFetch(`/users/${user.id}/reset-password`, { method: "POST" });
-      setResetCredentials({ userName: user.full_name, tempPassword: res.tempPassword });
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setResettingId(null);
-    }
   }
 
   async function handleAddUser(e) {
@@ -104,11 +87,7 @@ export default function UsersPage() {
     setAddError("");
   }
 
-  const filtered = users.filter((u) => {
-    const matchesQuery = (u.full_name || "").toLowerCase().includes(query.toLowerCase());
-    const matchesRole = roleFilter === "all" || u.role === roleFilter;
-    return matchesQuery && matchesRole;
-  });
+  const filtered = users.filter((u) => (u.full_name || "").toLowerCase().includes(query.toLowerCase()));
 
   return (
     <div>
@@ -118,18 +97,6 @@ export default function UsersPage() {
           <p className="text-sm text-foreground-muted mt-1">{users.length} registered account{users.length === 1 ? "" : "s"}</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary text-sm font-medium"
-          >
-            <option value="all">All Roles</option>
-            {Object.entries(ROLES).map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
           <div className="relative w-full sm:w-64">
             <Icon
               name="search"
@@ -151,21 +118,6 @@ export default function UsersPage() {
           </button>
         </div>
       </div>
-
-      {resetCredentials && (
-        <div className="bg-white/90 rounded-sm border border-accent/40 p-4 mb-4 max-w-md bg-accent/5">
-          <div className="text-sm">
-            <p className="font-medium text-accent mb-1">Password reset successful for {resetCredentials.userName}:</p>
-            <p className="ref-number font-semibold text-lg text-primary mb-3">Temp Password: {resetCredentials.tempPassword}</p>
-            <button
-              onClick={() => setResetCredentials(null)}
-              className="border border-border bg-white rounded-sm px-3 py-1.5 text-xs font-medium hover:bg-muted"
-            >
-              Close Banner
-            </button>
-          </div>
-        </div>
-      )}
 
       {showAddForm && (
         <div className="bg-white/90 rounded-sm border border-border p-4 mb-4 max-w-md">
@@ -240,7 +192,7 @@ export default function UsersPage() {
       {error && <p className="text-danger">{error}</p>}
 
       {!loading && !error && filtered.length === 0 && (
-        <p className="text-foreground-muted">No accounts match your search/filter criteria.</p>
+        <p className="text-foreground-muted">No accounts match &ldquo;{query}&rdquo;.</p>
       )}
 
       {filtered.length > 0 && (
@@ -301,25 +253,15 @@ export default function UsersPage() {
                       <span className={`stamp ${isActive ? "text-accent" : "text-foreground-muted"}`}>{u.status || "Active"}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => updateUser(u.id, { status: isActive ? "Inactive" : "Active" })}
-                          className={`text-xs font-medium rounded-sm px-3 py-1.5 min-h-9 border transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                            isActive
-                              ? "border-danger text-danger hover:bg-danger hover:text-white"
-                              : "border-accent text-accent hover:bg-accent hover:text-white"
+                      <button
+                        onClick={() => updateUser(u.id, { status: isActive ? "Inactive" : "Active" })}
+                        className={`text-xs font-medium rounded-sm px-3 py-1.5 min-h-9 border transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary ${isActive
+                            ? "border-danger text-danger hover:bg-danger hover:text-white"
+                            : "border-accent text-accent hover:bg-accent hover:text-white"
                           }`}
-                        >
-                          {isActive ? "Deactivate" : "Activate"}
-                        </button>
-                        <button
-                          onClick={() => handleResetPassword(u)}
-                          disabled={resettingId === u.id}
-                          className="text-xs font-medium rounded-sm px-3 py-1.5 min-h-9 border border-primary text-primary hover:bg-primary hover:text-white transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
-                        >
-                          {resettingId === u.id ? "Resetting…" : "Reset Password"}
-                        </button>
-                      </div>
+                      >
+                        {isActive ? "Deactivate" : "Activate"}
+                      </button>
                     </td>
                   </tr>
                 );

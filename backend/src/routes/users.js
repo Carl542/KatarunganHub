@@ -96,19 +96,4 @@ router.patch("/:id", requireAuth, requireRole("admin"), async (req, res) => {
   logAudit({ actorId: req.user.id, action: "Updated user account", module: "User Accounts", complaintId: null });
 });
 
-router.post("/:id/reset-password", requireAuth, requireRole("admin"), async (req, res) => {
-  const supabase = getSupabaseClient();
-  const tempPassword = generateTempPassword();
-
-  const { error: authError } = await supabase.auth.admin.updateUserById(req.params.id, {
-    password: tempPassword,
-  });
-
-  if (authError) return res.status(400).json({ error: authError.message });
-
-  logAudit({ actorId: req.user.id, action: "Reset user account password", module: "User Accounts", complaintId: null });
-
-  res.json({ message: "Password reset successfully", tempPassword });
-});
-
 export default router;

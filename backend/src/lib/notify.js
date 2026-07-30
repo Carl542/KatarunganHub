@@ -2,12 +2,14 @@ import { getSupabaseClient } from "./supabaseClient.js";
 
 const SEMAPHORE_API_URL = "https://api.semaphore.co/api/v4/messages";
 
-// Formats Philippine local mobile numbers (09XXXXXXXXX) into E.164 (+639XXXXXXXXX)
+// Formats Philippine mobile numbers into local 11-digit format (09XXXXXXXXX) preferred by local carrier SIMs
 function formatPhNumber(num) {
   if (!num) return "";
   let clean = num.replace(/[^\d+]/g, "");
-  if (clean.startsWith("09")) {
-    clean = "+63" + clean.slice(1);
+  if (clean.startsWith("+639")) {
+    clean = "09" + clean.slice(4);
+  } else if (clean.startsWith("639")) {
+    clean = "09" + clean.slice(3);
   }
   return clean;
 }
@@ -65,10 +67,8 @@ async function sendTextbeeSms(supabase, notificationId, recipientId, message) {
     const payload = {
       recipients: [formattedNumber],
       message: message,
+      sim: process.env.TEXTBEE_SIM || "SIM2 (2)",
     };
-    if (process.env.TEXTBEE_SIM) {
-      payload.sim = process.env.TEXTBEE_SIM;
-    }
 
     const response = await fetch(url, {
       method: "POST",

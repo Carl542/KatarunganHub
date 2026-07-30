@@ -135,8 +135,9 @@ describe("notify", () => {
           "Content-Type": "application/json",
         }),
         body: JSON.stringify({
-          recipients: ["+639171234567"],
+          recipients: ["09171234567"],
           message: "Hello via Textbee",
+          sim: "SIM2 (2)",
         }),
       })
     );

@@ -45,4 +45,45 @@ router.patch("/", requireAuth, requireRole("admin"), async (req, res) => {
   logAudit({ actorId: req.user.id, action: "Updated settings", module: "Settings", complaintId: null });
 });
 
+router.post("/test-sms", requireAuth, requireRole("admin"), async (req, res) => {
+  const { phoneNumber, message } = req.body;
+  if (!phoneNumber) return res.status(400).json({ error: "Phone number is required" });
+
+  let formattedNumber = phoneNumber.replace(/[^\d+]/g, "");
+  if (formattedNumber.startsWith("+639")) formattedNumber = "09" + formattedNumber.slice(4);
+
+  const text = message || "KatarunganHub Live Test: Official hearing notification broadcast.";
+
+  try {
+    if (process.env.TEXTBEE_API_KEY && process.env.TEXTBEE_DEVICE_ID) {
+      const deviceId = process.env.TEXTBEE_DEVICE_ID;
+      const apiKey = process.env.TEXTBEE_API_KEY;
+      const response = await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`, {
+        method: "POST",
+        headers: { "x-api-key": apiKey, "Content-Type": "application/json" },
+        body: JSON.stringify({ recipients: [formattedNumber], message: text }),
+      });
+      const data = await response.json();
+      if (!response.ok) return res.status(500).json({ error: data.message || "Failed to send SMS via Textbee" });
+      logAudit({ actorId: req.user.id, action: `Sent test SMS to ${formattedNumber}`, module: "Settings", complaintId: null });
+      return res.json({ success: true, provider: "Textbee", data });
+    } else if (process.env.SEMAPHORE_API_KEY) {
+      const body = new URLSearchParams({
+        apikey: process.env.SEMAPHORE_API_KEY,
+        number: formattedNumber,
+        message: text,
+      });
+      const response = await fetch("https://api.semaphore.co/api/v4/messages", { method: "POST", body });
+      const data = await response.json();
+      if (!response.ok) return res.status(500).json({ error: "Failed to send SMS via Semaphore" });
+      logAudit({ actorId: req.user.id, action: `Sent test SMS to ${formattedNumber}`, module: "Settings", complaintId: null });
+      return res.json({ success: true, provider: "Semaphore", data });
+    } else {
+      return res.status(400).json({ error: "No SMS Gateway configured. Please set TEXTBEE_API_KEY or SEMAPHORE_API_KEY." });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

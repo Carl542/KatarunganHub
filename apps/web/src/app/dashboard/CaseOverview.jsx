@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
+import { useCurrentProfile } from "@/lib/useCurrentProfile";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import DonutChart from "@/components/DonutChart";
 import StatCard from "@/components/StatCard";
@@ -29,6 +30,7 @@ function lastNMonths(n) {
 }
 
 export default function CaseOverview() {
+  const profile = useCurrentProfile();
   const [cases, setCases] = useState(null);
   const [upcoming, setUpcoming] = useState([]);
   const [error, setError] = useState("");
@@ -82,9 +84,42 @@ export default function CaseOverview() {
     .slice(0, 5);
 
   const recentCases = [...cases].sort((a, b) => new Date(b.filed_at) - new Date(a.filed_at)).slice(0, 5);
+  const isSecretary = profile?.role === "secretary";
 
   return (
     <div>
+      <div className="bg-white/90 rounded-sm border border-border p-4 mb-4 flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 className="font-display text-base font-semibold">Quick Actions</h2>
+          <p className="text-xs text-foreground-muted">Shortcuts for case registration, scheduling, and management.</p>
+        </div>
+        <div className="flex items-center gap-3 flex-wrap">
+          {isSecretary && (
+            <Link
+              href="/dashboard/cases/register"
+              className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-10 px-4 py-2 text-sm font-medium flex items-center gap-2"
+            >
+              <Icon name="file-text" className="w-4 h-4" />
+              + Register New Case
+            </Link>
+          )}
+          <Link
+            href="/dashboard/schedules"
+            className="border border-border bg-white text-foreground rounded-sm hover:bg-muted transition-colors min-h-10 px-4 py-2 text-sm font-medium flex items-center gap-2"
+          >
+            <Icon name="calendar" className="w-4 h-4 text-primary" />
+            Schedule Hearing
+          </Link>
+          <Link
+            href="/dashboard/lupon-members"
+            className="border border-border bg-white text-foreground rounded-sm hover:bg-muted transition-colors min-h-10 px-4 py-2 text-sm font-medium flex items-center gap-2"
+          >
+            <Icon name="users" className="w-4 h-4 text-primary" />
+            Lupon Directory
+          </Link>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <StatCard label="Total Cases" value={cases.length} href="/dashboard/cases" icon="clipboard-list" color="primary" />
         <StatCard label="Pending Cases" value={pending} href="/dashboard/cases" icon="file-text" color="warning" />

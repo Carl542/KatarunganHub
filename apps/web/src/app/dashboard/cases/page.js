@@ -17,6 +17,8 @@ export default function CasesPage() {
   const profile = useCurrentProfile();
   const [cases, setCases] = useState([]);
   const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -29,11 +31,17 @@ export default function CasesPage() {
 
   const filtered = cases.filter((c) => {
     const q = query.toLowerCase();
-    return (
+    const matchesQuery =
       (c.reference_number || "").toLowerCase().includes(q) ||
       (c.title || "").toLowerCase().includes(q) ||
-      (c.status || "").toLowerCase().includes(q)
-    );
+      (c.status || "").toLowerCase().includes(q);
+    const matchesType = typeFilter === "all" || c.type === typeFilter;
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "in_progress"
+        ? c.status === "Under Mediation" || c.status === "Active"
+        : c.status === statusFilter);
+    return matchesQuery && matchesType && matchesStatus;
   });
 
   return (
@@ -45,26 +53,49 @@ export default function CasesPage() {
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {cases.length > 0 && (
-            <div className="relative w-full sm:w-72">
-              <Icon
-                name="search"
-                className="w-4 h-4 text-foreground-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              />
-              <input
-                type="search"
-                placeholder="Search by reference, title, or status…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white w-full focus-visible:outline-3 focus-visible:outline-primary"
-              />
-            </div>
+            <>
+              <select
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary text-sm font-medium"
+              >
+                <option value="all">All Types</option>
+                <option value="Lupon">Lupon (Barangay)</option>
+                <option value="Non-Lupon">Non-Lupon (Referral)</option>
+              </select>
+
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary text-sm font-medium"
+              >
+                <option value="all">All Statuses</option>
+                <option value="New">New (Intake)</option>
+                <option value="in_progress">In Progress</option>
+                <option value="Closed">Closed / Resolved</option>
+              </select>
+
+              <div className="relative w-full sm:w-64">
+                <Icon
+                  name="search"
+                  className="w-4 h-4 text-foreground-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                />
+                <input
+                  type="search"
+                  placeholder="Search by reference, title, status…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white w-full focus-visible:outline-3 focus-visible:outline-primary"
+                />
+              </div>
+            </>
           )}
           {profile?.role === "secretary" && (
             <Link
               href="/dashboard/cases/register"
               className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 px-4 py-2 text-sm font-medium whitespace-nowrap"
             >
-              Register Case
+              + Register Case
             </Link>
           )}
         </div>

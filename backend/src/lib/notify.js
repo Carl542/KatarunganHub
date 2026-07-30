@@ -71,6 +71,7 @@ async function sendTextbeeSms(supabase, notificationId, recipientId, message) {
       body: JSON.stringify({
         recipients: [formattedNumber],
         message: message,
+        sim: process.env.TEXTBEE_SIM ? parseInt(process.env.TEXTBEE_SIM, 10) : 2,
       }),
     });
 

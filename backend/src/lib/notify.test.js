@@ -137,6 +137,7 @@ describe("notify", () => {
         body: JSON.stringify({
           recipients: ["+639171234567"],
           message: "Hello via Textbee",
+          sim: 2,
         }),
       })
     );

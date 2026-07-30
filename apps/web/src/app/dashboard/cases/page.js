@@ -35,12 +35,28 @@ export default function CasesPage() {
       (c.reference_number || "").toLowerCase().includes(q) ||
       (c.title || "").toLowerCase().includes(q) ||
       (c.status || "").toLowerCase().includes(q);
-    const matchesType = typeFilter === "all" || c.type === typeFilter;
+
+    const pangkatFormations = c.pangkat_formations || [];
+    const isPangkatMember = pangkatFormations.some(
+      (pf) =>
+        pf.chairperson_id === profile?.id ||
+        pf.secretary_id === profile?.id ||
+        pf.member_id === profile?.id
+    );
+
+    const matchesType =
+      typeFilter === "all"
+        ? true
+        : typeFilter === "my_pangkat"
+        ? isPangkatMember
+        : c.type === typeFilter;
+
     const matchesStatus =
       statusFilter === "all" ||
       (statusFilter === "in_progress"
         ? c.status === "Under Mediation" || c.status === "Active"
         : c.status === statusFilter);
+
     return matchesQuery && matchesType && matchesStatus;
   });
 
@@ -60,6 +76,7 @@ export default function CasesPage() {
                 className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary text-sm font-medium"
               >
                 <option value="all">All Types</option>
+                {profile?.role === "lupon" && <option value="my_pangkat">My Pangkat Cases</option>}
                 <option value="Lupon">Lupon (Barangay)</option>
                 <option value="Non-Lupon">Non-Lupon (Referral)</option>
               </select>
@@ -108,7 +125,7 @@ export default function CasesPage() {
         <p className="text-foreground-muted">No cases found.</p>
       )}
       {!loading && cases.length > 0 && filtered.length === 0 && (
-        <p className="text-foreground-muted">No cases match &ldquo;{query}&rdquo;.</p>
+        <p className="text-foreground-muted">No cases match your search/filter criteria.</p>
       )}
 
       {filtered.length > 0 && (
@@ -123,20 +140,38 @@ export default function CasesPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c) => (
-                <tr key={c.id} className="border-t border-border hover:bg-muted/60 transition-colors">
-                  <td className="px-4 py-3">
-                    <Link href={`/dashboard/cases/${c.id}`} className="ref-number text-primary hover:underline font-medium">
-                      {c.reference_number}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3">{c.title}</td>
-                  <td className="px-4 py-3">{c.type}</td>
-                  <td className="px-4 py-3">
-                    <span className={`stamp ${STATUS_COLOR[c.status] || "text-foreground-muted"}`}>{c.status}</span>
-                  </td>
-                </tr>
-              ))}
+              {filtered.map((c) => {
+                const pangkatFormations = c.pangkat_formations || [];
+                const isPangkatMember = pangkatFormations.some(
+                  (pf) =>
+                    pf.chairperson_id === profile?.id ||
+                    pf.secretary_id === profile?.id ||
+                    pf.member_id === profile?.id
+                );
+                return (
+                  <tr key={c.id} className="border-t border-border hover:bg-muted/60 transition-colors">
+                    <td className="px-4 py-3">
+                      <Link href={`/dashboard/cases/${c.id}`} className="ref-number text-primary hover:underline font-medium">
+                        {c.reference_number}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span>{c.title}</span>
+                        {isPangkatMember && (
+                          <span className="stamp text-accent bg-accent/10 px-2 py-0.5 rounded-xs text-[10px]">
+                            Pangkat Panel
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">{c.type}</td>
+                    <td className="px-4 py-3">
+                      <span className={`stamp ${STATUS_COLOR[c.status] || "text-foreground-muted"}`}>{c.status}</span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

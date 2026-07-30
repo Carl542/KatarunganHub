@@ -185,6 +185,20 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
         </div>
       </div>
 
+      {currentStage === "Pangkat conciliation" && (
+        <div className="bg-primary/5 rounded-sm border border-primary/30 p-4 mb-4">
+          <h2 className="font-display text-base font-semibold text-primary flex items-center gap-2 mb-2">
+            <Icon name="info" className="w-5 h-5 shrink-0" />
+            RA 7160 Conciliation Guidelines for Pangkat Members
+          </h2>
+          <ul className="text-xs space-y-1.5 text-foreground-muted">
+            <li>⏱️ <strong>15-Day Statutory Conciliation Period:</strong> Pangkat must resolve conciliation within 15 days from 1st meeting (extendable max 15 days if agreed by both parties).</li>
+            <li>📜 <strong>Attestation Requirement:</strong> Amicable settlement must be in writing, signed by both parties, and attested by the Pangkat Chairman.</li>
+            <li>⚖️ <strong>10-Day Repudiation Period:</strong> Any party may repudiate settlement within 10 days on ground of fraud, violence, or intimidation.</li>
+          </ul>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {canManage && !isClosed && (
           <div className="bg-white/90 rounded-sm border border-border p-6">
@@ -214,11 +228,17 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
               </label>
 
               <label className="flex flex-col gap-1">
-                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Transition notes</span>
+                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">
+                  {currentStage === "Pangkat conciliation" ? "Conciliation Session Minutes & Notes" : "Transition notes"}
+                </span>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Add notes about this workflow transition…"
+                  placeholder={
+                    currentStage === "Pangkat conciliation"
+                      ? "Record agreed settlement terms, party statements, or conciliation minutes…"
+                      : "Add notes about this workflow transition…"
+                  }
                   className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                 />
               </label>

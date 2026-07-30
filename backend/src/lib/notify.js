@@ -62,17 +62,21 @@ async function sendTextbeeSms(supabase, notificationId, recipientId, message) {
 
     const url = `https://api.textbee.dev/api/v1/gateway/devices/${deviceId}/send-sms`;
 
+    const payload = {
+      recipients: [formattedNumber],
+      message: message,
+    };
+    if (process.env.TEXTBEE_SIM) {
+      payload.sim = process.env.TEXTBEE_SIM;
+    }
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "x-api-key": apiKey,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        recipients: [formattedNumber],
-        message: message,
-        sim: process.env.TEXTBEE_SIM || 2,
-      }),
+      body: JSON.stringify(payload),
     });
 
     await supabase

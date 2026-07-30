@@ -67,7 +67,6 @@ async function sendTextbeeSms(supabase, notificationId, recipientId, message) {
     const payload = {
       recipients: [formattedNumber],
       message: message,
-      sim: process.env.TEXTBEE_SIM || "SIM2 (2)",
     };
 
     const response = await fetch(url, {

@@ -57,6 +57,7 @@ export default function AttendanceTab({ caseId }) {
     secretary: "Present",
     member: "Present",
   });
+  const [file, setFile] = useState(null);
   const [form, setForm] = useState({
     scheduleId: "",
     complainantAttendance: "Present",
@@ -100,11 +101,29 @@ export default function AttendanceTab({ caseId }) {
             .join("; ")
         : "";
 
-      await apiFetch(`/complaints/${caseId}/attendance`, {
-        method: "POST",
-        body: JSON.stringify({ ...form, luponAttendance }),
-      });
+      if (file) {
+        const formData = new FormData();
+        formData.append("scheduleId", form.scheduleId || "");
+        formData.append("complainantAttendance", form.complainantAttendance);
+        formData.append("respondentAttendance", form.respondentAttendance);
+        formData.append("luponAttendance", luponAttendance);
+        formData.append("result", form.result);
+        formData.append("remarks", form.remarks);
+        formData.append("file", file);
+
+        await apiFetch(`/complaints/${caseId}/attendance`, {
+          method: "POST",
+          body: formData,
+        });
+      } else {
+        await apiFetch(`/complaints/${caseId}/attendance`, {
+          method: "POST",
+          body: JSON.stringify({ ...form, luponAttendance }),
+        });
+      }
+
       setForm({ ...form, scheduleId: "", remarks: "" });
+      setFile(null);
       load();
     } catch (err) {
       setError(err.message);
@@ -115,7 +134,7 @@ export default function AttendanceTab({ caseId }) {
     <div className="flex flex-col gap-4">
       {canManage && (
       <form onSubmit={handleSubmit} className="bg-white/90 rounded-sm border border-border p-5 flex flex-col gap-3">
-        <h2 className="font-display text-lg font-semibold">Record Attendance</h2>
+        <h2 className="font-display text-lg font-semibold">Record Attendance &amp; Proceedings</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Schedule</span>
@@ -175,16 +194,30 @@ export default function AttendanceTab({ caseId }) {
         )}
 
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Remarks</span>
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Remarks / Summary</span>
           <textarea
             value={form.remarks}
             onChange={(e) => setForm({ ...form, remarks: e.target.value })}
             className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+            placeholder="Key agreements or summary of proceedings..."
           />
         </label>
+
+        <label className="flex flex-col gap-1">
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">
+            📸 Attach Session Photo / Scanned Record Book (Optional)
+          </span>
+          <input
+            type="file"
+            accept="image/*,application/pdf"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="border border-border rounded-sm px-3 py-2 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
+          />
+        </label>
+
         {error && <p className="text-danger text-sm">{error}</p>}
         <button type="submit" className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium self-start px-4">
-          Record attendance
+          Record attendance &amp; proceedings
         </button>
       </form>
       )}
@@ -200,12 +233,13 @@ export default function AttendanceTab({ caseId }) {
                 <th className="px-4 py-2">Respondent</th>
                 <th className="px-4 py-2">Lupon</th>
                 <th className="px-4 py-2">Remarks</th>
+                <th className="px-4 py-2">Snapshot / Signed Page</th>
               </tr>
             </thead>
             <tbody>
               {records.length === 0 && (
                 <tr>
-                  <td className="px-4 py-16 text-center text-foreground-muted" colSpan={4}>
+                  <td className="px-4 py-16 text-center text-foreground-muted" colSpan={5}>
                     No attendance recorded yet.
                   </td>
                 </tr>
@@ -233,6 +267,20 @@ export default function AttendanceTab({ caseId }) {
                     )}
                   </td>
                   <td className="px-4 py-2">{r.remarks}</td>
+                  <td className="px-4 py-2">
+                    {r.attachment_path ? (
+                      <a
+                        href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/complaints/${caseId}/attendance/${r.id}/attachment`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-primary hover:underline font-medium text-xs bg-primary/10 px-2 py-1 rounded-sm"
+                      >
+                        📸 View Snapshot ({r.original_filename || "Record"})
+                      </a>
+                    ) : (
+                      <span className="text-foreground-muted text-xs">— No file attached</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

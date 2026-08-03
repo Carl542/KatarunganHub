@@ -1,5 +1,6 @@
 "use client";
 
+// Security update: Role selection is managed automatically via Supabase profile RBAC.
 import { useId, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

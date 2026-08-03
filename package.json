@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "dev": "concurrently -n web,api -c blue,green \"npm:dev -w apps/web\" \"npm:dev -w backend\"",
-    "test": "npm run test -w apps/web && npm run test -w backend"
+    "test": "npm run test -w apps/web && npm run test -w backend",
+    "seed:cases": "node scripts/seed-demo-cases.js"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"

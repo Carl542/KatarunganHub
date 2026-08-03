@@ -7,16 +7,7 @@ import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import BrandMark from "@/components/BrandMark";
 import Icon from "@/components/Icon";
-import { ROLES } from "@/lib/roles";
 
-const DEMO_EMAIL_BY_ROLE = {
-  admin: "admin@demo.katarunganhub.local",
-  punong: "punong@demo.katarunganhub.local",
-  secretary: "secretary@demo.katarunganhub.local",
-  lupon: "lupon@demo.katarunganhub.local",
-  complainant: "complainant@demo.katarunganhub.local",
-  respondent: "respondent@demo.katarunganhub.local",
-};
 
 export default function LoginPage() {
   const router = useRouter();

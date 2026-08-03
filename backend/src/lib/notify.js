@@ -69,6 +69,11 @@ async function sendTextbeeSms(supabase, notificationId, recipientId, message) {
       message: message,
     };
 
+    if (process.env.TEXTBEE_SIM_SLOT) {
+      const parsed = parseInt(process.env.TEXTBEE_SIM_SLOT, 10);
+      payload.sim = isNaN(parsed) ? process.env.TEXTBEE_SIM_SLOT : parsed;
+    }
+
     const response = await fetch(url, {
       method: "POST",
       headers: {

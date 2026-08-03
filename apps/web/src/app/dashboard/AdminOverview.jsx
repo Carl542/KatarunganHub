@@ -10,6 +10,8 @@ import StatCard from "@/components/StatCard";
 import Icon from "@/components/Icon";
 import { tooltipStyle, barCursorFill } from "@/lib/chartTheme";
 
+import CaseBreakdownChart from "@/components/CaseBreakdownChart";
+
 const SHORT_ROLE_LABELS = {
   admin: "Admin",
   punong: "Punong Brgy",
@@ -18,15 +20,6 @@ const SHORT_ROLE_LABELS = {
   complainant: "Complainant",
   respondent: "Respondent",
 };
-
-function DonutCard({ title, data }) {
-  return (
-    <div className="bg-white/90 rounded-sm border border-border p-5">
-      <h2 className="font-display text-lg font-semibold mb-3">{title}</h2>
-      <DonutChart data={data} />
-    </div>
-  );
-}
 
 function RoleBarCard({ title, data }) {
   const rows = Object.entries(data).map(([name, value]) => ({ name, value }));
@@ -100,7 +93,13 @@ export default function AdminOverview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <DonutCard title="Cases by Status" data={stats.byStatus} />
+        <CaseBreakdownChart
+          title="Cases by Status"
+          subtitle="Breakdown of barangay cases by current status"
+          data={stats.byStatus}
+          deltaValue={stats.activeCases}
+          deltaLabel=" Active"
+        />
         <RoleBarCard title="Users by Role" data={Object.fromEntries(Object.entries(stats.byRole).map(([r, n]) => [SHORT_ROLE_LABELS[r] || ROLES[r] || r, n]))} />
       </div>
 

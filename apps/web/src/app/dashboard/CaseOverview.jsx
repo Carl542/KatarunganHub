@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/apiClient";
 import { useCurrentProfile } from "@/lib/useCurrentProfile";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import DonutChart from "@/components/DonutChart";
+import CaseBreakdownChart from "@/components/CaseBreakdownChart";
 import StatCard from "@/components/StatCard";
 import Icon from "@/components/Icon";
 import { tooltipStyle, lineCursorStroke } from "@/lib/chartTheme";
@@ -140,10 +141,13 @@ export default function CaseOverview() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white/90 rounded-sm border border-border p-5">
-          <h2 className="font-display text-lg font-semibold mb-3">Cases by status</h2>
-          <DonutChart data={byStatus} centerValue={cases.length} centerLabel="Total" />
-        </div>
+        <CaseBreakdownChart
+          title="Cases by status"
+          subtitle="Breakdown by workflow stage"
+          data={byStatus}
+          deltaValue={cases.length > 0 ? Math.round((resolved / cases.length) * 100) : 0}
+          deltaLabel="% Resolved"
+        />
 
         <div className="bg-white/90 rounded-sm border border-border">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">

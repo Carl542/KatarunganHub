@@ -21,18 +21,12 @@ const DEMO_EMAIL_BY_ROLE = {
 export default function LoginPage() {
   const router = useRouter();
   const errorId = useId();
-  const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  function handleRoleChange(value) {
-    setRole(value);
-    if (DEMO_EMAIL_BY_ROLE[value]) setEmail(DEMO_EMAIL_BY_ROLE[value]);
-  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -93,26 +87,6 @@ export default function LoginPage() {
           <h1 className="font-display text-3xl font-semibold text-center text-foreground">Welcome Back!</h1>
           <p className="text-center text-base text-foreground-muted mt-1 mb-6">Sign in to your account</p>
           <div className="h-px bg-brass/40 mb-6" aria-hidden="true" />
-
-          <label className="block text-sm font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="role">
-            Role
-          </label>
-          <div className="relative mb-4">
-            <Icon name="user" className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
-            <select
-              id="role"
-              value={role}
-              onChange={(e) => handleRoleChange(e.target.value)}
-              className="w-full min-h-12 text-base border border-border rounded-sm pl-10 pr-3 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-            >
-              <option value="">Select your role</option>
-              {Object.entries(ROLES).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </div>
 
           <label className="block text-sm font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="email">
             Email

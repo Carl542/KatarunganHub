@@ -1,7 +1,7 @@
 "use client";
 
 // Security update: Role selection is managed automatically via Supabase profile RBAC.
-import { useId, useState } from "react";
+import { useId, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -19,6 +19,10 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log("%c🔒 [KATARUNGANHUB VERIFICATION]: NEW LOGIN PAGE LOADED (VERSION 2.0.0) - ROLE DROPDOWN IS REMOVED!", "color: #0038a8; font-size: 14px; font-weight: bold;");
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();

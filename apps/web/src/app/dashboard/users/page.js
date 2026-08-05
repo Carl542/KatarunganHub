@@ -112,6 +112,7 @@ export default function UsersPage() {
     return (
       (u.full_name || "").toLowerCase().includes(q) ||
       (u.role || "").toLowerCase().includes(q) ||
+      (u.email || "").toLowerCase().includes(q) ||
       (u.phone_number || "").toLowerCase().includes(q)
     );
   });
@@ -145,7 +146,7 @@ export default function UsersPage() {
             />
             <input
               type="search"
-              placeholder="Search by name…"
+              placeholder="Search by name or email…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="border border-border rounded-sm pl-9 pr-3 py-2 min-h-11 bg-white w-full focus-visible:outline-3 focus-visible:outline-primary"
@@ -161,16 +162,26 @@ export default function UsersPage() {
       </div>
 
       {resetCredentials && (
-        <div className="bg-white/90 rounded-sm border border-accent/40 p-4 mb-4 max-w-md bg-accent/5">
+        <div className="bg-white border border-emerald-300 rounded-lg p-5 mb-6 max-w-lg bg-emerald-50/80 shadow-xs">
           <div className="text-sm">
-            <p className="font-medium text-accent mb-1">Password reset successful for {resetCredentials.userName}:</p>
-            <p className="ref-number font-semibold text-lg text-primary mb-3">Temp Password: {resetCredentials.tempPassword}</p>
-            <button
-              onClick={() => setResetCredentials(null)}
-              className="border border-border bg-white rounded-sm px-3 py-1.5 text-xs font-medium hover:bg-muted"
-            >
-              Close Banner
-            </button>
+            <p className="font-bold text-emerald-900 mb-1 flex items-center gap-2">
+              <Icon name="check-circle" className="w-5 h-5 text-emerald-600" />
+              Password Reset Successful for {resetCredentials.userName}!
+            </p>
+            <p className="text-xs text-emerald-800 mb-2">
+              Give this new temporary password to the user for login:
+            </p>
+            <p className="font-mono font-bold text-xl text-emerald-900 bg-white border border-emerald-200 rounded px-3 py-2 mb-3 inline-block select-all">
+              {resetCredentials.tempPassword}
+            </p>
+            <div>
+              <button
+                onClick={() => setResetCredentials(null)}
+                className="border border-emerald-300 bg-white rounded-md px-3.5 py-1.5 text-xs font-semibold text-emerald-900 hover:bg-emerald-100"
+              >
+                Close Banner
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -179,9 +190,9 @@ export default function UsersPage() {
         <div className="bg-white/90 rounded-sm border border-border p-4 mb-4 max-w-md">
           {addedCredentials ? (
             <div className="text-sm">
-              <p className="font-medium text-accent mb-2">Account created successfully — give these credentials to the user:</p>
-              <p className="ref-number font-semibold text-slate-800">Email / Login ID: {addedCredentials.email}</p>
-              <p className="ref-number font-bold text-blue-600 mb-3">Temp password: {addedCredentials.tempPassword}</p>
+              <p className="font-medium text-emerald-700 mb-2">Account created successfully — give these credentials to the user:</p>
+              <p className="font-mono text-xs text-slate-800 font-semibold mb-1">Email / Login ID: {addedCredentials.email}</p>
+              <p className="font-mono font-bold text-base text-blue-600 mb-3">Temp password: {addedCredentials.tempPassword}</p>
               <button
                 onClick={closeAddForm}
                 className="border border-border rounded-sm px-3 py-1.5 text-xs font-medium hover:bg-muted"
@@ -196,7 +207,7 @@ export default function UsersPage() {
                 <input
                   value={addForm.fullName}
                   onChange={(e) => setAddForm({ ...addForm, fullName: e.target.value })}
-                  placeholder="e.g. Juan Dela Cruz"
+                  placeholder="e.g. James Gimelga"
                   className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                 />
               </label>
@@ -215,12 +226,12 @@ export default function UsersPage() {
                 </select>
               </label>
               <label className="flex flex-col gap-1">
-                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Email (optional)</span>
+                <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Email (Login ID)</span>
                 <input
                   type="email"
                   value={addForm.email}
                   onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
-                  placeholder="e.g. juan@gmail.com"
+                  placeholder="e.g. james@gmail.com"
                   className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                 />
               </label>
@@ -265,6 +276,7 @@ export default function UsersPage() {
             <thead className="bg-primary-light text-left border-b-2 border-brass/40">
               <tr>
                 <th className="px-4 py-3 text-xs font-medium tracking-wide uppercase text-foreground-muted">Name</th>
+                <th className="px-4 py-3 text-xs font-medium tracking-wide uppercase text-foreground-muted">Login Email</th>
                 <th className="px-4 py-3 text-xs font-medium tracking-wide uppercase text-foreground-muted">Role</th>
                 <th className="px-4 py-3 text-xs font-medium tracking-wide uppercase text-foreground-muted">Phone Number</th>
                 <th className="px-4 py-3 text-xs font-medium tracking-wide uppercase text-foreground-muted">Status</th>
@@ -282,9 +294,12 @@ export default function UsersPage() {
                       <input
                         defaultValue={u.full_name}
                         onBlur={(e) => saveFullName(u.id, e.target.value)}
-                        className="bg-transparent hover:bg-white focus:bg-white border border-transparent focus:border-border rounded-sm px-1.5 py-1 text-sm font-medium text-foreground w-48"
+                        className="bg-transparent hover:bg-white focus:bg-white border border-transparent focus:border-border rounded-sm px-1.5 py-1 text-sm font-medium text-foreground w-44"
                       />
                     </div>
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-slate-700 select-all">
+                    {u.email || <span className="text-slate-400 italic">No email set</span>}
                   </td>
                   <td className="px-4 py-3">
                     <select
@@ -331,7 +346,7 @@ export default function UsersPage() {
                       <button
                         onClick={() => handleResetPassword(u)}
                         disabled={resettingId === u.id}
-                        className="border border-primary text-primary rounded-sm px-2.5 py-1 text-xs font-medium hover:bg-primary-light transition-colors disabled:opacity-40"
+                        className="border border-blue-600 text-blue-600 bg-blue-50/50 hover:bg-blue-600 hover:text-white rounded-sm px-2.5 py-1 text-xs font-semibold transition-colors disabled:opacity-40"
                       >
                         {resettingId === u.id ? "Resetting…" : "Reset Password"}
                       </button>

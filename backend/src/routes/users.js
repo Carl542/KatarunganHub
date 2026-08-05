@@ -12,12 +12,24 @@ function fallbackEmail(fullName, phoneNumber) {
   return `${slug}.${Date.now()}@resident.katarunganhub.local`;
 }
 
-router.get("/", requireAuth, requireRole("admin"), async (req, res) => {
+router.get("/", requireAuth, requireRole("admin", "secretary"), async (req, res) => {
   const supabase = getSupabaseClient();
-  const { data, error } = await supabase.from("profiles").select("*").order("full_name", { ascending: true });
+  const { data: profiles, error } = await supabase.from("profiles").select("*").order("full_name", { ascending: true });
 
   if (error) return res.status(500).json({ error: error.message });
-  res.json(data);
+
+  // Attach emails from Supabase Auth list Users
+  try {
+    const { data: authData } = await supabase.auth.admin.listUsers();
+    const emailMap = new Map((authData?.users || []).map((u) => [u.id, u.email]));
+    const merged = profiles.map((p) => ({
+      ...p,
+      email: emailMap.get(p.id) || p.email || null,
+    }));
+    return res.json(merged);
+  } catch (authErr) {
+    return res.json(profiles);
+  }
 });
 
 router.get(
@@ -74,7 +86,22 @@ router.post("/", requireAuth, requireRole("admin", "secretary"), async (req, res
   logAudit({ actorId: req.user.id, action: `Registered new ${role} account`, module: "User Accounts", complaintId: null });
 });
 
-router.patch("/:id", requireAuth, requireRole("admin"), async (req, res) => {
+router.post("/:id/reset-password", requireAuth, requireRole("admin", "secretary"), async (req, res) => {
+  const supabase = getSupabaseClient();
+  const tempPassword = generateTempPassword();
+
+  const { error: authError } = await supabase.auth.admin.updateUserById(req.params.id, {
+    password: tempPassword,
+  });
+
+  if (authError) return res.status(400).json({ error: authError.message });
+
+  res.json({ success: true, tempPassword });
+
+  logAudit({ actorId: req.user.id, action: "Reset user password", module: "User Accounts", complaintId: null });
+});
+
+router.patch("/:id", requireAuth, requireRole("admin", "secretary"), async (req, res) => {
   const { role, status, phone_number, full_name } = req.body;
   const updates = {};
   if (role) updates.role = role;

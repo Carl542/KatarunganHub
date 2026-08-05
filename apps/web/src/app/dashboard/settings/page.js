@@ -27,7 +27,7 @@ export default function SettingsPage() {
     auto_reminders_enabled: "true",
     auto_reminder_hours: "24",
     notify_lupon: "true",
-    seal_url: "/logo.png",
+    seal_url: "/images/barangay-seal.png",
   });
 
   // Gateway & Test SMS States
@@ -51,8 +51,8 @@ export default function SettingsPage() {
           setValues((prev) => ({
             ...prev,
             ...data,
-            // Ensure complete address if DB has old short string
-            barangay_address: data.barangay_address || prev.barangay_address,
+            seal_url: data.seal_url || "/images/barangay-seal.png",
+            barangay_address: data.barangay_address || "Quirino District, Padada, Davao del Sur",
           }));
           setInitialValues((prev) => ({ ...prev, ...data }));
         }
@@ -244,16 +244,16 @@ export default function SettingsPage() {
 
                   {/* Top Row: Square Seal Box (Left) + Barangay Name & Muni/Prov (Right) */}
                   <div className="flex flex-col sm:flex-row gap-4 items-stretch">
-                    {/* Square Seal Box Matching Image 1 Reference */}
-                    <div className="w-32 border border-slate-200 rounded-lg p-3 bg-white flex flex-col items-center justify-between gap-2 shrink-0 shadow-xs">
-                      <div className="w-20 h-20 flex items-center justify-center p-1">
+                    {/* Square Seal Box Matching Reference Image */}
+                    <div className="w-36 border border-slate-200 rounded-lg p-3 bg-white flex flex-col items-center justify-between gap-3 shrink-0 shadow-xs">
+                      <div className="w-24 h-24 flex items-center justify-center p-1">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={values.seal_url || "/logo.png"}
+                          src={values.seal_url || "/images/barangay-seal.png"}
                           alt="Barangay Seal"
-                          className="max-w-full max-h-full object-contain"
+                          className="w-full h-full object-contain"
                           onError={(e) => {
-                            e.currentTarget.src = "/logo.png";
+                            e.currentTarget.src = "/images/barangay-seal.png";
                           }}
                         />
                       </div>

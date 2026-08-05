@@ -42,14 +42,14 @@ export default function CaseDetailsPage({ params }) {
     return (
       <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
         <Icon name="refresh-cw" className="w-6 h-6 animate-spin text-blue-600" />
-        <p className="text-base font-medium">Loading case details…</p>
+        <p className="text-sm font-medium">Loading case details…</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-rose-50 border border-rose-200 rounded-md p-6 max-w-xl my-4 text-rose-700 font-medium text-base">
+      <div className="bg-rose-50 border border-rose-200 rounded-md p-6 max-w-xl my-4 text-rose-700 font-medium text-sm">
         {error}
       </div>
     );
@@ -67,14 +67,14 @@ export default function CaseDetailsPage({ params }) {
       {/* Top Title & Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">
             {caseData.title}
           </h1>
-          <div className="text-base text-slate-600 mt-2 flex items-center gap-3 flex-wrap font-semibold">
-            <span className="font-mono text-slate-900 text-lg font-bold">{caseData.reference_number}</span>
+          <div className="text-sm text-slate-500 mt-1 flex items-center gap-2 flex-wrap font-medium">
+            <span className="font-mono text-slate-800 font-bold">{caseData.reference_number}</span>
             <span aria-hidden="true">·</span>
             <span>{caseData.type}</span>
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
               {caseData.status}
             </span>
           </div>
@@ -85,29 +85,29 @@ export default function CaseDetailsPage({ params }) {
             <Link
               href={`/dashboard/cases/${id}/print`}
               target="_blank"
-              className="border border-slate-300 rounded-md px-4 py-2.5 flex items-center gap-2 text-base font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
+              className="border border-slate-300 rounded-md px-3.5 py-2 flex items-center gap-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
             >
-              <Icon name="file-text" className="w-5 h-5 text-slate-600" />
+              <Icon name="file-text" className="w-4 h-4 text-slate-600" />
               Print
             </Link>
           )}
           <Link
             href={backHref}
-            className="bg-blue-600 text-white rounded-md px-5 py-2.5 flex items-center gap-2 text-base font-bold hover:bg-blue-700 transition-colors shadow-xs"
+            className="bg-blue-600 text-white rounded-md px-4 py-2 flex items-center gap-2 text-sm font-semibold hover:bg-blue-700 transition-colors shadow-xs"
           >
-            <Icon name="chevron-right" className="w-5 h-5 rotate-180" />
+            <Icon name="chevron-right" className="w-4 h-4 rotate-180" />
             {backLabel}
           </Link>
         </div>
       </div>
 
-      {/* Tabs Navigation - Larger font for readability */}
+      {/* Tabs Navigation */}
       <div className="flex items-center gap-2 border-b border-slate-200">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-5 py-3 text-base font-bold border-b-2 transition-all ${
+            className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-all ${
               tab === t
                 ? "border-blue-600 text-blue-600 bg-blue-50/40 rounded-t-md"
                 : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
@@ -120,16 +120,16 @@ export default function CaseDetailsPage({ params }) {
 
       {/* TAB CONTENT */}
       {tab === "Overview" && (
-        <div className="bg-white rounded-xl border border-slate-200 p-8 max-w-4xl flex flex-col gap-6 shadow-xs">
+        <div className="bg-white rounded-lg border border-slate-200 p-6 max-w-3xl flex flex-col gap-5 shadow-xs">
           <div>
-            <h2 className="text-lg font-extrabold text-slate-900 uppercase tracking-wider mb-2">Narrative</h2>
-            <p className="text-slate-800 text-lg sm:text-xl leading-relaxed font-medium bg-slate-50 border border-slate-200 rounded-lg p-5">
+            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-1.5">Narrative</h2>
+            <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-normal bg-slate-50/60 border border-slate-200 rounded-md p-4">
               {caseData.narrative || "No narrative encoded."}
             </p>
           </div>
           <div>
-            <h2 className="text-lg font-extrabold text-slate-900 uppercase tracking-wider mb-2">Relief Requested</h2>
-            <p className="text-slate-800 text-lg sm:text-xl leading-relaxed font-medium bg-slate-50 border border-slate-200 rounded-lg p-5">
+            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-1.5">Relief Requested</h2>
+            <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-normal bg-slate-50/60 border border-slate-200 rounded-md p-4">
               {caseData.relief || "No specific relief recorded."}
             </p>
           </div>

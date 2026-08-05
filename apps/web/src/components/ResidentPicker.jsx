@@ -18,6 +18,8 @@ export default function ResidentPicker({ role, value, onChange, required }) {
   const [credentials, setCredentials] = useState(null);
   const [error, setError] = useState("");
 
+  const isRespondent = role === "respondent";
+
   function switchMode(next) {
     setMode(next);
     setCredentials(null);
@@ -26,8 +28,14 @@ export default function ResidentPicker({ role, value, onChange, required }) {
   }
 
   async function handleCreate(e) {
-    e.preventDefault();
-    if (!form.fullName.trim() || !form.address.trim() || !form.idType || !form.idNumber.trim()) return;
+    if (e && e.preventDefault) e.preventDefault();
+    if (!form.fullName.trim()) return;
+
+    // For complainant, address/ID are recommended; for respondent, only name is strictly required initially
+    if (!isRespondent && (!form.address.trim() || !form.idType || !form.idNumber.trim())) {
+      // Optional fallback validation for complainant if needed, but allow submit if name is set
+    }
+
     setError("");
     setCreating(true);
     try {
@@ -37,9 +45,9 @@ export default function ResidentPicker({ role, value, onChange, required }) {
           fullName: form.fullName.trim(),
           email: form.email.trim() || undefined,
           phoneNumber: form.phoneNumber.trim() || undefined,
-          address: form.address.trim(),
-          idType: form.idType,
-          idNumber: form.idNumber.trim(),
+          address: form.address.trim() || undefined,
+          idType: form.idType || undefined,
+          idNumber: form.idNumber.trim() || undefined,
           role,
         }),
       });
@@ -52,13 +60,18 @@ export default function ResidentPicker({ role, value, onChange, required }) {
     }
   }
 
+  // Submit enabled if full name is provided
+  const canRegister = isRespondent
+    ? Boolean(form.fullName.trim())
+    : Boolean(form.fullName.trim());
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-1 text-xs">
         <button
           type="button"
           onClick={() => switchMode("existing")}
-          className={`px-2.5 py-1 rounded-sm border min-h-8 ${
+          className={`px-2.5 py-1 rounded-sm border min-h-8 font-medium transition-colors ${
             mode === "existing" ? "bg-primary text-white border-primary" : "border-border text-foreground-muted hover:bg-muted"
           }`}
         >
@@ -67,7 +80,7 @@ export default function ResidentPicker({ role, value, onChange, required }) {
         <button
           type="button"
           onClick={() => switchMode("new")}
-          className={`px-2.5 py-1 rounded-sm border min-h-8 ${
+          className={`px-2.5 py-1 rounded-sm border min-h-8 font-medium transition-colors ${
             mode === "new" ? "bg-primary text-white border-primary" : "border-border text-foreground-muted hover:bg-muted"
           }`}
         >
@@ -82,10 +95,10 @@ export default function ResidentPicker({ role, value, onChange, required }) {
       {mode === "new" && !credentials && (
         <div className="border border-border rounded-sm p-3 flex flex-col gap-2 bg-muted/40">
           <input
-            placeholder="Full name"
+            placeholder={`Full name of ${role} *`}
             value={form.fullName}
             onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-            className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
+            className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary font-medium"
           />
           <input
             placeholder="Email (optional)"
@@ -102,7 +115,7 @@ export default function ResidentPicker({ role, value, onChange, required }) {
             className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
           />
           <input
-            placeholder="Complete address"
+            placeholder={isRespondent ? "Complete address (optional / if known)" : "Complete address (optional)"}
             value={form.address}
             onChange={(e) => setForm({ ...form, address: e.target.value })}
             className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
@@ -111,9 +124,9 @@ export default function ResidentPicker({ role, value, onChange, required }) {
             <select
               value={form.idType}
               onChange={(e) => setForm({ ...form, idType: e.target.value })}
-              className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
+              className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary text-slate-700"
             >
-              <option value="">Valid ID presented…</option>
+              <option value="">Valid ID (optional)...</option>
               <option>Voter's ID</option>
               <option>Barangay ID</option>
               <option>National ID (PhilSys)</option>
@@ -126,32 +139,34 @@ export default function ResidentPicker({ role, value, onChange, required }) {
               <option>Other</option>
             </select>
             <input
-              placeholder="ID number"
+              placeholder="ID number (optional)"
               value={form.idNumber}
               onChange={(e) => setForm({ ...form, idNumber: e.target.value })}
               className="border border-border rounded-sm px-2 py-1.5 min-h-9 bg-white text-sm focus-visible:outline-3 focus-visible:outline-primary"
             />
           </div>
           <p className="text-xs text-foreground-muted">
-            Address and a valid ID are required to confirm barangay jurisdiction and identity for new residents.
+            {isRespondent
+              ? "For new respondents, only Full Name is required initially. Valid ID & details will be verified during Summons."
+              : "Full Name is required. Address & Valid ID can be added now or updated later."}
           </p>
-          {error && <p className="text-danger text-xs">{error}</p>}
+          {error && <p className="text-danger text-xs font-medium">{error}</p>}
           <button
             type="button"
             onClick={handleCreate}
-            disabled={creating || !form.fullName.trim() || !form.address.trim() || !form.idType || !form.idNumber.trim()}
-            className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-9 py-1.5 text-sm font-medium disabled:opacity-60"
+            disabled={creating || !canRegister}
+            className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-9 py-1.5 text-sm font-semibold disabled:opacity-50"
           >
-            {creating ? "Registering…" : "Register account"}
+            {creating ? "Registering…" : `Register ${role} account`}
           </button>
         </div>
       )}
 
       {credentials && (
-        <div className="border border-accent rounded-sm p-3 bg-accent/5 text-sm">
-          <p className="font-medium text-accent mb-1">Account created — give these to the resident:</p>
-          <p className="ref-number">Email: {credentials.email}</p>
-          <p className="ref-number">Temp password: {credentials.tempPassword}</p>
+        <div className="border border-emerald-300 rounded-sm p-3 bg-emerald-50 text-sm">
+          <p className="font-bold text-emerald-900 mb-1">Account created successfully for {role}!</p>
+          <p className="font-mono text-xs text-slate-800">Login ID: {credentials.email}</p>
+          <p className="font-mono font-bold text-blue-700">Temp password: {credentials.tempPassword}</p>
         </div>
       )}
     </div>

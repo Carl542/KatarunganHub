@@ -18,17 +18,17 @@ export default function CitizenOverview() {
     setLoading(true);
     setError("");
     Promise.all([
-      apiFetch("/complaints"),
-      apiFetch("/schedules"),
-      apiFetch("/notifications"),
+      apiFetch("/complaints").catch(() => []),
+      apiFetch("/schedules").catch(() => []),
+      apiFetch("/notifications").catch(() => []),
     ])
       .then(([complaints, schedules, notifs]) => {
-        setCases(complaints || []);
-        const upcoming = (schedules || [])
+        setCases(Array.isArray(complaints) ? complaints : []);
+        const upcoming = (Array.isArray(schedules) ? schedules : [])
           .filter((s) => new Date(s.scheduled_at) >= new Date())
           .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
         setUpcomingSchedules(upcoming);
-        setNotifications(notifs || []);
+        setNotifications(Array.isArray(notifs) ? notifs : []);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -150,7 +150,7 @@ export default function CitizenOverview() {
         <>
           {/* Main 2-Column Cards Grid matching mockup */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            {/* LEFT CARD: MY CASE (7 COLS) */}
+            {/* LEFT CARD: MY CASE (6 COLS) */}
             <div className="lg:col-span-6 bg-white border border-slate-200 rounded-xl p-6 shadow-xs flex flex-col justify-between gap-6">
               <div>
                 <h2 className="text-base font-bold text-slate-900">My Case</h2>
@@ -310,7 +310,7 @@ export default function CitizenOverview() {
 
               {/* View Details Action Button */}
               <Link
-                href={activeCase ? `/dashboard/cases/${activeCase.id}` : "/dashboard/schedules"}
+                href={activeCase ? `/dashboard/cases/${activeCase.id}` : "/dashboard/my-cases"}
                 className="w-full py-3 px-4 bg-blue-600 text-white font-semibold text-sm rounded-md hover:bg-blue-700 transition-colors text-center shadow-xs block"
               >
                 View Details

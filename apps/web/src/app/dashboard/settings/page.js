@@ -12,7 +12,7 @@ export default function SettingsPage() {
   const [error, setError] = useState("");
   const [initialValues, setInitialValues] = useState({});
 
-  // Form states
+  // Form states matching design reference
   const [values, setValues] = useState({
     barangay_name: "Quirino District, Purok 3",
     municipality: "Padada",
@@ -48,7 +48,12 @@ export default function SettingsPage() {
     apiFetch("/settings")
       .then((data) => {
         if (data && Object.keys(data).length > 0) {
-          setValues((prev) => ({ ...prev, ...data }));
+          setValues((prev) => ({
+            ...prev,
+            ...data,
+            // Ensure complete address if DB has old short string
+            barangay_address: data.barangay_address || prev.barangay_address,
+          }));
           setInitialValues((prev) => ({ ...prev, ...data }));
         }
       })
@@ -228,8 +233,8 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* LEFT COLUMN (7 COLS) */}
               <div className="lg:col-span-7 flex flex-col gap-6">
-                {/* CARD 1: BARANGAY PROFILE */}
-                <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm flex flex-col gap-5">
+                {/* CARD 1: BARANGAY PROFILE - EXACT MATCH TO REFERENCE IMAGE */}
+                <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm flex flex-col gap-4">
                   <div>
                     <h2 className="text-base font-bold text-slate-900">Barangay Profile</h2>
                     <p className="text-xs text-slate-500 mt-0.5">
@@ -237,61 +242,62 @@ export default function SettingsPage() {
                     </p>
                   </div>
 
-                  {/* Seal Preview Section */}
-                  <div className="flex items-center gap-4 py-1">
-                    <div className="w-16 h-16 rounded-full border border-slate-200 bg-slate-50 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={values.seal_url || "/logo.png"}
-                        alt="Barangay Seal"
-                        className="w-full h-full object-contain"
-                        onError={(e) => {
-                          e.currentTarget.src = "/logo.png";
-                        }}
-                      />
-                    </div>
-                    <div>
+                  {/* Top Row: Square Seal Box (Left) + Barangay Name & Muni/Prov (Right) */}
+                  <div className="flex flex-col sm:flex-row gap-4 items-stretch">
+                    {/* Square Seal Box Matching Image 1 Reference */}
+                    <div className="w-32 border border-slate-200 rounded-lg p-3 bg-white flex flex-col items-center justify-between gap-2 shrink-0 shadow-xs">
+                      <div className="w-20 h-20 flex items-center justify-center p-1">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={values.seal_url || "/logo.png"}
+                          alt="Barangay Seal"
+                          className="max-w-full max-h-full object-contain"
+                          onError={(e) => {
+                            e.currentTarget.src = "/logo.png";
+                          }}
+                        />
+                      </div>
                       <button
                         type="button"
-                        onClick={() => alert("Upload custom seal feature active. Select image file.")}
-                        className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors shadow-xs"
+                        onClick={() => alert("Upload custom seal feature active.")}
+                        className="w-full py-1.5 px-2 text-xs font-semibold text-blue-600 bg-white border border-blue-600 rounded-md hover:bg-blue-50 transition-colors text-center"
                       >
                         Change Seal
                       </button>
-                      <p className="text-[11px] text-slate-400 mt-1">Official seal used in notice printouts.</p>
                     </div>
-                  </div>
 
-                  {/* Barangay Name */}
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xs font-semibold text-slate-700">Barangay Name *</label>
-                    <input
-                      type="text"
-                      value={values.barangay_name || ""}
-                      onChange={(e) => handleFieldChange("barangay_name", e.target.value)}
-                      className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                    />
-                  </div>
+                    {/* Right Inputs: Barangay Name, Municipality, Province */}
+                    <div className="flex-1 w-full flex flex-col justify-between gap-3">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-semibold text-slate-700">Barangay Name *</label>
+                        <input
+                          type="text"
+                          value={values.barangay_name || ""}
+                          onChange={(e) => handleFieldChange("barangay_name", e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                        />
+                      </div>
 
-                  {/* Municipality & Province Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1">
-                      <label className="text-xs font-semibold text-slate-700">Municipality/City *</label>
-                      <input
-                        type="text"
-                        value={values.municipality || ""}
-                        onChange={(e) => handleFieldChange("municipality", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="text-xs font-semibold text-slate-700">Province *</label>
-                      <input
-                        type="text"
-                        value={values.province || ""}
-                        onChange={(e) => handleFieldChange("province", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-xs font-semibold text-slate-700">Municipality/City *</label>
+                          <input
+                            type="text"
+                            value={values.municipality || ""}
+                            onChange={(e) => handleFieldChange("municipality", e.target.value)}
+                            className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-xs font-semibold text-slate-700">Province *</label>
+                          <input
+                            type="text"
+                            value={values.province || ""}
+                            onChange={(e) => handleFieldChange("province", e.target.value)}
+                            className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -307,7 +313,7 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Contact Number & Official Email Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
                       <label className="text-xs font-semibold text-slate-700">Official Contact Number *</label>
                       <input
@@ -316,7 +322,7 @@ export default function SettingsPage() {
                         onChange={(e) => handleFieldChange("barangay_contact", e.target.value)}
                         className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
                       />
-                      <span className="text-[11px] text-slate-400">Used as the sender contact in notices and printable documents.</span>
+                      <span className="text-[11px] text-slate-400 mt-0.5">Used as the sender contact in notices and printable documents.</span>
                     </div>
                     <div className="flex flex-col gap-1">
                       <label className="text-xs font-semibold text-slate-700">Official Email</label>
@@ -331,12 +337,12 @@ export default function SettingsPage() {
                 </div>
 
                 {/* CARD 2: OFFICE & CASE SETTINGS */}
-                <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm flex flex-col gap-5">
+                <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm flex flex-col gap-4">
                   <div>
                     <h2 className="text-base font-bold text-slate-900">Office & Case Settings</h2>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
                       <label className="text-xs font-semibold text-slate-700">Office Hours *</label>
                       <select
@@ -364,7 +370,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
                       <label className="text-xs font-semibold text-slate-700">Case Number Prefix *</label>
                       <input
@@ -385,7 +391,7 @@ export default function SettingsPage() {
                       />
                     </div>
                   </div>
-                  <span className="text-[11px] text-slate-400">These settings are used when creating and managing cases.</span>
+                  <span className="text-[11px] text-slate-400 mt-0.5">These settings are used when creating and managing cases.</span>
                 </div>
               </div>
 

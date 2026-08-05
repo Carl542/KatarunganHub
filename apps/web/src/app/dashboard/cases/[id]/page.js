@@ -38,58 +38,79 @@ export default function CaseDetailsPage({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  if (loading) return <p className="text-foreground-muted">Loading…</p>;
-  if (error) return <p className="text-danger">{error}</p>;
+  if (loading) {
+    return (
+      <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
+        <Icon name="refresh-cw" className="w-6 h-6 animate-spin text-blue-600" />
+        <p className="text-base font-medium">Loading case details…</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-rose-50 border border-rose-200 rounded-md p-6 max-w-xl my-4 text-rose-700 font-medium text-base">
+        {error}
+      </div>
+    );
+  }
+
   if (!caseData) return null;
 
   const hasWorkflow = caseData.type === "Lupon" || caseData.type === "Non-Lupon";
-  // Complainants/respondents only have "My Cases" in their sidebar nav (not
-  // the staff-facing "Cases" list), so send them back to the page they
-  // actually navigated from.
   const isCaseParty = ["complainant", "respondent"].includes(profile?.role);
   const backHref = isCaseParty ? "/dashboard/my-cases" : "/dashboard/cases";
   const backLabel = isCaseParty ? "Back to My Cases" : "Back to Cases";
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4 gap-3">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-12 text-slate-800">
+      {/* Top Title & Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <h1 className="font-display text-2xl font-semibold">{caseData.title}</h1>
-          <p className="text-sm text-foreground-muted mt-1 flex items-center gap-2 flex-wrap">
-            <span className="ref-number">{caseData.reference_number}</span>
+          <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            {caseData.title}
+          </h1>
+          <div className="text-base text-slate-600 mt-2 flex items-center gap-3 flex-wrap font-semibold">
+            <span className="font-mono text-slate-900 text-lg font-bold">{caseData.reference_number}</span>
             <span aria-hidden="true">·</span>
             <span>{caseData.type}</span>
-            <span className="stamp text-primary">{caseData.status}</span>
-          </p>
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+              {caseData.status}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+
+        <div className="flex items-center gap-3 shrink-0">
           {STAFF_ROLES.includes(profile?.role) && (
             <Link
               href={`/dashboard/cases/${id}/print`}
               target="_blank"
-              className="border border-border rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors"
+              className="border border-slate-300 rounded-md px-4 py-2.5 flex items-center gap-2 text-base font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
             >
-              <Icon name="file-text" className="w-4 h-4" />
+              <Icon name="file-text" className="w-5 h-5 text-slate-600" />
               Print
             </Link>
           )}
           <Link
             href={backHref}
-            className="bg-primary text-white rounded-sm px-4 min-h-11 flex items-center gap-2 text-sm font-medium hover:bg-primary/90 transition-colors"
+            className="bg-blue-600 text-white rounded-md px-5 py-2.5 flex items-center gap-2 text-base font-bold hover:bg-blue-700 transition-colors shadow-xs"
           >
-            <Icon name="chevron-right" className="w-4 h-4 rotate-180" />
+            <Icon name="chevron-right" className="w-5 h-5 rotate-180" />
             {backLabel}
           </Link>
         </div>
       </div>
 
-      <div className="flex gap-1 mb-4 border-b">
+      {/* Tabs Navigation - Larger font for readability */}
+      <div className="flex items-center gap-2 border-b border-slate-200">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
-              tab === t ? "border-primary text-primary" : "border-transparent text-foreground-muted"
+            className={`px-5 py-3 text-base font-bold border-b-2 transition-all ${
+              tab === t
+                ? "border-blue-600 text-blue-600 bg-blue-50/40 rounded-t-md"
+                : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
             }`}
           >
             {t}
@@ -97,17 +118,25 @@ export default function CaseDetailsPage({ params }) {
         ))}
       </div>
 
+      {/* TAB CONTENT */}
       {tab === "Overview" && (
-        <div className="bg-white/90 rounded-sm border border-border p-6 max-w-3xl">
-          <h2 className="font-display text-lg font-semibold mb-2">Narrative</h2>
-          <p className="text-foreground mb-4">{caseData.narrative}</p>
-          <h2 className="font-display text-lg font-semibold mb-2">Relief requested</h2>
-          <p className="text-foreground">{caseData.relief}</p>
+        <div className="bg-white rounded-xl border border-slate-200 p-8 max-w-4xl flex flex-col gap-6 shadow-xs">
+          <div>
+            <h2 className="text-lg font-extrabold text-slate-900 uppercase tracking-wider mb-2">Narrative</h2>
+            <p className="text-slate-800 text-lg sm:text-xl leading-relaxed font-medium bg-slate-50 border border-slate-200 rounded-lg p-5">
+              {caseData.narrative || "No narrative encoded."}
+            </p>
+          </div>
+          <div>
+            <h2 className="text-lg font-extrabold text-slate-900 uppercase tracking-wider mb-2">Relief Requested</h2>
+            <p className="text-slate-800 text-lg sm:text-xl leading-relaxed font-medium bg-slate-50 border border-slate-200 rounded-lg p-5">
+              {caseData.relief || "No specific relief recorded."}
+            </p>
+          </div>
         </div>
       )}
 
       {tab === "Workflow" && hasWorkflow && <WorkflowTab caseId={id} caseData={caseData} onUpdated={load} />}
-
       {tab === "Schedules" && <SchedulesTab caseId={id} />}
       {tab === "Pangkat" && <PangkatTab caseId={id} />}
       {tab === "Attendance" && <AttendanceTab caseId={id} />}

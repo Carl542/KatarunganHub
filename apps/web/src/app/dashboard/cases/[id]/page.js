@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/apiClient";
 import Icon from "@/components/Icon";
 import SchedulesTab from "./tabs/SchedulesTab";
@@ -17,10 +18,14 @@ const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 export default function CaseDetailsPage({ params }) {
   const { id } = use(params);
   const profile = useCurrentProfile();
+  const searchParams = useSearchParams();
+  const initialTabParam = searchParams ? searchParams.get("tab") : null;
+  const validInitialTab = TABS.includes(initialTabParam) ? initialTabParam : "Overview";
+
   const [caseData, setCaseData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState("Overview");
+  const [tab, setTab] = useState(validInitialTab);
 
   function load() {
     setLoading(true);
@@ -37,6 +42,12 @@ export default function CaseDetailsPage({ params }) {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  useEffect(() => {
+    if (initialTabParam && TABS.includes(initialTabParam)) {
+      setTab(initialTabParam);
+    }
+  }, [initialTabParam]);
 
   if (loading) {
     return (

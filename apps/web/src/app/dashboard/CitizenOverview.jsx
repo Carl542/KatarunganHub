@@ -150,7 +150,7 @@ export default function CitizenOverview() {
         <>
           {/* Main 2-Column Cards Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            {/* LEFT CARD: MY CASE (6 COLS) */}
+            {/* LEFT CARD: MY CASE (6 COLS) - Navigates to Overview & Narrative */}
             <div className="lg:col-span-6 bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col justify-between gap-6">
               <div>
                 <h2 className="text-base font-bold text-slate-900">My Case</h2>
@@ -251,16 +251,16 @@ export default function CitizenOverview() {
                 </div>
               </div>
 
-              {/* View Case Action Button */}
+              {/* View Case Action Button (Opens Overview Tab) */}
               <Link
-                href={`/dashboard/cases/${activeCase.id}`}
+                href={`/dashboard/cases/${activeCase.id}?tab=Overview`}
                 className="w-full py-2.5 px-4 bg-blue-600 text-white font-semibold text-sm rounded-md hover:bg-blue-700 transition-colors text-center shadow-xs block"
               >
-                View Case
+                View Case Profile
               </Link>
             </div>
 
-            {/* RIGHT CARD: NEXT HEARING (6 COLS) */}
+            {/* RIGHT CARD: NEXT HEARING (6 COLS) - Navigates directly to Schedules Tab */}
             <div className="lg:col-span-6 bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col justify-between gap-6">
               <div>
                 <h2 className="text-base font-bold text-slate-900">Next Hearing</h2>
@@ -308,12 +308,12 @@ export default function CitizenOverview() {
                 </div>
               </div>
 
-              {/* View Details Action Button */}
+              {/* View Hearing Details Action Button (Opens Schedules Tab directly) */}
               <Link
-                href={activeCase ? `/dashboard/cases/${activeCase.id}` : "/dashboard/my-cases"}
+                href={activeCase ? `/dashboard/cases/${activeCase.id}?tab=Schedules` : "/dashboard/my-cases"}
                 className="w-full py-2.5 px-4 bg-blue-600 text-white font-semibold text-sm rounded-md hover:bg-blue-700 transition-colors text-center shadow-xs block"
               >
-                View Details
+                View Hearing Details
               </Link>
             </div>
           </div>

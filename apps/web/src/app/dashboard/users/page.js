@@ -14,7 +14,7 @@ function initialsFor(fullName) {
     .toUpperCase();
 }
 
-const STAFF_ROLE_OPTIONS = ["admin", "punong", "secretary", "lupon"];
+const ALL_ROLE_OPTIONS = ["admin", "punong", "secretary", "lupon", "complainant", "respondent"];
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -23,7 +23,7 @@ export default function UsersPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [addForm, setAddForm] = useState({ fullName: "", email: "", phoneNumber: "", role: "secretary" });
+  const [addForm, setAddForm] = useState({ fullName: "", email: "", phoneNumber: "", role: "complainant" });
   const [addError, setAddError] = useState("");
   const [adding, setAdding] = useState(false);
   const [addedCredentials, setAddedCredentials] = useState(null);
@@ -89,7 +89,7 @@ export default function UsersPage() {
         }),
       });
       setAddedCredentials({ email: created.email, tempPassword: created.tempPassword });
-      setAddForm({ fullName: "", email: "", phoneNumber: "", role: "secretary" });
+      setAddForm({ fullName: "", email: "", phoneNumber: "", role: "complainant" });
       load();
     } catch (err) {
       setAddError(err.message);
@@ -102,12 +102,18 @@ export default function UsersPage() {
     setShowAddForm(false);
     setAddedCredentials(null);
     setAddError("");
+    setAddForm({ fullName: "", email: "", phoneNumber: "", role: "complainant" });
   }
 
-  const filtered = users.filter((u) => {
-    const matchesQuery = (u.full_name || "").toLowerCase().includes(query.toLowerCase());
-    const matchesRole = roleFilter === "all" || u.role === roleFilter;
-    return matchesQuery && matchesRole;
+  const filteredUsers = users.filter((u) => {
+    if (roleFilter !== "all" && u.role !== roleFilter) return false;
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return (
+      (u.full_name || "").toLowerCase().includes(q) ||
+      (u.role || "").toLowerCase().includes(q) ||
+      (u.phone_number || "").toLowerCase().includes(q)
+    );
   });
 
   return (
@@ -115,18 +121,20 @@ export default function UsersPage() {
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div>
           <h1 className="font-display text-2xl font-semibold">User Accounts</h1>
-          <p className="text-sm text-foreground-muted mt-1">{users.length} registered account{users.length === 1 ? "" : "s"}</p>
+          <p className="text-sm text-foreground-muted mt-1">
+            {users.length} registered account{users.length === 1 ? "" : "s"}
+          </p>
         </div>
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary text-sm font-medium"
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
           >
             <option value="all">All Roles</option>
-            {Object.entries(ROLES).map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
+            {ALL_ROLE_OPTIONS.map((r) => (
+              <option key={r} value={r}>
+                {ROLES[r]}
               </option>
             ))}
           </select>
@@ -171,9 +179,9 @@ export default function UsersPage() {
         <div className="bg-white/90 rounded-sm border border-border p-4 mb-4 max-w-md">
           {addedCredentials ? (
             <div className="text-sm">
-              <p className="font-medium text-accent mb-2">Account created — give these to the staff member:</p>
-              <p className="ref-number">Email: {addedCredentials.email}</p>
-              <p className="ref-number mb-3">Temp password: {addedCredentials.tempPassword}</p>
+              <p className="font-medium text-accent mb-2">Account created successfully — give these credentials to the user:</p>
+              <p className="ref-number font-semibold text-slate-800">Email / Login ID: {addedCredentials.email}</p>
+              <p className="ref-number font-bold text-blue-600 mb-3">Temp password: {addedCredentials.tempPassword}</p>
               <button
                 onClick={closeAddForm}
                 className="border border-border rounded-sm px-3 py-1.5 text-xs font-medium hover:bg-muted"
@@ -188,6 +196,7 @@ export default function UsersPage() {
                 <input
                   value={addForm.fullName}
                   onChange={(e) => setAddForm({ ...addForm, fullName: e.target.value })}
+                  placeholder="e.g. Juan Dela Cruz"
                   className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                 />
               </label>
@@ -196,9 +205,9 @@ export default function UsersPage() {
                 <select
                   value={addForm.role}
                   onChange={(e) => setAddForm({ ...addForm, role: e.target.value })}
-                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                  className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary font-medium text-slate-900"
                 >
-                  {STAFF_ROLE_OPTIONS.map((r) => (
+                  {ALL_ROLE_OPTIONS.map((r) => (
                     <option key={r} value={r}>
                       {ROLES[r]}
                     </option>
@@ -211,6 +220,7 @@ export default function UsersPage() {
                   type="email"
                   value={addForm.email}
                   onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                  placeholder="e.g. juan@gmail.com"
                   className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                 />
               </label>
@@ -220,30 +230,36 @@ export default function UsersPage() {
                   type="tel"
                   value={addForm.phoneNumber}
                   onChange={(e) => setAddForm({ ...addForm, phoneNumber: e.target.value })}
+                  placeholder="09171234567"
                   className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary"
                 />
               </label>
-              {addError && <p className="text-danger text-sm">{addError}</p>}
-              <button
-                type="submit"
-                disabled={adding || !addForm.fullName.trim()}
-                className="bg-primary text-white rounded-sm hover:bg-primary/90 transition-colors min-h-11 py-2 font-medium disabled:opacity-60"
-              >
-                {adding ? "Creating…" : "Create account"}
-              </button>
+              {addError && <p className="text-xs text-danger font-medium">{addError}</p>}
+              <div className="flex justify-end gap-2 mt-1">
+                <button
+                  type="button"
+                  onClick={closeAddForm}
+                  className="border border-border rounded-sm px-4 py-2 text-sm font-medium hover:bg-muted"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={adding || !addForm.fullName.trim()}
+                  className="bg-primary text-white rounded-sm px-4 py-2 text-sm font-medium hover:bg-primary/90 disabled:opacity-40"
+                >
+                  {adding ? "Creating…" : "Create account"}
+                </button>
+              </div>
             </form>
           )}
         </div>
       )}
 
-      {loading && <p className="text-foreground-muted">Loading…</p>}
+      {loading && <p className="text-foreground-muted">Loading user accounts…</p>}
       {error && <p className="text-danger">{error}</p>}
 
-      {!loading && !error && filtered.length === 0 && (
-        <p className="text-foreground-muted">No accounts match your search/filter criteria.</p>
-      )}
-
-      {filtered.length > 0 && (
+      {!loading && !error && (
         <div className="bg-white/90 rounded-sm border border-border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-primary-light text-left border-b-2 border-brass/40">
@@ -256,73 +272,73 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((u) => {
-                const isActive = u.status === "Active" || !u.status;
-                return (
-                  <tr key={u.id} className="border-t border-border hover:bg-muted/60 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-8 h-8 rounded-full bg-primary-light text-primary font-display font-semibold flex items-center justify-center text-xs shrink-0"
-                          aria-hidden="true"
-                        >
-                          {initialsFor(u.full_name)}
-                        </div>
-                        <input
-                          defaultValue={u.full_name || ""}
-                          onBlur={(e) => saveFullName(u.id, e.target.value)}
-                          className="font-medium border border-transparent hover:border-border focus:border-border rounded-sm px-2 py-1 -mx-2 bg-transparent focus-visible:outline-3 focus-visible:outline-primary min-w-[10rem]"
-                        />
+              {filteredUsers.map((u) => (
+                <tr key={u.id} className="border-t border-border hover:bg-muted/60 transition-colors">
+                  <td className="px-4 py-3 font-medium">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-primary flex items-center justify-center font-bold text-xs shrink-0">
+                        {initialsFor(u.full_name)}
                       </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <select
-                        value={u.role}
-                        onChange={(e) => updateUser(u.id, { role: e.target.value })}
-                        className="border border-border rounded-sm px-2 py-1.5 bg-white focus-visible:outline-3 focus-visible:outline-primary"
-                      >
-                        {Object.entries(ROLES).map(([id, label]) => (
-                          <option key={id} value={id}>
-                            {label}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-4 py-3">
                       <input
-                        type="tel"
-                        defaultValue={u.phone_number || ""}
-                        placeholder="09171234567"
-                        onBlur={(e) => savePhoneNumber(u.id, e.target.value)}
-                        className="ref-number border border-border rounded-sm px-2 py-1.5 w-36 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+                        defaultValue={u.full_name}
+                        onBlur={(e) => saveFullName(u.id, e.target.value)}
+                        className="bg-transparent hover:bg-white focus:bg-white border border-transparent focus:border-border rounded-sm px-1.5 py-1 text-sm font-medium text-foreground w-48"
                       />
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`stamp ${isActive ? "text-accent" : "text-foreground-muted"}`}>{u.status || "Active"}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => updateUser(u.id, { status: isActive ? "Inactive" : "Active" })}
-                          className={`text-xs font-medium rounded-sm px-3 py-1.5 min-h-9 border transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary ${isActive
-                            ? "border-danger text-danger hover:bg-danger hover:text-white"
-                            : "border-accent text-accent hover:bg-accent hover:text-white"
-                          }`}
-                        >
-                          {isActive ? "Deactivate" : "Activate"}
-                        </button>
-                        <button
-                          onClick={() => handleResetPassword(u)}
-                          disabled={resettingId === u.id}
-                          className="text-xs font-medium rounded-sm px-3 py-1.5 min-h-9 border border-primary text-primary hover:bg-primary hover:text-white transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
-                        >
-                          {resettingId === u.id ? "Resetting…" : "Reset Password"}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={u.role}
+                      onChange={(e) => updateUser(u.id, { role: e.target.value })}
+                      className="border border-border rounded-sm px-2 py-1 bg-white text-xs font-medium focus-visible:outline-2 focus-visible:outline-primary"
+                    >
+                      {ALL_ROLE_OPTIONS.map((r) => (
+                        <option key={r} value={r}>
+                          {ROLES[r]}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-foreground-muted">
+                    <input
+                      defaultValue={u.phone_number || ""}
+                      placeholder="Add phone…"
+                      onBlur={(e) => savePhoneNumber(u.id, e.target.value)}
+                      className="bg-transparent hover:bg-white focus:bg-white border border-transparent focus:border-border rounded-sm px-1.5 py-1 text-xs font-mono text-foreground-muted w-32"
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`stamp text-xs ${
+                        u.status === "Inactive"
+                          ? "text-foreground-muted border-foreground-muted/30"
+                          : "text-accent border-accent/40"
+                      }`}
+                    >
+                      {u.status || "Active"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          updateUser(u.id, { status: u.status === "Inactive" ? "Active" : "Inactive" })
+                        }
+                        className="border border-border rounded-sm px-2.5 py-1 text-xs font-medium hover:bg-muted transition-colors"
+                      >
+                        {u.status === "Inactive" ? "Activate" : "Deactivate"}
+                      </button>
+                      <button
+                        onClick={() => handleResetPassword(u)}
+                        disabled={resettingId === u.id}
+                        className="border border-primary text-primary rounded-sm px-2.5 py-1 text-xs font-medium hover:bg-primary-light transition-colors disabled:opacity-40"
+                      >
+                        {resettingId === u.id ? "Resetting…" : "Reset Password"}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

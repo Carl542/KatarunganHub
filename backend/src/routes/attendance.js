@@ -27,22 +27,37 @@ router.post("/", requireAuth, requireRole(...STAFF_ROLES), upload.single("file")
     if (uploadError) return res.status(500).json({ error: uploadError.message });
   }
 
-  const { data, error } = await supabase
+  const baseRecord = {
+    complaint_id: req.params.complaintId,
+    schedule_id: scheduleId || null,
+    complainant_attendance: complainantAttendance || "Present",
+    respondent_attendance: respondentAttendance || "Present",
+    lupon_attendance: luponAttendance || null,
+    result: result || null,
+    remarks: remarks || null,
+    recorded_by: req.user.id,
+  };
+
+  const fullRecord = attachmentPath
+    ? { ...baseRecord, attachment_path: attachmentPath, original_filename: originalFilename }
+    : baseRecord;
+
+  let { data, error } = await supabase
     .from("attendance_records")
-    .insert({
-      complaint_id: req.params.complaintId,
-      schedule_id: scheduleId || null,
-      complainant_attendance: complainantAttendance,
-      respondent_attendance: respondentAttendance,
-      lupon_attendance: luponAttendance,
-      result,
-      remarks,
-      attachment_path: attachmentPath,
-      original_filename: originalFilename,
-      recorded_by: req.user.id,
-    })
+    .insert(fullRecord)
     .select()
     .single();
+
+  // Fallback retry if attachment_path column is missing in legacy schema
+  if (error && error.message && error.message.includes("attachment_path")) {
+    const retry = await supabase
+      .from("attendance_records")
+      .insert(baseRecord)
+      .select()
+      .single();
+    data = retry.data;
+    error = retry.error;
+  }
 
   if (error) return res.status(500).json({ error: error.message });
   res.status(201).json(data);
@@ -59,7 +74,7 @@ router.get("/:recordId/attachment", requireAuth, requireCaseAccess, async (req, 
   const supabase = getSupabaseClient();
   const { data: record, error } = await supabase
     .from("attendance_records")
-    .select("attachment_path, original_filename")
+    .select("*")
     .eq("id", req.params.recordId)
     .single();
 
@@ -101,4 +116,3 @@ router.get("/", requireAuth, requireCaseAccess, async (req, res) => {
 });
 
 export default router;
-

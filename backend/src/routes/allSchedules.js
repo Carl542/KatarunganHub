@@ -4,26 +4,15 @@ import { getSupabaseClient } from "../lib/supabaseClient.js";
 import { notify } from "../lib/notify.js";
 
 const router = Router();
+const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
 
-router.get("/", requireAuth, async (req, res) => {
+router.get("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
   const supabase = getSupabaseClient();
-  let query = supabase
+  const { data, error } = await supabase
     .from("mediation_schedules")
-    .select("*, complaint:complaints(reference_number, title, complainant_id, respondent_id)")
+    .select("*, complaint:complaints(reference_number, title)")
     .order("scheduled_at", { ascending: true });
 
-  if (["complainant", "respondent"].includes(req.user.role)) {
-    const { data: userComplaints } = await supabase
-      .from("complaints")
-      .select("id")
-      .or(`complainant_id.eq.${req.user.id},respondent_id.eq.${req.user.id}`);
-
-    const complaintIds = (userComplaints || []).map((c) => c.id);
-    if (complaintIds.length === 0) return res.json([]);
-    query = query.in("complaint_id", complaintIds);
-  }
-
-  const { data, error } = await query;
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 });

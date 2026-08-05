@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
+import { useCurrentProfile } from "@/lib/useCurrentProfile";
 import Icon from "@/components/Icon";
 import StatCard from "@/components/StatCard";
 
@@ -31,6 +32,9 @@ function withinDateRange(dateStr, range) {
 }
 
 export default function NotificationsPage() {
+  const profile = useCurrentProfile();
+  const isCitizen = ["complainant", "respondent"].includes(profile?.role);
+
   const [notifications, setNotifications] = useState([]);
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
@@ -113,6 +117,82 @@ export default function NotificationsPage() {
     URL.revokeObjectURL(url);
   }
 
+  if (loading) {
+    return (
+      <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
+        <Icon name="refresh-cw" className="w-6 h-6 animate-spin text-blue-600" />
+        <p className="text-sm font-medium">Loading notifications…</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className="text-rose-600 bg-rose-50 border border-rose-200 rounded-md p-4 text-sm font-medium">{error}</p>;
+  }
+
+  // CITIZEN PERSONAL NOTIFICATIONS INBOX VIEW
+  if (isCitizen) {
+    return (
+      <div className="flex flex-col gap-6 max-w-4xl mx-auto pb-12 text-slate-800">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">Notifications</h1>
+          <p className="text-sm text-slate-500 mt-1">Updates and SMS alerts regarding your registered cases.</p>
+        </div>
+
+        {notifications.length === 0 ? (
+          <div className="bg-white border border-slate-200 rounded-lg p-12 text-center flex flex-col items-center gap-3 shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+              <Icon name="bell" className="w-6 h-6" />
+            </div>
+            <h2 className="text-base font-bold text-slate-900">No Notifications</h2>
+            <p className="text-xs text-slate-500 max-w-md">You have no notification alerts recorded yet.</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {notifications.map((n) => (
+              <div
+                key={n.id}
+                className="bg-white border border-slate-200 rounded-lg p-4 shadow-xs flex items-start justify-between gap-4 transition-colors hover:border-slate-300"
+              >
+                <div className="flex items-start gap-3.5">
+                  <div className="w-9 h-9 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 mt-0.5">
+                    <Icon name="bell" className="w-4.5 h-4.5" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm font-semibold text-slate-800 leading-snug">{n.message}</p>
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <span>
+                        {new Date(n.created_at).toLocaleString("en-PH", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                      {n.complaint?.reference_number && (
+                        <>
+                          <span>·</span>
+                          <Link
+                            href={`/dashboard/cases/${n.complaint_id}`}
+                            className="font-mono text-blue-600 font-bold hover:underline"
+                          >
+                            {n.complaint.reference_number}
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ADMIN / STAFF SMS TELEMETRY DASHBOARD VIEW
   return (
     <div>
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
@@ -137,12 +217,9 @@ export default function NotificationsPage() {
         )}
       </div>
 
-      {loading && <p className="text-foreground-muted">Loading…</p>}
-      {error && <p className="text-danger">{error}</p>}
+      {notifications.length === 0 && <p className="text-foreground-muted">No notifications yet.</p>}
 
-      {!loading && !error && notifications.length === 0 && <p className="text-foreground-muted">No notifications yet.</p>}
-
-      {!loading && notifications.length > 0 && (
+      {notifications.length > 0 && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <StatCard label="All Notifications" value={total} icon="bell" color="primary" subtitle="Total notifications" />

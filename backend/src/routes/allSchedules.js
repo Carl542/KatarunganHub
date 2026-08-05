@@ -10,7 +10,9 @@ router.get("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("mediation_schedules")
-    .select("*, complaint:complaints(reference_number, title)")
+    .select(
+      "*, complaint:complaints(reference_number, title, complainant:profiles!complainant_id(full_name), respondent:profiles!respondent_id(full_name)), facilitator:profiles!facilitator_id(full_name)"
+    )
     .order("scheduled_at", { ascending: true });
 
   if (error) return res.status(500).json({ error: error.message });

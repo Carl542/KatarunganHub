@@ -600,13 +600,14 @@ export default function SchedulesPage() {
                         {/* Case Number & Title */}
                         <div>
                           <p className="text-[0.7rem] font-bold text-foreground-muted tracking-wide">
-                            {s.complaint?.reference_number || "KP-2026-071"}
+                            {s.complaint?.reference_number || "KH-2026-005"}
                           </p>
                           <Link
                             href={`/dashboard/cases/${s.complaint_id}`}
                             className="font-bold text-sm text-foreground hover:text-primary transition-colors block mt-0.5"
                           >
-                            {s.complaint?.complainant_name || "Reyes"} vs. {s.complaint?.respondent_name || "Santos"}
+                            {s.complaint?.complainant?.full_name || s.complaint?.complainant_name || "Complainant"} vs.{" "}
+                            {s.complaint?.respondent?.full_name || s.complaint?.respondent_name || "Respondent"}
                           </Link>
                           {s.complaint?.title && (
                             <p className="text-xs text-foreground-muted truncate mt-0.5">{s.complaint.title}</p>
@@ -624,7 +625,7 @@ export default function SchedulesPage() {
                             <span className="truncate">
                               {s.facilitator?.full_name
                                 ? `Facilitator: ${s.facilitator.full_name}`
-                                : "Conciliator: Ramon P. Reyes"}
+                                : "Conciliator: Punong Barangay / Secretary"}
                             </span>
                           </p>
                         </div>

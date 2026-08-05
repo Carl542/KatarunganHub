@@ -84,14 +84,20 @@ export default function CitizenOverview() {
     );
   }
 
-  // Active or most recent case for respondent/complainant
+  // Active (pending/ongoing) case for respondent/complainant.
+  // Closed cases are cleared from active overview and viewable in My Cases history.
   const activeCase =
-    cases.find((c) => c.status !== "Closed") || cases[0] || null;
+    cases.find(
+      (c) =>
+        c.status !== "Closed" &&
+        c.workflow_stage !== "Closed" &&
+        c.status !== "Proper disposition"
+    ) || null;
 
   // Next hearing schedule for active case
   const nextHearing = activeCase
-    ? upcomingSchedules.find((s) => s.complaint_id === activeCase.id) || upcomingSchedules[0]
-    : upcomingSchedules[0];
+    ? upcomingSchedules.find((s) => s.complaint_id === activeCase.id) || null
+    : null;
 
   // Latest notification
   const latestNotif = notifications[0];
@@ -368,15 +374,22 @@ export default function CitizenOverview() {
           </div>
         </>
       ) : (
-        /* Empty state when citizen has no cases */
+        /* Empty state when citizen has no active pending cases */
         <div className="bg-white border border-slate-200 rounded-lg p-12 text-center flex flex-col items-center gap-3 shadow-xs">
-          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-            <Icon name="clipboard-list" className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <Icon name="check-circle" className="w-6 h-6" />
           </div>
-          <h2 className="text-base font-bold text-slate-900">No Cases on Record</h2>
+          <h2 className="text-base font-bold text-slate-900">No Active Pending Cases</h2>
           <p className="text-xs text-slate-500 max-w-md">
-            You currently have no active or historical barangay cases registered under your profile.
+            You currently have no ongoing or pending barangay cases. All resolved and historical cases can be accessed anytime under My Cases.
           </p>
+          <Link
+            href="/dashboard/my-cases"
+            className="mt-2 px-4 py-2.5 bg-blue-600 text-white font-semibold text-xs rounded-md hover:bg-blue-700 transition-colors shadow-xs inline-flex items-center gap-2"
+          >
+            <Icon name="folder" className="w-4 h-4" />
+            View Case History (My Cases)
+          </Link>
         </div>
       )}
     </div>

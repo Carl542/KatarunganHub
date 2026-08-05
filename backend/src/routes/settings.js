@@ -5,7 +5,18 @@ import { logAudit } from "../lib/auditLog.js";
 
 const router = Router();
 const STAFF_ROLES = ["admin", "punong", "secretary", "lupon"];
-const PUBLIC_KEYS = ["barangay_name", "barangay_address", "barangay_contact"];
+const PUBLIC_KEYS = [
+  "barangay_name",
+  "barangay_address",
+  "barangay_contact",
+  "municipality",
+  "province",
+  "official_email",
+  "office_hours",
+  "default_venue",
+  "case_prefix",
+  "current_year",
+];
 
 // Public — no requireAuth. Used by the login/track pages and dashboard
 // header, which citizens and anonymous visitors also see.

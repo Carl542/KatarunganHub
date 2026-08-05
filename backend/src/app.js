@@ -16,7 +16,24 @@ import referenceDataRouter from "./routes/referenceData.js";
 
 export function createApp() {
   const app = express();
-  app.use(cors({ origin: process.env.WEB_ORIGIN || "http://localhost:3000" }));
+  const allowedOrigin = process.env.WEB_ORIGIN;
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (
+          origin.endsWith(".vercel.app") ||
+          origin.includes("localhost") ||
+          origin.includes("127.0.0.1") ||
+          (allowedOrigin && origin === allowedOrigin)
+        ) {
+          return callback(null, true);
+        }
+        return callback(null, true);
+      },
+      credentials: true,
+    })
+  );
   app.use(express.json());
 
   app.get("/health", (req, res) => {

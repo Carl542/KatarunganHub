@@ -54,7 +54,9 @@ export default function AdminOverview() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchOverview = () => {
+    setLoading(true);
+    setError("");
     Promise.all([
       apiFetch("/users"),
       apiFetch("/audit-logs"),
@@ -78,10 +80,34 @@ export default function AdminOverview() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchOverview();
   }, []);
 
   if (loading) return <p className="text-foreground-muted">Loading overview…</p>;
-  if (error) return <p className="text-danger">{error}</p>;
+  if (error)
+    return (
+      <div className="bg-rose-50 border border-rose-200 rounded-md p-6 max-w-xl my-4 flex flex-col gap-3">
+        <div className="flex items-center gap-2 text-rose-800 font-semibold text-base">
+          <Icon name="alert-circle" className="w-5 h-5 shrink-0 text-rose-600" />
+          <span>Server Connection Issue</span>
+        </div>
+        <p className="text-sm text-rose-700">
+          {error.includes("Failed to fetch")
+            ? "Could not reach the backend server API. If the server was sleeping (Render free tier), it may take 20-30 seconds to wake up."
+            : error}
+        </p>
+        <button
+          onClick={fetchOverview}
+          className="self-start px-4 py-2 bg-rose-700 text-white font-medium text-sm rounded-md hover:bg-rose-800 transition-colors shadow-sm flex items-center gap-2"
+        >
+          <Icon name="refresh-cw" className="w-4 h-4" />
+          Retry Connection
+        </button>
+      </div>
+    );
 
   return (
     <div>

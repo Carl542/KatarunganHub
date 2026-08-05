@@ -220,7 +220,19 @@ export default function SchedulesPage() {
         </div>
 
         <button
-          onClick={() => setShowAddForm((v) => !v)}
+          onClick={() => {
+            if (showAddForm) {
+              setShowAddForm(false);
+            } else {
+              const day = selectedDay || today.getDate();
+              const targetDate = new Date(cursor.year, cursor.month, day, 9, 0, 0);
+              const yyyy = targetDate.getFullYear();
+              const mm = String(targetDate.getMonth() + 1).padStart(2, "0");
+              const dd = String(targetDate.getDate()).padStart(2, "0");
+              setForm((f) => ({ ...f, scheduledAt: `${yyyy}-${mm}-${dd}T09:00` }));
+              setShowAddForm(true);
+            }
+          }}
           className="bg-primary text-white hover:bg-primary/90 transition-all shadow-sm rounded-md px-4 py-2.5 text-sm font-semibold flex items-center gap-2"
         >
           <Icon name="plus" className="w-4 h-4" />

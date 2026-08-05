@@ -21,18 +21,20 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <h1 className="font-display text-2xl font-semibold mb-1">
-        {profile.role === "admin" ? "System Administration" : `${greeting()}, ${profile.full_name}!`}
-      </h1>
-      <p className="text-foreground-muted mb-6">
-        {profile.role === "admin"
-          ? "Manage accounts, Lupon profiles, and review recent system activity."
-          : isCaseStaff
-          ? "Here's what's happening across Katarungang Pambarangay cases."
-          : isCitizen
-          ? "Track the status of your case here — anytime, without visiting the barangay."
-          : `You are signed in as ${ROLES[profile.role] || profile.role}.`}
-      </p>
+      {!isCitizen && (
+        <>
+          <h1 className="font-display text-2xl font-semibold mb-1">
+            {profile.role === "admin" ? "System Administration" : `${greeting()}, ${profile.full_name}!`}
+          </h1>
+          <p className="text-foreground-muted mb-6">
+            {profile.role === "admin"
+              ? "Manage accounts, Lupon profiles, and review recent system activity."
+              : isCaseStaff
+              ? "Here's what's happening across Katarungang Pambarangay cases."
+              : `You are signed in as ${ROLES[profile.role] || profile.role}.`}
+          </p>
+        </>
+      )}
 
       {profile.role === "admin" && <AdminOverview />}
       {isCaseStaff && <CaseOverview />}

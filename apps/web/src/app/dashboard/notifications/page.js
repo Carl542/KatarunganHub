@@ -31,6 +31,38 @@ function withinDateRange(dateStr, range) {
   return date >= cutoff;
 }
 
+// Derive a title from notification message content
+function getNotificationTitle(msg = "") {
+  const lower = msg.toLowerCase();
+  if (lower.includes("follow-up")) return "Follow-up conference reminder";
+  if (lower.includes("punong barangay hearing")) return "Punong Barangay hearing reminder";
+  if (lower.includes("pangkat hearing")) return "Pangkat hearing reminder";
+  if (lower.includes("moved to")) return "Case moved to mediation";
+  if (lower.includes("summons issued")) return "Summons issued";
+  if (lower.includes("jurisdiction")) return "Case under jurisdiction review";
+  if (lower.includes("scheduled")) return "Mediation scheduled";
+  if (lower.includes("reminder") || lower.includes("pahinumdom")) return "Hearing reminder";
+  if (lower.includes("recorded") || lower.includes("filed")) return "Case officially filed";
+  return "Notification Update";
+}
+
+// Format date timestamp to match "Aug 4, 2026 · 12:58 AM"
+function formatNotificationDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  const monthDayYear = d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const time = d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+  return `${monthDayYear} · ${time}`;
+}
+
 export default function NotificationsPage() {
   const profile = useCurrentProfile();
   const isCitizen = ["complainant", "respondent"].includes(profile?.role);
@@ -117,6 +149,29 @@ export default function NotificationsPage() {
     URL.revokeObjectURL(url);
   }
 
+  // Split citizen notifications into Recent (latest 3 or < 7 days) and Earlier
+  const { recentNotifs, earlierNotifs } = useMemo(() => {
+    if (!isCitizen || notifications.length === 0) return { recentNotifs: [], earlierNotifs: [] };
+    const now = new Date().getTime();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+
+    const recent = [];
+    const earlier = [];
+
+    notifications.forEach((n, index) => {
+      const itemTime = new Date(n.created_at).getTime();
+      const isRecentDate = now - itemTime < sevenDaysMs;
+      // Top 3 items or within 7 days go to Recent
+      if (index < 3 || isRecentDate) {
+        recent.push(n);
+      } else {
+        earlier.push(n);
+      }
+    });
+
+    return { recentNotifs: recent, earlierNotifs: earlier };
+  }, [isCitizen, notifications]);
+
   if (loading) {
     return (
       <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
@@ -130,17 +185,18 @@ export default function NotificationsPage() {
     return <p className="text-rose-600 bg-rose-50 border border-rose-200 rounded-md p-4 text-sm font-medium">{error}</p>;
   }
 
-  // CITIZEN PERSONAL NOTIFICATIONS INBOX VIEW
+  // CITIZEN INBOX DESIGN MATCHING REFERENCE MOCKUP
   if (isCitizen) {
     return (
-      <div className="flex flex-col gap-6 max-w-4xl mx-auto pb-12 text-slate-800">
+      <div className="flex flex-col gap-6 max-w-5xl mx-auto pb-16 text-slate-800">
+        {/* Header Title & Subtitle */}
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">Notifications</h1>
-          <p className="text-sm text-slate-500 mt-1">Updates and SMS alerts regarding your registered cases.</p>
+          <p className="text-sm text-slate-500 mt-1">Updates and reminders about your cases.</p>
         </div>
 
         {notifications.length === 0 ? (
-          <div className="bg-white border border-slate-200 rounded-lg p-12 text-center flex flex-col items-center gap-3 shadow-xs">
+          <div className="bg-white border border-slate-200 rounded-xl p-12 text-center flex flex-col items-center gap-3 shadow-xs">
             <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
               <Icon name="bell" className="w-6 h-6" />
             </div>
@@ -148,44 +204,102 @@ export default function NotificationsPage() {
             <p className="text-xs text-slate-500 max-w-md">You have no notification alerts recorded yet.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {notifications.map((n) => (
-              <div
-                key={n.id}
-                className="bg-white border border-slate-200 rounded-lg p-4 shadow-xs flex items-start justify-between gap-4 transition-colors hover:border-slate-300"
-              >
-                <div className="flex items-start gap-3.5">
-                  <div className="w-9 h-9 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 mt-0.5">
-                    <Icon name="bell" className="w-4.5 h-4.5" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm font-semibold text-slate-800 leading-snug">{n.message}</p>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <span>
-                        {new Date(n.created_at).toLocaleString("en-PH", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                      {n.complaint?.reference_number && (
-                        <>
-                          <span>·</span>
-                          <Link
-                            href={`/dashboard/cases/${n.complaint_id}`}
-                            className="font-mono text-blue-600 font-bold hover:underline"
-                          >
-                            {n.complaint.reference_number}
-                          </Link>
-                        </>
-                      )}
-                    </div>
-                  </div>
+          /* Main Card Container matching reference mockup */
+          <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden p-6 flex flex-col gap-6">
+            {/* RECENT SECTION */}
+            {recentNotifs.length > 0 && (
+              <div className="flex flex-col gap-3">
+                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Recent</h2>
+                <div className="flex flex-col divide-y divide-slate-100 border border-slate-100 rounded-lg overflow-hidden">
+                  {recentNotifs.map((n, idx) => {
+                    const title = getNotificationTitle(n.message);
+                    const formattedDate = formatNotificationDate(n.created_at);
+                    const isNew = idx < 2;
+
+                    return (
+                      <div
+                        key={n.id}
+                        className={`p-4 flex items-start justify-between gap-4 transition-colors ${
+                          isNew ? "bg-blue-50/40" : "bg-slate-50/50"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3.5 min-w-0">
+                          {/* Blue Dot Indicator for Unread/New */}
+                          <div className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0 mt-3.5" />
+
+                          {/* Bell Icon in Circle */}
+                          <div className="w-10 h-10 rounded-full bg-blue-100/70 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+                            <Icon name="bell" className="w-5 h-5" />
+                          </div>
+
+                          {/* Details */}
+                          <div className="flex flex-col gap-0.5 min-w-0">
+                            <h3 className="text-sm font-bold text-slate-900 leading-snug">{title}</h3>
+                            <p className="text-xs text-slate-600 font-medium leading-relaxed">{n.message}</p>
+                            {n.complaint?.reference_number && (
+                              <Link
+                                href={`/dashboard/cases/${n.complaint_id}`}
+                                className="font-mono text-xs font-bold text-blue-600 hover:underline mt-1 inline-block"
+                              >
+                                {n.complaint.reference_number}
+                              </Link>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Timestamp */}
+                        <span className="text-xs text-slate-500 font-medium shrink-0 whitespace-nowrap mt-0.5">
+                          {formattedDate}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            ))}
+            )}
+
+            {/* EARLIER SECTION */}
+            {earlierNotifs.length > 0 && (
+              <div className="flex flex-col gap-3 pt-2 border-t border-slate-100">
+                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Earlier</h2>
+                <div className="flex flex-col divide-y divide-slate-100">
+                  {earlierNotifs.map((n) => {
+                    const title = getNotificationTitle(n.message);
+                    const formattedDate = formatNotificationDate(n.created_at);
+
+                    return (
+                      <div key={n.id} className="p-4 flex items-start justify-between gap-4 transition-colors hover:bg-slate-50/60">
+                        <div className="flex items-start gap-3.5 min-w-0">
+                          {/* Neutral Bell Icon for Earlier */}
+                          <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shrink-0">
+                            <Icon name="bell" className="w-5 h-5" />
+                          </div>
+
+                          {/* Details */}
+                          <div className="flex flex-col gap-0.5 min-w-0">
+                            <h3 className="text-sm font-bold text-slate-800 leading-snug">{title}</h3>
+                            <p className="text-xs text-slate-500 font-medium leading-relaxed">{n.message}</p>
+                            {n.complaint?.reference_number && (
+                              <Link
+                                href={`/dashboard/cases/${n.complaint_id}`}
+                                className="font-mono text-xs font-bold text-blue-600 hover:underline mt-1 inline-block"
+                              >
+                                {n.complaint.reference_number}
+                              </Link>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Timestamp */}
+                        <span className="text-xs text-slate-400 font-medium shrink-0 whitespace-nowrap mt-0.5">
+                          {formattedDate}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -211,14 +211,20 @@ router.patch("/:id/workflow", requireAuth, async (req, res) => {
     return res.status(400).json({ error: `"${outcome}" is not a valid outcome for "${currentStage}"` });
   }
 
-  const nextStage = workflow.getNextStage(currentStage, outcome);
-  const activeStatus = existing.type === "Non-Lupon" ? "Active" : "Under Mediation";
+  let newStatus = activeStatus;
+  if (nextStage === "Closed") {
+    newStatus = "Closed";
+  } else if (nextStage === "Settlement monitoring" || outcome === "Settlement reached") {
+    newStatus = "Settlement monitoring";
+  } else if (nextStage === "Proper disposition") {
+    newStatus = "Proper disposition";
+  }
 
   const { data, error } = await supabase
     .from("complaints")
     .update({
       workflow_stage: nextStage,
-      status: nextStage === "Closed" ? "Closed" : activeStatus,
+      status: newStatus,
     })
     .eq("id", req.params.id)
     .select()

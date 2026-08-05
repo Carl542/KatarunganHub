@@ -1,6 +1,4 @@
 // Client-side display copy only — mirrors backend/src/lib/workflowDefinitions.js
-// for rendering. Real validation always happens server-side; a stale copy here
-// only affects which options are offered, never what's accepted.
 export const LUPON_STAGES = [
   "Official complaint encoded",
   "Jurisdiction review",
@@ -14,9 +12,9 @@ export const LUPON_STAGES = [
 ];
 
 export const OUTCOMES_BY_STAGE = {
-  "Official complaint encoded": ["For jurisdiction review"],
-  "Jurisdiction review": ["Potentially covered", "Potentially not covered", "Requires further verification", "Referred to appropriate office"],
-  "Summons issued": ["Proceed to mediation", "Rescheduled", "Complainant failed to appear", "Respondent failed to appear"],
+  "Official complaint encoded": ["For jurisdiction review", "Potentially covered", "Proceed to mediation", "Settlement reached"],
+  "Jurisdiction review": ["Potentially covered", "Proceed to mediation", "Settlement reached", "Potentially not covered", "Requires further verification", "Referred to appropriate office"],
+  "Summons issued": ["Proceed to mediation", "Settlement reached", "Rescheduled", "Complainant failed to appear", "Respondent failed to appear"],
   "Punong Barangay mediation": ["Settlement reached", "No settlement", "Voluntary arbitration", "Rescheduled", "Complainant failed to appear", "Respondent failed to appear", "Referred"],
   "Pangkat formation": ["Pangkat formed", "Conflict review required", "Rescheduled"],
   "Pangkat conciliation": ["Settlement reached", "Conciliation failed", "Voluntary arbitration", "Rescheduled", "Complainant failed to appear", "Respondent failed to appear"],
@@ -25,9 +23,6 @@ export const OUTCOMES_BY_STAGE = {
   Closed: [],
 };
 
-// Mirrors backend/src/lib/workflowDefinitions.js NEXT_STAGE_BY_OUTCOME — used to
-// show a read-only "Next stage" preview as soon as an outcome is picked, since
-// the actual next stage is always server-derived from the outcome, never chosen directly.
 export const NEXT_STAGE_BY_OUTCOME = {
   "For jurisdiction review": "Jurisdiction review",
   "Potentially covered": "Summons issued",
@@ -54,8 +49,6 @@ export const NEXT_STAGE_BY_OUTCOME = {
   "Ready for closure": "Closed",
 };
 
-// Reminders shown before recording a transition. Informational only — not persisted,
-// not required to submit the form.
 export const CHECKLIST_BY_STAGE = {
   "Official complaint encoded": ["Confirm barangay jurisdiction", "Verify parties' addresses", "Review complaint completeness"],
   "Jurisdiction review": ["Confirm both parties reside in the same city/municipality", "Check for statutory exceptions (RA 7160 Sec. 408)", "Document the jurisdiction basis"],
@@ -68,23 +61,18 @@ export const CHECKLIST_BY_STAGE = {
   Closed: [],
 };
 
-// Mirrors backend/src/lib/workflowDefinitions.js STAGE_ACTORS — used to hide
-// the transition form from roles the server would reject anyway, since the
-// allowed actor differs per stage (e.g. only "lupon" on Pangkat conciliation).
 export const STAGE_ACTORS = {
-  "Official complaint encoded": ["secretary"],
-  "Jurisdiction review": ["punong", "secretary"],
-  "Summons issued": ["punong", "secretary"],
-  "Punong Barangay mediation": ["punong"],
-  "Pangkat formation": ["punong", "secretary"],
-  "Pangkat conciliation": ["lupon"],
-  "Settlement monitoring": ["secretary"],
-  "Proper disposition": ["punong", "secretary"],
+  "Official complaint encoded": ["admin", "punong", "secretary"],
+  "Jurisdiction review": ["admin", "punong", "secretary"],
+  "Summons issued": ["admin", "punong", "secretary"],
+  "Punong Barangay mediation": ["admin", "punong", "secretary"],
+  "Pangkat formation": ["admin", "punong", "secretary"],
+  "Pangkat conciliation": ["admin", "lupon", "punong", "secretary"],
+  "Settlement monitoring": ["admin", "secretary", "punong"],
+  "Proper disposition": ["admin", "punong", "secretary"],
   Closed: [],
 };
 
-// Groups the 9 real stages into 8 display steps for the stepper (Proper disposition
-// and Closed share a step) — purely a display grouping, not a change to real stage data.
 export const LUPON_DISPLAY_STEPS = [
   { label: "Official Complaint Encoded", stages: ["Official complaint encoded"] },
   { label: "Jurisdiction Review", stages: ["Jurisdiction review"] },

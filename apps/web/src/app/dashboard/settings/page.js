@@ -151,7 +151,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-16 text-slate-800">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-12 text-slate-800">
       {/* Top Header & Breadcrumb */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
@@ -230,344 +230,350 @@ export default function SettingsPage() {
         <>
           {/* TAB 1: BARANGAY PROFILE & OFFICE SETTINGS */}
           {activeTab === "profile" && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* LEFT COLUMN (7 COLS) */}
-              <div className="lg:col-span-7 flex flex-col gap-6">
-                {/* CARD 1: BARANGAY PROFILE */}
-                <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col gap-5">
-                  <div>
-                    <h2 className="text-base font-bold text-slate-900">Barangay Profile</h2>
-                    <p className="text-xs text-slate-500 mt-1">
-                      Information displayed on official documents and the public case-tracking page.
-                    </p>
-                  </div>
-
-                  {/* Top Row: Square Seal Box (Left) + Barangay Name & Muni/Prov (Right) */}
-                  <div className="flex flex-col sm:flex-row gap-5 items-stretch">
-                    {/* Square Seal Box matching reference mockup */}
-                    <div className="w-36 border border-slate-200 rounded-lg p-3.5 bg-white flex flex-col items-center justify-between gap-3 shrink-0 shadow-xs">
-                      <div className="w-20 h-20 flex items-center justify-center p-1">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={values.seal_url || "/images/barangay-seal.png"}
-                          alt="Barangay Seal"
-                          className="max-w-full max-h-full object-contain"
-                          onError={(e) => {
-                            e.currentTarget.src = "/images/barangay-seal.png";
-                          }}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => alert("Upload custom seal feature active.")}
-                        className="w-full py-1.5 px-2 text-xs font-semibold text-blue-600 bg-white border border-blue-600 rounded-md hover:bg-blue-50 transition-colors text-center"
-                      >
-                        Change Seal
-                      </button>
+            <div className="flex flex-col gap-6">
+              {/* Perfectly Balanced 2-Column Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                {/* LEFT COLUMN (7 COLS) */}
+                <div className="lg:col-span-7 flex flex-col justify-between gap-6">
+                  {/* CARD 1: BARANGAY PROFILE */}
+                  <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col gap-5 flex-1">
+                    <div>
+                      <h2 className="text-base font-bold text-slate-900">Barangay Profile</h2>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Information displayed on official documents and the public case-tracking page.
+                      </p>
                     </div>
 
-                    {/* Right Inputs: Barangay Name, Municipality, Province */}
-                    <div className="flex-1 w-full flex flex-col justify-between gap-3">
+                    {/* Top Row: Square Seal Box (Left) + Barangay Name & Muni/Prov (Right) */}
+                    <div className="flex flex-col sm:flex-row gap-5 items-stretch">
+                      {/* Square Seal Box matching reference mockup */}
+                      <div className="w-36 border border-slate-200 rounded-lg p-3.5 bg-white flex flex-col items-center justify-between gap-3 shrink-0 shadow-xs">
+                        <div className="w-20 h-20 flex items-center justify-center p-1">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={values.seal_url || "/images/barangay-seal.png"}
+                            alt="Barangay Seal"
+                            className="max-w-full max-h-full object-contain"
+                            onError={(e) => {
+                              e.currentTarget.src = "/images/barangay-seal.png";
+                            }}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => alert("Upload custom seal feature active.")}
+                          className="w-full py-1.5 px-2 text-xs font-semibold text-blue-600 bg-white border border-blue-600 rounded-md hover:bg-blue-50 transition-colors text-center"
+                        >
+                          Change Seal
+                        </button>
+                      </div>
+
+                      {/* Right Inputs: Barangay Name, Municipality, Province */}
+                      <div className="flex-1 w-full flex flex-col justify-between gap-3">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs font-bold text-slate-700">Barangay Name *</label>
+                          <input
+                            type="text"
+                            value={values.barangay_name || ""}
+                            onChange={(e) => handleFieldChange("barangay_name", e.target.value)}
+                            className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs font-bold text-slate-700">Municipality/City *</label>
+                            <input
+                              type="text"
+                              value={values.municipality || ""}
+                              onChange={(e) => handleFieldChange("municipality", e.target.value)}
+                              className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs font-bold text-slate-700">Province *</label>
+                            <input
+                              type="text"
+                              value={values.province || ""}
+                              onChange={(e) => handleFieldChange("province", e.target.value)}
+                              className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Complete Address */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-slate-700">Complete Address *</label>
+                      <input
+                        type="text"
+                        value={values.barangay_address || ""}
+                        onChange={(e) => handleFieldChange("barangay_address", e.target.value)}
+                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                      />
+                    </div>
+
+                    {/* Contact Number & Official Email Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-bold text-slate-700">Barangay Name *</label>
+                        <label className="text-xs font-bold text-slate-700">Official Contact Number *</label>
                         <input
                           type="text"
-                          value={values.barangay_name || ""}
-                          onChange={(e) => handleFieldChange("barangay_name", e.target.value)}
+                          value={values.barangay_contact || ""}
+                          onChange={(e) => handleFieldChange("barangay_contact", e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                        />
+                        <span className="text-xs text-slate-500 mt-0.5">Used as the sender contact in notices and printable documents.</span>
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-slate-700">Official Email</label>
+                        <input
+                          type="email"
+                          value={values.official_email || ""}
+                          onChange={(e) => handleFieldChange("official_email", e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CARD 2: OFFICE & CASE SETTINGS */}
+                  <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col gap-5">
+                    <div>
+                      <h2 className="text-base font-bold text-slate-900">Office & Case Settings</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-slate-700">Office Hours *</label>
+                        <select
+                          value={values.office_hours || "Monday–Friday, 8:00 AM–5:00 PM"}
+                          onChange={(e) => handleFieldChange("office_hours", e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                        >
+                          <option value="Monday–Friday, 8:00 AM–5:00 PM">Monday–Friday, 8:00 AM–5:00 PM</option>
+                          <option value="Monday–Saturday, 8:00 AM–5:00 PM">Monday–Saturday, 8:00 AM–5:00 PM</option>
+                          <option value="Daily, 8:00 AM–5:00 PM">Daily, 8:00 AM–5:00 PM</option>
+                        </select>
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-slate-700">Default Hearing Venue *</label>
+                        <select
+                          value={values.default_venue || "Barangay Hall – Session Room"}
+                          onChange={(e) => handleFieldChange("default_venue", e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                        >
+                          <option value="Barangay Hall – Session Room">Barangay Hall – Session Room</option>
+                          <option value="Barangay Hall – Main Office">Barangay Hall – Main Office</option>
+                          <option value="Pangkat Mediation Room">Pangkat Mediation Room</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-slate-700">Case Number Prefix *</label>
+                        <input
+                          type="text"
+                          value={values.case_prefix || "KP"}
+                          onChange={(e) => handleFieldChange("case_prefix", e.target.value)}
                           className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-xs font-bold text-slate-700">Municipality/City *</label>
-                          <input
-                            type="text"
-                            value={values.municipality || ""}
-                            onChange={(e) => handleFieldChange("municipality", e.target.value)}
-                            className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-xs font-bold text-slate-700">Province *</label>
-                          <input
-                            type="text"
-                            value={values.province || ""}
-                            onChange={(e) => handleFieldChange("province", e.target.value)}
-                            className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Complete Address */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-700">Complete Address *</label>
-                    <input
-                      type="text"
-                      value={values.barangay_address || ""}
-                      onChange={(e) => handleFieldChange("barangay_address", e.target.value)}
-                      className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                    />
-                  </div>
-
-                  {/* Contact Number & Official Email Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Official Contact Number *</label>
-                      <input
-                        type="text"
-                        value={values.barangay_contact || ""}
-                        onChange={(e) => handleFieldChange("barangay_contact", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      />
-                      <span className="text-xs text-slate-500 mt-0.5">Used as the sender contact in notices and printable documents.</span>
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Official Email</label>
-                      <input
-                        type="email"
-                        value={values.official_email || ""}
-                        onChange={(e) => handleFieldChange("official_email", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* CARD 2: OFFICE & CASE SETTINGS */}
-                <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col gap-5">
-                  <div>
-                    <h2 className="text-base font-bold text-slate-900">Office & Case Settings</h2>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Office Hours *</label>
-                      <select
-                        value={values.office_hours || "Monday–Friday, 8:00 AM–5:00 PM"}
-                        onChange={(e) => handleFieldChange("office_hours", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      >
-                        <option value="Monday–Friday, 8:00 AM–5:00 PM">Monday–Friday, 8:00 AM–5:00 PM</option>
-                        <option value="Monday–Saturday, 8:00 AM–5:00 PM">Monday–Saturday, 8:00 AM–5:00 PM</option>
-                        <option value="Daily, 8:00 AM–5:00 PM">Daily, 8:00 AM–5:00 PM</option>
-                      </select>
-                    </div>
-
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Default Hearing Venue *</label>
-                      <select
-                        value={values.default_venue || "Barangay Hall – Session Room"}
-                        onChange={(e) => handleFieldChange("default_venue", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      >
-                        <option value="Barangay Hall – Session Room">Barangay Hall – Session Room</option>
-                        <option value="Barangay Hall – Main Office">Barangay Hall – Main Office</option>
-                        <option value="Pangkat Mediation Room">Pangkat Mediation Room</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Case Number Prefix *</label>
-                      <input
-                        type="text"
-                        value={values.case_prefix || "KP"}
-                        onChange={(e) => handleFieldChange("case_prefix", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Current Year *</label>
-                      <input
-                        type="text"
-                        value={values.current_year || "2026"}
-                        onChange={(e) => handleFieldChange("current_year", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      />
-                    </div>
-                  </div>
-                  <span className="text-xs text-slate-500 mt-0.5">These settings are used when creating and managing cases.</span>
-                </div>
-              </div>
-
-              {/* RIGHT COLUMN (5 COLS) */}
-              <div className="lg:col-span-5 flex flex-col gap-6">
-                {/* CARD 1: SMS GATEWAY */}
-                <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col gap-5">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-base font-bold text-slate-900">SMS Gateway</h2>
-                    <button
-                      type="button"
-                      onClick={handleTestConnection}
-                      disabled={testingConnection}
-                      className="px-3.5 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors flex items-center gap-1.5 shadow-xs"
-                    >
-                      {testingConnection && <Icon name="refresh-cw" className="w-3.5 h-3.5 animate-spin" />}
-                      Test Connection
-                    </button>
-                  </div>
-
-                  {/* Status Banner */}
-                  <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-md p-3.5 text-xs text-slate-700 font-medium">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-2.5 h-2.5 rounded-full ${connStatus === "Connected" ? "bg-emerald-500" : "bg-amber-500"}`} />
-                      <span className="font-bold text-emerald-700">{connStatus}</span>
-                    </div>
-                    <div>
-                      Provider: <strong className="text-slate-900">TextBee</strong>
-                    </div>
-                    <div>
-                      Device/API: <span className="font-mono text-slate-800">*********7A42</span>
-                    </div>
-                  </div>
-                  <div className="text-xs text-slate-400 text-right -mt-3">Last checked: Today, 8:14 AM</div>
-
-                  {/* Send Test Message Sub-form */}
-                  <form onSubmit={handleSendTestSms} className="flex flex-col gap-3.5 pt-3 border-t border-slate-100">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">SEND TEST MESSAGE</h3>
-
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Philippine Mobile Number *</label>
-                      <div className="flex gap-2">
-                        <span className="inline-flex items-center px-3.5 py-2 border border-slate-300 bg-slate-50 text-slate-700 rounded-md text-sm font-semibold">
-                          +63
-                        </span>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-slate-700">Current Year *</label>
                         <input
-                          type="tel"
-                          required
-                          placeholder="917 123 4567"
-                          value={testPhone}
-                          onChange={(e) => setTestPhone(e.target.value)}
-                          className="flex-1 border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                          type="text"
+                          value={values.current_year || "2026"}
+                          onChange={(e) => handleFieldChange("current_year", e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
                         />
                       </div>
                     </div>
+                    <span className="text-xs text-slate-500 mt-0.5">These settings are used when creating and managing cases.</span>
+                  </div>
+                </div>
 
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Message</label>
-                      <textarea
-                        rows={3}
-                        value={testMessage}
-                        onChange={(e) => setTestMessage(e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
-                      />
+                {/* RIGHT COLUMN (5 COLS) */}
+                <div className="lg:col-span-5 flex flex-col justify-between gap-6">
+                  {/* CARD 1: SMS GATEWAY */}
+                  <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col gap-5 flex-1">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-base font-bold text-slate-900">SMS Gateway</h2>
+                      <button
+                        type="button"
+                        onClick={handleTestConnection}
+                        disabled={testingConnection}
+                        className="px-3.5 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors flex items-center gap-1.5 shadow-xs"
+                      >
+                        {testingConnection && <Icon name="refresh-cw" className="w-3.5 h-3.5 animate-spin" />}
+                        Test Connection
+                      </button>
                     </div>
 
-                    {testError && (
+                    {/* Status Banner */}
+                    <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-md p-3.5 text-xs text-slate-700 font-medium">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2.5 h-2.5 rounded-full ${connStatus === "Connected" ? "bg-emerald-500" : "bg-amber-500"}`} />
+                        <span className="font-bold text-emerald-700">{connStatus}</span>
+                      </div>
+                      <div>
+                        Provider: <strong className="text-slate-900">TextBee</strong>
+                      </div>
+                      <div>
+                        Device/API: <span className="font-mono text-slate-800">*********7A42</span>
+                      </div>
+                    </div>
+                    <div className="text-xs text-slate-400 text-right -mt-3">Last checked: Today, 8:14 AM</div>
+
+                    {/* Send Test Message Sub-form */}
+                    <form onSubmit={handleSendTestSms} className="flex flex-col gap-3.5 pt-3 border-t border-slate-100">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">SEND TEST MESSAGE</h3>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-slate-700">Philippine Mobile Number *</label>
+                        <div className="flex gap-2">
+                          <span className="inline-flex items-center px-3.5 py-2 border border-slate-300 bg-slate-50 text-slate-700 rounded-md text-sm font-semibold">
+                            +63
+                          </span>
+                          <input
+                            type="tel"
+                            required
+                            placeholder="917 123 4567"
+                            value={testPhone}
+                            onChange={(e) => setTestPhone(e.target.value)}
+                            className="flex-1 border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-slate-700">Message</label>
+                        <textarea
+                          rows={3}
+                          value={testMessage}
+                          onChange={(e) => setTestMessage(e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                        />
+                      </div>
+
+                      {testError && (
+                        <p className="text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-md p-3 flex items-center gap-2 font-medium">
+                          <Icon name="alert-circle" className="w-4 h-4 shrink-0 text-rose-600" />
+                          {testError}
+                        </p>
+                      )}
+                      {testResult && !testError && (
+                        <p className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-md p-3 flex items-center gap-2 font-medium">
+                          <Icon name="check-circle" className="w-4 h-4 shrink-0 text-emerald-600" />
+                          Test SMS dispatched via {testResult.provider}! Check recipient mobile.
+                        </p>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={sendingTest || !testPhone}
+                        className="w-full py-2.5 px-4 bg-blue-600 text-white font-semibold text-sm rounded-md hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
+                      >
+                        <Icon name="send" className="w-4 h-4" />
+                        {sendingTest ? "Sending Test SMS…" : "Send Test SMS"}
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* CARD 2: AUTOMATED HEARING REMINDERS */}
+                  <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col gap-5">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-base font-bold text-slate-900">Automated Hearing Reminders</h2>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={values.auto_reminders_enabled === "true"}
+                          onChange={(e) => handleFieldChange("auto_reminders_enabled", e.target.checked ? "true" : "false")}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      Send reminders to complainants and respondents before scheduled hearings.
+                    </p>
+
+                    <div className="flex flex-col gap-3.5 pt-1">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-slate-700">Send reminder</label>
+                        <select
+                          value={values.auto_reminder_hours || "24"}
+                          onChange={(e) => handleFieldChange("auto_reminder_hours", e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 font-medium"
+                        >
+                          <option value="24">24 hours before hearing</option>
+                          <option value="12">12 hours before hearing</option>
+                          <option value="48">48 hours before hearing</option>
+                        </select>
+                      </div>
+
+                      <label className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer py-1">
+                        <input
+                          type="checkbox"
+                          checked={values.notify_lupon === "true"}
+                          onChange={(e) => handleFieldChange("notify_lupon", e.target.checked ? "true" : "false")}
+                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600"
+                        />
+                        <span>Notify assigned Lupon member</span>
+                      </label>
+                    </div>
+
+                    {/* Status Banner */}
+                    <div className="bg-blue-50/70 border border-blue-200 rounded-md p-3.5 flex items-center justify-between text-xs text-blue-900 font-medium">
+                      <div className="flex items-center gap-2">
+                        <Icon name="calendar-days" className="w-4 h-4 text-blue-600 shrink-0" />
+                        <span><strong>Next run:</strong> Tomorrow, 8:00 AM</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-blue-800">
+                        <Icon name="users" className="w-4 h-4 text-blue-600 shrink-0" />
+                        <span><strong>3</strong> scheduled recipients</span>
+                      </div>
+                    </div>
+
+                    {remindersError && (
                       <p className="text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-md p-3 flex items-center gap-2 font-medium">
                         <Icon name="alert-circle" className="w-4 h-4 shrink-0 text-rose-600" />
-                        {testError}
+                        {remindersError}
                       </p>
                     )}
-                    {testResult && !testError && (
+                    {remindersResult !== null && !remindersError && (
                       <p className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-md p-3 flex items-center gap-2 font-medium">
                         <Icon name="check-circle" className="w-4 h-4 shrink-0 text-emerald-600" />
-                        Test SMS dispatched via {testResult.provider}! Check recipient mobile.
+                        {remindersResult === 0
+                          ? "No hearings scheduled tomorrow — 0 reminders dispatched."
+                          : `Reminders successfully queued & dispatched for ${remindersResult} hearing${remindersResult === 1 ? "" : "s"}.`}
                       </p>
                     )}
 
                     <button
-                      type="submit"
-                      disabled={sendingTest || !testPhone}
-                      className="w-full py-2.5 px-4 bg-blue-600 text-white font-semibold text-sm rounded-md hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
+                      type="button"
+                      onClick={handleSendReminders}
+                      disabled={sendingReminders}
+                      className="w-full py-2.5 px-4 bg-white text-blue-700 font-semibold text-sm border border-blue-300 rounded-md hover:bg-blue-50 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
                     >
-                      <Icon name="send" className="w-4 h-4" />
-                      {sendingTest ? "Sending Test SMS…" : "Send Test SMS"}
+                      <Icon name="bell" className="w-4 h-4" />
+                      {sendingReminders ? "Sending Reminders…" : "Send Today's Reminders"}
                     </button>
-                  </form>
-                </div>
-
-                {/* CARD 2: AUTOMATED HEARING REMINDERS */}
-                <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs flex flex-col gap-5">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-base font-bold text-slate-900">Automated Hearing Reminders</h2>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={values.auto_reminders_enabled === "true"}
-                        onChange={(e) => handleFieldChange("auto_reminders_enabled", e.target.checked ? "true" : "false")}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
                   </div>
-                  <p className="text-xs text-slate-500">
-                    Send reminders to complainants and respondents before scheduled hearings.
-                  </p>
-
-                  <div className="flex flex-col gap-3.5 pt-1">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs font-bold text-slate-700">Send reminder</label>
-                      <select
-                        value={values.auto_reminder_hours || "24"}
-                        onChange={(e) => handleFieldChange("auto_reminder_hours", e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-3.5 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 font-medium"
-                      >
-                        <option value="24">24 hours before hearing</option>
-                        <option value="12">12 hours before hearing</option>
-                        <option value="48">48 hours before hearing</option>
-                      </select>
-                    </div>
-
-                    <label className="flex items-center gap-2.5 text-xs font-medium text-slate-700 cursor-pointer py-1">
-                      <input
-                        type="checkbox"
-                        checked={values.notify_lupon === "true"}
-                        onChange={(e) => handleFieldChange("notify_lupon", e.target.checked ? "true" : "false")}
-                        className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600"
-                      />
-                      <span>Notify assigned Lupon member</span>
-                    </label>
-                  </div>
-
-                  {/* Status Banner */}
-                  <div className="bg-blue-50/70 border border-blue-200 rounded-md p-3.5 flex items-center justify-between text-xs text-blue-900 font-medium">
-                    <div className="flex items-center gap-2">
-                      <Icon name="calendar-days" className="w-4 h-4 text-blue-600 shrink-0" />
-                      <span><strong>Next run:</strong> Tomorrow, 8:00 AM</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-blue-800">
-                      <Icon name="users" className="w-4 h-4 text-blue-600 shrink-0" />
-                      <span><strong>3</strong> scheduled recipients</span>
-                    </div>
-                  </div>
-
-                  {remindersError && (
-                    <p className="text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-md p-3 flex items-center gap-2 font-medium">
-                      <Icon name="alert-circle" className="w-4 h-4 shrink-0 text-rose-600" />
-                      {remindersError}
-                    </p>
-                  )}
-                  {remindersResult !== null && !remindersError && (
-                    <p className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-md p-3 flex items-center gap-2 font-medium">
-                      <Icon name="check-circle" className="w-4 h-4 shrink-0 text-emerald-600" />
-                      {remindersResult === 0
-                        ? "No hearings scheduled tomorrow — 0 reminders dispatched."
-                        : `Reminders successfully queued & dispatched for ${remindersResult} hearing${remindersResult === 1 ? "" : "s"}.`}
-                    </p>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={handleSendReminders}
-                    disabled={sendingReminders}
-                    className="w-full py-2.5 px-4 bg-white text-blue-700 font-semibold text-sm border border-blue-300 rounded-md hover:bg-blue-50 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
-                  >
-                    <Icon name="bell" className="w-4 h-4" />
-                    {sendingReminders ? "Sending Reminders…" : "Send Today's Reminders"}
-                  </button>
                 </div>
+              </div>
 
-                {/* CARD 3: AUDIT NOTICE FOOTER */}
-                <div className="bg-blue-50/50 border border-blue-200 rounded-lg p-4 flex items-center gap-3 text-xs text-blue-900 font-medium">
-                  <Icon name="shield" className="w-5 h-5 text-blue-600 shrink-0" />
-                  <span>Configuration changes are recorded in Audit Logs.</span>
+              {/* CLEAN FULL-WIDTH AUDIT NOTICE AT THE BOTTOM OF THE 2 COLUMNS */}
+              <div className="bg-blue-50/60 border border-blue-200 rounded-lg p-4 flex items-center justify-between text-xs text-blue-900 font-medium">
+                <div className="flex items-center gap-2.5">
+                  <Icon name="shield" className="w-4.5 h-4.5 text-blue-600 shrink-0" />
+                  <span>Configuration changes are automatically recorded in System Audit Logs.</span>
                 </div>
+                <span className="text-slate-500 font-semibold text-[11px] uppercase tracking-wider hidden sm:inline">System Security Scope</span>
               </div>
             </div>
           )}

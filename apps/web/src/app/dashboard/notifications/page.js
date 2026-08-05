@@ -185,10 +185,10 @@ export default function NotificationsPage() {
     return <p className="text-rose-600 bg-rose-50 border border-rose-200 rounded-md p-4 text-sm font-medium">{error}</p>;
   }
 
-  // CITIZEN INBOX DESIGN MATCHING REFERENCE MOCKUP
+  // CITIZEN INBOX DESIGN MATCHING REFERENCE MOCKUP (FULL WIDTH)
   if (isCitizen) {
     return (
-      <div className="flex flex-col gap-6 max-w-5xl mx-auto pb-16 text-slate-800">
+      <div className="flex flex-col gap-6 w-full pb-16 text-slate-800">
         {/* Header Title & Subtitle */}
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">Notifications</h1>
@@ -196,7 +196,7 @@ export default function NotificationsPage() {
         </div>
 
         {notifications.length === 0 ? (
-          <div className="bg-white border border-slate-200 rounded-xl p-12 text-center flex flex-col items-center gap-3 shadow-xs">
+          <div className="bg-white border border-slate-200 rounded-xl p-12 text-center flex flex-col items-center gap-3 shadow-xs w-full">
             <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
               <Icon name="bell" className="w-6 h-6" />
             </div>
@@ -204,8 +204,8 @@ export default function NotificationsPage() {
             <p className="text-xs text-slate-500 max-w-md">You have no notification alerts recorded yet.</p>
           </div>
         ) : (
-          /* Main Card Container matching reference mockup */
-          <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden p-6 flex flex-col gap-6">
+          /* Main Card Container matching reference mockup (Full Width) */
+          <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden p-6 sm:p-8 flex flex-col gap-6 w-full">
             {/* RECENT SECTION */}
             {recentNotifs.length > 0 && (
               <div className="flex flex-col gap-3">
@@ -219,7 +219,7 @@ export default function NotificationsPage() {
                     return (
                       <div
                         key={n.id}
-                        className={`p-4 flex items-start justify-between gap-4 transition-colors ${
+                        className={`p-4 sm:p-5 flex items-start justify-between gap-4 transition-colors ${
                           isNew ? "bg-blue-50/40" : "bg-slate-50/50"
                         }`}
                       >
@@ -234,8 +234,8 @@ export default function NotificationsPage() {
 
                           {/* Details */}
                           <div className="flex flex-col gap-0.5 min-w-0">
-                            <h3 className="text-sm font-bold text-slate-900 leading-snug">{title}</h3>
-                            <p className="text-xs text-slate-600 font-medium leading-relaxed">{n.message}</p>
+                            <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">{title}</h3>
+                            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">{n.message}</p>
                             {n.complaint?.reference_number && (
                               <Link
                                 href={`/dashboard/cases/${n.complaint_id}`}
@@ -268,7 +268,7 @@ export default function NotificationsPage() {
                     const formattedDate = formatNotificationDate(n.created_at);
 
                     return (
-                      <div key={n.id} className="p-4 flex items-start justify-between gap-4 transition-colors hover:bg-slate-50/60">
+                      <div key={n.id} className="p-4 sm:p-5 flex items-start justify-between gap-4 transition-colors hover:bg-slate-50/60">
                         <div className="flex items-start gap-3.5 min-w-0">
                           {/* Neutral Bell Icon for Earlier */}
                           <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shrink-0">
@@ -277,8 +277,8 @@ export default function NotificationsPage() {
 
                           {/* Details */}
                           <div className="flex flex-col gap-0.5 min-w-0">
-                            <h3 className="text-sm font-bold text-slate-800 leading-snug">{title}</h3>
-                            <p className="text-xs text-slate-500 font-medium leading-relaxed">{n.message}</p>
+                            <h3 className="text-sm sm:text-base font-bold text-slate-800 leading-snug">{title}</h3>
+                            <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">{n.message}</p>
                             {n.complaint?.reference_number && (
                               <Link
                                 href={`/dashboard/cases/${n.complaint_id}`}

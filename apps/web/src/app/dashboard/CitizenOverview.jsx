@@ -99,11 +99,20 @@ export default function CitizenOverview() {
   // Step calculation for 3-step progress bar stepper
   let currentStep = 1; // 1: Filed, 2: Mediation, 3: Resolved
   if (activeCase) {
-    if (activeCase.status === "Closed") {
+    const statusLower = (activeCase.status || "").toLowerCase();
+    if (
+      statusLower === "closed" ||
+      statusLower === "amicable settlement" ||
+      statusLower.includes("settlement") ||
+      statusLower.includes("disposition") ||
+      statusLower === "resolved"
+    ) {
       currentStep = 3;
     } else if (
-      activeCase.status === "Under Mediation" ||
-      activeCase.status === "Active" ||
+      statusLower.includes("mediation") ||
+      statusLower.includes("conciliation") ||
+      statusLower === "active" ||
+      statusLower.includes("summons") ||
       nextHearing
     ) {
       currentStep = 2;
@@ -166,16 +175,24 @@ export default function CitizenOverview() {
 
                 {/* Status Badge */}
                 <div className="mt-3">
-                  <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/60">
+                  <span
+                    className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-bold ${
+                      currentStep === 3
+                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200/60"
+                        : currentStep === 2
+                        ? "bg-amber-50 text-amber-800 border border-amber-200/60"
+                        : "bg-blue-50 text-blue-800 border border-blue-200/60"
+                    }`}
+                  >
                     {activeCase.status || "Under Mediation"}
                   </span>
                 </div>
 
                 <p className="text-xs text-slate-500 font-medium mt-3">
-                  {currentStep === 2
-                    ? "Your case is currently scheduled for mediation."
-                    : currentStep === 3
-                    ? "Your case has been resolved and closed."
+                  {currentStep === 3
+                    ? "Your case has reached an amicable settlement and is resolved."
+                    : currentStep === 2
+                    ? "Your case is currently scheduled for mediation / conciliation."
                     : "Your case has been filed and is awaiting schedule assignment."}
                 </p>
 
@@ -216,16 +233,22 @@ export default function CitizenOverview() {
                     <div className="relative z-10 flex flex-col items-center gap-1.5 bg-white px-1">
                       <div
                         className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                          currentStep >= 2
+                          currentStep === 3
+                            ? "bg-emerald-600 text-white ring-4 ring-emerald-50"
+                            : currentStep === 2
                             ? "bg-blue-600 text-white ring-4 ring-blue-50"
                             : "bg-slate-200 text-slate-500 border-2 border-slate-300"
                         }`}
                       >
-                        2
+                        {currentStep === 3 ? "✓" : "2"}
                       </div>
                       <span
                         className={`text-xs font-semibold ${
-                          currentStep === 2 ? "text-blue-600" : "text-slate-500"
+                          currentStep === 3
+                            ? "text-emerald-700 font-bold"
+                            : currentStep === 2
+                            ? "text-blue-600 font-bold"
+                            : "text-slate-500"
                         }`}
                       >
                         Mediation
@@ -241,9 +264,13 @@ export default function CitizenOverview() {
                             : "bg-slate-100 text-slate-400 border border-slate-300"
                         }`}
                       >
-                        3
+                        {currentStep === 3 ? "✓" : "3"}
                       </div>
-                      <span className="text-xs font-semibold text-slate-500">
+                      <span
+                        className={`text-xs font-semibold ${
+                          currentStep === 3 ? "text-emerald-700 font-bold" : "text-slate-500"
+                        }`}
+                      >
                         Resolved
                       </span>
                     </div>

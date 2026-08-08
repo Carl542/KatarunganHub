@@ -12,9 +12,9 @@ export const LUPON_STAGES = [
 ];
 
 export const OUTCOMES_BY_STAGE = {
-  "Official complaint encoded": ["For jurisdiction review", "Potentially covered", "Proceed to mediation", "Settlement reached"],
-  "Jurisdiction review": ["Potentially covered", "Proceed to mediation", "Settlement reached", "Potentially not covered", "Requires further verification", "Referred to appropriate office"],
-  "Summons issued": ["Proceed to mediation", "Settlement reached", "Rescheduled", "Complainant failed to appear", "Respondent failed to appear"],
+  "Official complaint encoded": ["For jurisdiction review"],
+  "Jurisdiction review": ["Potentially covered", "Potentially not covered", "Requires further verification", "Referred to appropriate office"],
+  "Summons issued": ["Proceed to mediation", "Rescheduled", "Complainant failed to appear", "Respondent failed to appear"],
   "Punong Barangay mediation": ["Settlement reached", "No settlement", "Voluntary arbitration", "Rescheduled", "Complainant failed to appear", "Respondent failed to appear", "Referred"],
   "Pangkat formation": ["Pangkat formed", "Conflict review required", "Rescheduled"],
   "Pangkat conciliation": ["Settlement reached", "Conciliation failed", "Voluntary arbitration", "Rescheduled", "Complainant failed to appear", "Respondent failed to appear"],
@@ -62,14 +62,14 @@ export const CHECKLIST_BY_STAGE = {
 };
 
 export const STAGE_ACTORS = {
-  "Official complaint encoded": ["admin", "punong", "secretary"],
-  "Jurisdiction review": ["admin", "punong", "secretary"],
-  "Summons issued": ["admin", "punong", "secretary"],
-  "Punong Barangay mediation": ["admin", "punong", "secretary"],
-  "Pangkat formation": ["admin", "punong", "secretary"],
-  "Pangkat conciliation": ["admin", "lupon", "punong", "secretary"],
-  "Settlement monitoring": ["admin", "secretary", "punong"],
-  "Proper disposition": ["admin", "punong", "secretary"],
+  "Official complaint encoded": ["secretary"],
+  "Jurisdiction review": ["punong", "secretary"],
+  "Summons issued": ["punong", "secretary"],
+  "Punong Barangay mediation": ["punong"],
+  "Pangkat formation": ["punong", "secretary"],
+  "Pangkat conciliation": ["lupon"],
+  "Settlement monitoring": ["secretary"],
+  "Proper disposition": ["punong", "secretary"],
   Closed: [],
 };
 

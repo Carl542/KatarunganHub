@@ -12,7 +12,7 @@ function fallbackEmail(fullName, phoneNumber) {
   return `${slug}.${Date.now()}@resident.katarunganhub.local`;
 }
 
-router.get("/", requireAuth, requireRole("admin", "secretary"), async (req, res) => {
+router.get("/", requireAuth, requireRole("admin"), async (req, res) => {
   const supabase = getSupabaseClient();
   const { data: profiles, error } = await supabase.from("profiles").select("*").order("full_name", { ascending: true });
 
@@ -101,7 +101,7 @@ router.post("/:id/reset-password", requireAuth, requireRole("admin", "secretary"
   logAudit({ actorId: req.user.id, action: "Reset user password", module: "User Accounts", complaintId: null });
 });
 
-router.patch("/:id", requireAuth, requireRole("admin", "secretary"), async (req, res) => {
+router.patch("/:id", requireAuth, requireRole("admin"), async (req, res) => {
   const { role, status, phone_number, full_name } = req.body;
   const updates = {};
   if (role) updates.role = role;

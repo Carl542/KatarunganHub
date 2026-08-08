@@ -211,6 +211,9 @@ router.patch("/:id/workflow", requireAuth, async (req, res) => {
     return res.status(400).json({ error: `"${outcome}" is not a valid outcome for "${currentStage}"` });
   }
 
+  const nextStage = workflow.getNextStage(currentStage, outcome);
+  const activeStatus = existing.type === "Non-Lupon" ? "Active" : "Under Mediation";
+
   let newStatus = activeStatus;
   if (nextStage === "Closed") {
     newStatus = "Closed";

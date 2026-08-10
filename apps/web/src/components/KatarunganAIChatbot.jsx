@@ -229,17 +229,16 @@ export default function KatarunganAIChatbot() {
               </div>
             </div>
 
-            {/* Header Action Controls (High-Visibility Minimize & Close Buttons) */}
-            <div className="flex items-center gap-1.5 shrink-0 ml-2">
+            {/* Header Action Controls (Clean Icon-Only Dash & Cross Controls) */}
+            <div className="flex items-center gap-1 shrink-0 ml-2">
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                title="Minimize Chat Window"
-                className="bg-white/15 hover:bg-white/30 text-white font-bold px-2 py-1 rounded-md transition-all border border-white/30 flex items-center gap-1 text-xs shadow-xs active:scale-95"
-                aria-label="Minimize Chat Window"
+                title="Minimize"
+                aria-label="Minimize"
+                className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/20 transition-all active:scale-90 flex items-center justify-center"
               >
-                <Icon name="minus" className="w-4 h-4 text-white" />
-                <span className="hidden xs:inline text-[11px]">Minimize</span>
+                <Icon name="minus" className="w-5 h-5 text-white" />
               </button>
               <button
                 type="button"
@@ -247,12 +246,11 @@ export default function KatarunganAIChatbot() {
                   setMessages(INITIAL_MESSAGES);
                   setIsOpen(false);
                 }}
-                title="Close & Clear Chat"
-                className="bg-rose-500/90 hover:bg-rose-600 text-white font-bold px-2 py-1 rounded-md transition-all border border-rose-300/40 flex items-center gap-1 text-xs shadow-xs active:scale-95"
-                aria-label="Close Chat"
+                title="Exit"
+                aria-label="Exit"
+                className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-rose-600/90 transition-all active:scale-90 flex items-center justify-center"
               >
-                <Icon name="x" className="w-4 h-4 text-white" />
-                <span className="hidden xs:inline text-[11px]">Exit</span>
+                <Icon name="x" className="w-5 h-5 text-white" />
               </button>
             </div>
           </div>

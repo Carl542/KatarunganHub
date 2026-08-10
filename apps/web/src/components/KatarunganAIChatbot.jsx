@@ -178,6 +178,15 @@ export default function KatarunganAIChatbot() {
     }, 800);
   }
 
+  const chipsRef = useRef(null);
+
+  function scrollChips(direction) {
+    if (chipsRef.current) {
+      const distance = direction === "left" ? -160 : 160;
+      chipsRef.current.scrollBy({ left: distance, behavior: "smooth" });
+    }
+  }
+
   return (
     <aside aria-label="AI Legal Assistant" className="fixed bottom-5 right-5 z-50 flex flex-col items-end print:hidden">
       {/* Floating Toggle Button */}
@@ -265,18 +274,44 @@ export default function KatarunganAIChatbot() {
             <div ref={chatEndRef} />
           </div>
 
-          {/* Suggested Question Chips */}
-          <div className="p-2.5 bg-slate-100/80 border-t border-border/60 flex gap-2 overflow-x-auto scrollbar-none shrink-0">
-            {SUGGESTED_QUESTIONS.map((chip, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSend(chip.question)}
-                className="bg-white hover:bg-primary/10 hover:text-primary text-slate-700 text-[11px] font-semibold px-3 py-1.5 rounded-full border border-border/80 shrink-0 transition-all shadow-2xs flex items-center gap-1.5 active:scale-95"
-              >
-                <Icon name={chip.icon} className="w-3 h-3 text-primary shrink-0" />
-                <span>{chip.label}</span>
-              </button>
-            ))}
+          {/* Suggested Question Chips Container with Scroll Controls */}
+          <div className="relative bg-slate-100/90 border-t border-border/60 shrink-0 group">
+            {/* Scroll Left Button */}
+            <button
+              type="button"
+              onClick={() => scrollChips("left")}
+              aria-label="Scroll left"
+              className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-white/90 shadow-md border border-slate-200 text-slate-700 flex items-center justify-center hover:bg-primary hover:text-white transition-all opacity-80 group-hover:opacity-100 active:scale-95"
+            >
+              ‹
+            </button>
+
+            {/* Chips Scroll Viewport */}
+            <div
+              ref={chipsRef}
+              className="px-7 py-2.5 flex gap-2 overflow-x-auto scroll-smooth scrollbar-thin scrollbar-thumb-slate-300"
+            >
+              {SUGGESTED_QUESTIONS.map((chip, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleSend(chip.question)}
+                  className="bg-white hover:bg-primary/10 hover:text-primary text-slate-700 text-[11px] font-semibold px-3 py-1.5 rounded-full border border-border/80 shrink-0 transition-all shadow-2xs flex items-center gap-1.5 active:scale-95 whitespace-nowrap"
+                >
+                  <Icon name={chip.icon} className="w-3 h-3 text-primary shrink-0" />
+                  <span>{chip.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Scroll Right Button */}
+            <button
+              type="button"
+              onClick={() => scrollChips("right")}
+              aria-label="Scroll right"
+              className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-white/90 shadow-md border border-slate-200 text-slate-700 flex items-center justify-center hover:bg-primary hover:text-white transition-all opacity-80 group-hover:opacity-100 active:scale-95"
+            >
+              ›
+            </button>
           </div>
 
           {/* Input Footer */}

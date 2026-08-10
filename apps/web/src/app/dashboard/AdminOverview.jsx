@@ -25,23 +25,28 @@ function RoleBarCard({ title, data }) {
   const rows = Object.entries(data).map(([name, value]) => ({ name, value }));
 
   return (
-    <div className="bg-white/90 rounded-sm border border-border p-5">
-      <h2 className="font-display text-lg font-semibold mb-3">{title}</h2>
+    <div className="bg-white/90 rounded-sm border border-border p-5 flex flex-col justify-between shadow-xs h-full">
+      <div>
+        <h2 className="font-display text-lg font-semibold text-foreground">{title}</h2>
+        <p className="text-xs text-foreground-muted mt-0.5 mb-3">User account distribution across system roles</p>
+      </div>
       {rows.length === 0 ? (
-        <p className="text-foreground-muted text-sm">No data yet.</p>
+        <p className="text-foreground-muted text-sm py-10 text-center">No data yet.</p>
       ) : (
-        <ResponsiveContainer width="100%" height={Math.max(160, rows.length * 34)}>
-          <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 20, bottom: 4, left: 4 }} barCategoryGap="28%">
-            <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#786956" }} />
-            <YAxis type="category" dataKey="name" width={92} tick={{ fontSize: 11, fill: "#786956" }} tickLine={false} axisLine={false} />
-            <Tooltip {...tooltipStyle} cursor={{ fill: barCursorFill }} />
-            <Bar dataKey="value" radius={[0, 3, 3, 0]} maxBarSize={18}>
-              {rows.map((_, i) => (
-                <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="w-full flex-1 min-h-[260px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 24, bottom: 4, left: 4 }} barCategoryGap="20%">
+              <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#786956" }} />
+              <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 11, fill: "#786956" }} tickLine={false} axisLine={false} />
+              <Tooltip {...tooltipStyle} cursor={{ fill: barCursorFill }} />
+              <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={22}>
+                {rows.map((_, i) => (
+                  <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       )}
     </div>
   );
@@ -118,7 +123,7 @@ export default function AdminOverview() {
         <StatCard label="Active Cases" value={stats.activeCases} href="/dashboard/reports" icon="clipboard-list" color="warning" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 items-stretch">
         <CaseBreakdownChart
           title="Cases by Status"
           subtitle="Breakdown of barangay cases by current status"

@@ -1,27 +1,28 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import BrandMark from "@/components/BrandMark";
 import Icon from "@/components/Icon";
 
 const SUGGESTED_QUESTIONS = [
   {
     icon: "scale",
-    label: "Covered ba sa Lupon ang away sa utang o bakud?",
+    label: "Away sa utang o bakud",
     question: "Covered ba sa Lupon ang away sa utang o boundary sa bakud?",
   },
   {
     icon: "file-text",
-    label: "Unsa ang Non-Lupon Cases ug ngano gi-refer?",
+    label: "Non-Lupon Cases",
     question: "Unsa ang Non-Lupon Cases ug ngano gi-refer kini sa court o PNP?",
   },
   {
     icon: "clock",
-    label: "Pila ka adlaw ang mediation ug conciliation timelines?",
+    label: "Legal Timelines",
     question: "Pila ka adlaw ang mandatory mediation ug conciliation sa R.A. 7160?",
   },
   {
     icon: "help-circle",
-    label: "Unsa nga requirements ang i-andam sa pag-file?",
+    label: "Filing Requirements",
     question: "Unsa nga mga requirements ang kinahanglan i-andam sa pag-file ug reklamo?",
   },
 ];
@@ -29,10 +30,46 @@ const SUGGESTED_QUESTIONS = [
 const INITIAL_MESSAGES = [
   {
     sender: "bot",
-    text: "Maayong adlaw! Ako ang **KatarunganAI Assistant** 🤖.\n\nNaka-train ako sa **Republic Act 7160 (Katarungang Pambarangay Law)**. Pwede ka mangutana sa **Bisaya, Tagalog, o English** bahin sa reklamo, Lupon jurisdiction, ug KP Forms!",
+    text: "Maayong adlaw! Ako ang **KatarunganAI Assistant**.\n\nNaka-train ako sa **Republic Act 7160 (Katarungang Pambarangay Law)**. Pwede ka mangutana sa **Bisaya, Tagalog, o English** bahin sa reklamo, Lupon jurisdiction, ug KP Forms!",
     time: "Just now",
   },
 ];
+
+// Rich text formatter to cleanly render **bold** text and lists without raw asterisks
+function formatFormattedText(text) {
+  if (!text) return null;
+
+  const lines = text.split("\n");
+  return lines.map((line, lineIdx) => {
+    // Process **bold** syntax within line
+    const parts = line.split(/(\*\*.*?\*\*)/g);
+    const formattedLine = parts.map((part, partIdx) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return (
+          <strong key={partIdx} className="font-bold text-slate-900">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return part;
+    });
+
+    // Style bullet lines or empty lines
+    const isBullet = line.trim().startsWith("•") || line.trim().startsWith("1.") || line.trim().startsWith("2.") || line.trim().startsWith("3.");
+    const isHeaderLine = line.includes("NON-LUPON") || line.includes("JURISDICTION") || line.includes("TIMELINES") || line.includes("REQUIREMENTS");
+
+    return (
+      <span
+        key={lineIdx}
+        className={`block ${isHeaderLine ? "font-bold text-primary tracking-tight mb-1 mt-0.5 text-[13px]" : ""} ${
+          isBullet ? "pl-2 py-0.5 text-slate-700" : ""
+        } ${line.trim() === "" ? "h-2" : ""}`}
+      >
+        {formattedLine}
+      </span>
+    );
+  });
+}
 
 export default function KatarunganAIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -138,52 +175,54 @@ export default function KatarunganAIChatbot() {
       };
       setMessages((prev) => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 900);
+    }, 800);
   }
 
   return (
-    <aside aria-label="AI Legal Assistant" className="fixed bottom-5 right-5 z-50 flex flex-col items-end">
+    <aside aria-label="AI Legal Assistant" className="fixed bottom-5 right-5 z-50 flex flex-col items-end print:hidden">
       {/* Floating Toggle Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group relative bg-gradient-to-r from-primary via-blue-700 to-indigo-800 text-white rounded-full px-4 py-3 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center gap-2.5 border border-white/20 active:scale-95"
+          className="group relative bg-[#050c1e] text-white rounded-full px-4 py-3 shadow-2xl hover:shadow-primary/30 hover:scale-105 transition-all duration-300 flex items-center gap-3 border border-brass/40 active:scale-95"
         >
-          <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0 animate-pulse">
-            <Icon name="bot" className="w-5 h-5 text-amber-300" />
+          <span className="w-8 h-8 rounded-full bg-primary/20 border border-brass/30 flex items-center justify-center shrink-0">
+            <BrandMark size={20} />
           </span>
           <div className="flex flex-col items-start text-left">
-            <span className="text-xs font-bold tracking-tight text-white flex items-center gap-1">
-              Ask KatarunganAI
+            <span className="text-xs font-bold tracking-tight text-white flex items-center gap-1.5 font-display">
+              KatarunganAI
               <span className="px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-extrabold text-[9px] uppercase tracking-wider">
                 AI
               </span>
             </span>
-            <span className="text-[10px] text-white/80 font-medium">R.A. 7160 Legal Assistant</span>
+            <span className="text-[10px] text-white/70 font-medium">R.A. 7160 Legal Assistant</span>
           </div>
         </button>
       )}
 
       {/* Floating Chat Modal */}
       {isOpen && (
-        <div className="bg-white border border-border/80 rounded-2xl shadow-2xl w-[92vw] sm:w-[410px] h-[540px] max-h-[82vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
-          {/* Chat Header */}
-          <div className="bg-gradient-to-r from-slate-900 via-primary to-blue-900 text-white p-4 flex items-center justify-between shrink-0 border-b border-white/10">
+        <div className="bg-white border border-border/80 rounded-2xl shadow-2xl w-[92vw] sm:w-[420px] h-[560px] max-h-[84vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+          {/* Custom Header matching KatarunganHub palette */}
+          <div className="bg-[#050c1e] text-white p-4 flex items-center justify-between shrink-0 border-b border-border/60">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-blue-500/30 border border-blue-400/40 flex items-center justify-center shrink-0">
-                <Icon name="bot" className="w-5 h-5 text-amber-300" />
+              <div className="w-9 h-9 rounded-full bg-primary/30 border border-brass/40 flex items-center justify-center shrink-0">
+                <BrandMark size={24} />
               </div>
               <div>
                 <h2 className="font-display font-bold text-sm text-white flex items-center gap-1.5">
                   KatarunganAI Assistant
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    🟢 Online
+                  </span>
                 </h2>
-                <p className="text-[10px] text-blue-200/90 font-medium">R.A. 7160 Katarungang Pambarangay Knowledge Base</p>
+                <p className="text-[10px] text-slate-300 font-medium">Official R.A. 7160 Legal Knowledge Base</p>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-white/70 hover:text-white p-1 rounded-md hover:bg-white/10 transition-colors"
+              className="text-white/70 hover:text-white p-1.5 rounded-md hover:bg-white/10 transition-colors"
               aria-label="Close Chat"
             >
               <Icon name="x" className="w-5 h-5" />
@@ -191,48 +230,48 @@ export default function KatarunganAIChatbot() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 p-4 overflow-y-auto bg-slate-50/60 flex flex-col gap-3">
+          <div className="flex-1 p-4 overflow-y-auto bg-slate-50/70 flex flex-col gap-3.5">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`flex gap-2.5 max-w-[88%] ${msg.sender === "user" ? "self-end flex-row-reverse" : "self-start"}`}
+                className={`flex gap-2.5 max-w-[90%] ${msg.sender === "user" ? "self-end flex-row-reverse" : "self-start"}`}
               >
                 {msg.sender === "bot" && (
-                  <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-xs mt-1">
-                    🤖
+                  <div className="w-7 h-7 rounded-full bg-[#050c1e] border border-brass/40 flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+                    <BrandMark size={16} />
                   </div>
                 )}
                 <div>
                   <div
-                    className={`p-3.5 rounded-2xl text-xs leading-relaxed shadow-xs whitespace-pre-line ${
+                    className={`p-3.5 text-xs leading-relaxed shadow-2xs font-sans ${
                       msg.sender === "user"
-                        ? "bg-primary text-white rounded-br-none"
-                        : "bg-white text-slate-800 border border-slate-200/80 rounded-bl-none font-sans"
+                        ? "bg-primary text-white rounded-2xl rounded-tr-xs font-medium"
+                        : "bg-white text-slate-800 border border-border/80 rounded-2xl rounded-tl-xs"
                     }`}
                   >
-                    {msg.text}
+                    {msg.sender === "user" ? msg.text : formatFormattedText(msg.text)}
                   </div>
-                  <span className="text-[9px] text-slate-400 px-1 mt-0.5 block">{msg.time}</span>
+                  <span className="text-[9px] text-slate-400 px-1.5 mt-1 block font-medium">{msg.time}</span>
                 </div>
               </div>
             ))}
 
             {isTyping && (
-              <div className="self-start flex gap-2 items-center text-xs text-slate-400 bg-white border border-slate-200 rounded-full px-3 py-1.5 shadow-xs">
+              <div className="self-start flex gap-2 items-center text-xs text-slate-500 bg-white border border-border/80 rounded-full px-3.5 py-1.5 shadow-2xs">
                 <Icon name="refresh-cw" className="w-3.5 h-3.5 animate-spin text-primary" />
-                <span>KatarunganAI is thinking…</span>
+                <span className="font-medium">KatarunganAI is processing…</span>
               </div>
             )}
             <div ref={chatEndRef} />
           </div>
 
-          {/* Quick Suggested Question Chips */}
-          <div className="p-2.5 bg-slate-100/90 border-t border-border/60 flex gap-1.5 overflow-x-auto scrollbar-none shrink-0">
+          {/* Suggested Question Chips */}
+          <div className="p-2.5 bg-slate-100/80 border-t border-border/60 flex gap-2 overflow-x-auto scrollbar-none shrink-0">
             {SUGGESTED_QUESTIONS.map((chip, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSend(chip.question)}
-                className="bg-white hover:bg-primary/10 hover:text-primary text-slate-700 text-[11px] font-medium px-2.5 py-1.5 rounded-full border border-slate-200 shrink-0 transition-all shadow-2xs flex items-center gap-1 active:scale-95"
+                className="bg-white hover:bg-primary/10 hover:text-primary text-slate-700 text-[11px] font-semibold px-3 py-1.5 rounded-full border border-border/80 shrink-0 transition-all shadow-2xs flex items-center gap-1.5 active:scale-95"
               >
                 <Icon name={chip.icon} className="w-3 h-3 text-primary shrink-0" />
                 <span>{chip.label}</span>
@@ -252,12 +291,12 @@ export default function KatarunganAIChatbot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask KatarunganAI (Bisaya, Tagalog, English)…"
-              className="flex-1 text-xs border border-border rounded-lg px-3.5 py-2.5 bg-slate-50 focus:bg-white focus-visible:outline-2 focus-visible:outline-primary"
+              className="flex-1 text-xs border border-border rounded-xl px-3.5 py-2.5 bg-slate-50 focus:bg-white focus-visible:outline-2 focus-visible:outline-primary font-medium text-foreground"
             />
             <button
               type="submit"
               disabled={!input.trim()}
-              className="bg-primary text-white p-2.5 rounded-lg hover:bg-primary/90 transition-all disabled:opacity-40 shadow-xs shrink-0 active:scale-95"
+              className="bg-primary text-white p-2.5 rounded-xl hover:bg-primary/90 transition-all disabled:opacity-40 shadow-xs shrink-0 active:scale-95 flex items-center justify-center"
             >
               <Icon name="send" className="w-4 h-4" />
             </button>

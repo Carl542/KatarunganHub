@@ -228,14 +228,30 @@ export default function KatarunganAIChatbot() {
                 </h2>
                 <p className="text-[10px] text-slate-300 font-medium">Official R.A. 7160 Legal Knowledge Base</p>
               </div>
+            {/* Header Controls (Minimize & Close) */}
+            <div className="flex items-center gap-1 shrink-0 ml-2">
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                title="Minimize Chat"
+                className="text-white/70 hover:text-white p-1.5 rounded-md hover:bg-white/15 transition-all active:scale-95 flex items-center justify-center"
+                aria-label="Minimize Chat"
+              >
+                <Icon name="minus" className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMessages(INITIAL_MESSAGES);
+                  setIsOpen(false);
+                }}
+                title="Close & Clear Chat"
+                className="text-white/70 hover:text-white hover:bg-rose-600/80 p-1.5 rounded-md transition-all active:scale-95 flex items-center justify-center"
+                aria-label="Close Chat"
+              >
+                <Icon name="x" className="w-4 h-4" />
+              </button>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white/70 hover:text-white p-1.5 rounded-md hover:bg-white/10 transition-colors"
-              aria-label="Close Chat"
-            >
-              <Icon name="x" className="w-5 h-5" />
-            </button>
           </div>
 
           {/* Messages Area */}

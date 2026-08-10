@@ -154,17 +154,22 @@ export default function CaseOverview() {
         <StatCard label="Resolved Cases" value={resolved} href="/dashboard/cases" icon="check-circle" color="accent" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        <div className="bg-white/90 rounded-sm border border-border p-5">
-          <h2 className="font-display text-lg font-semibold mb-2">Cases per month</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={perMonth}>
-              <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#786956" }} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
-              <Tooltip {...tooltipStyle} cursor={{ stroke: lineCursorStroke }} />
-              <Line type="monotone" dataKey="count" stroke="#3f6b4b" strokeWidth={2} dot={{ r: 3 }} />
-            </LineChart>
-          </ResponsiveContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 items-stretch">
+        <div className="bg-white/90 rounded-sm border border-border p-5 flex flex-col justify-between shadow-xs">
+          <div>
+            <h2 className="font-display text-lg font-semibold text-foreground">Cases per month</h2>
+            <p className="text-xs text-foreground-muted mt-0.5 mb-3">Monthly case filing volume</p>
+          </div>
+          <div className="w-full flex-1 min-h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={perMonth}>
+                <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#786956" }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#786956" }} />
+                <Tooltip {...tooltipStyle} cursor={{ stroke: lineCursorStroke }} />
+                <Line type="monotone" dataKey="count" stroke="#3f6b4b" strokeWidth={2.5} dot={{ r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         <CaseBreakdownChart

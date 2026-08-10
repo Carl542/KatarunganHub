@@ -229,16 +229,16 @@ export default function KatarunganAIChatbot() {
               </div>
             </div>
 
-            {/* Header Action Controls (Clean Icon-Only Dash & Cross Controls) */}
-            <div className="flex items-center gap-1 shrink-0 ml-2">
+            {/* Header Action Controls (High-Visibility Box Buttons) */}
+            <div className="flex items-center gap-2 shrink-0 ml-auto pl-2">
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 title="Minimize"
                 aria-label="Minimize"
-                className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/20 transition-all active:scale-90 flex items-center justify-center"
+                className="bg-white/25 hover:bg-white/40 text-white font-extrabold px-2.5 py-1 rounded-lg border border-white/50 shadow-sm transition-all active:scale-95 flex items-center justify-center min-w-[34px] min-h-[34px]"
               >
-                <Icon name="minus" className="w-5 h-5 text-white" />
+                <span className="text-lg font-bold leading-none text-white block -mt-1">–</span>
               </button>
               <button
                 type="button"
@@ -246,11 +246,11 @@ export default function KatarunganAIChatbot() {
                   setMessages(INITIAL_MESSAGES);
                   setIsOpen(false);
                 }}
-                title="Exit"
-                aria-label="Exit"
-                className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-rose-600/90 transition-all active:scale-90 flex items-center justify-center"
+                title="Exit / Close"
+                aria-label="Exit / Close"
+                className="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-2.5 py-1 rounded-lg border border-rose-400 shadow-sm transition-all active:scale-95 flex items-center justify-center min-w-[34px] min-h-[34px]"
               >
-                <Icon name="x" className="w-5 h-5 text-white" />
+                <span className="text-base font-bold leading-none text-white block">✕</span>
               </button>
             </div>
           </div>

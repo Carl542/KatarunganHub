@@ -6,6 +6,7 @@ import Link from "next/link";
 import { apiFetch } from "@/lib/apiClient";
 import BrandMark from "@/components/BrandMark";
 import Icon from "@/components/Icon";
+import KatarunganAIChatbot from "@/components/KatarunganAIChatbot";
 
 const STATUS_COLOR = {
   Closed: "text-accent bg-accent/10 border-accent/30",
@@ -379,6 +380,7 @@ export default function TrackCasePage() {
           )}
         </div>
       </div>
+      <KatarunganAIChatbot />
     </main>
   );
 }

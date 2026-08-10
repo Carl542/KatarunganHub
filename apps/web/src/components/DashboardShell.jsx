@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import Icon from "./Icon";
 import BrandMark from "./BrandMark";
+import KatarunganAIChatbot from "./KatarunganAIChatbot";
 import { ROLES, NAV_BY_ROLE } from "@/lib/roles";
 
 function initialsFor(fullName) {
@@ -106,6 +107,7 @@ export default function DashboardShell({ role, fullName, barangayName, children 
           {children}
         </main>
       </div>
+      <KatarunganAIChatbot />
     </div>
   );
 }

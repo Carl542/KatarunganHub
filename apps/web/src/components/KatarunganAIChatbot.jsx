@@ -233,14 +233,14 @@ export default function KatarunganAIChatbot() {
               </div>
             </div>
 
-            {/* Header Action Control (Minimize Button Only) */}
+            {/* Header Action Control (Clean Borderless Minimize Button) */}
             <div className="flex items-center shrink-0 ml-2">
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 title="Minimize Chat"
                 aria-label="Minimize Chat"
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/20 hover:bg-white/35 text-white font-extrabold border border-white/40 shadow-xs transition-all active:scale-95 flex items-center justify-center text-base font-sans"
+                className="text-white/80 hover:text-white hover:bg-white/15 p-1 rounded-md transition-all active:scale-90 flex items-center justify-center text-2xl font-bold font-sans leading-none"
               >
                 –
               </button>

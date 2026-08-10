@@ -228,6 +228,8 @@ export default function KatarunganAIChatbot() {
                 </h2>
                 <p className="text-[10px] text-slate-300 font-medium">Official R.A. 7160 Legal Knowledge Base</p>
               </div>
+            </div>
+
             {/* Header Controls (Minimize & Close) */}
             <div className="flex items-center gap-1 shrink-0 ml-2">
               <button

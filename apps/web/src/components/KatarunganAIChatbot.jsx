@@ -233,28 +233,16 @@ export default function KatarunganAIChatbot() {
               </div>
             </div>
 
-            {/* Header Action Controls (Perfectly Aligned Minimize & Exit Buttons) */}
-            <div className="flex items-center gap-1.5 shrink-0 ml-2">
+            {/* Header Action Control (Minimize Button Only) */}
+            <div className="flex items-center shrink-0 ml-2">
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                title="Minimize"
-                aria-label="Minimize"
+                title="Minimize Chat"
+                aria-label="Minimize Chat"
                 className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/20 hover:bg-white/35 text-white font-extrabold border border-white/40 shadow-xs transition-all active:scale-95 flex items-center justify-center text-base font-sans"
               >
                 –
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMessages(INITIAL_MESSAGES);
-                  setIsOpen(false);
-                }}
-                title="Exit / Close"
-                aria-label="Exit / Close"
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-extrabold border border-rose-400 shadow-xs transition-all active:scale-95 flex items-center justify-center text-xs font-sans"
-              >
-                ✕
               </button>
             </div>
           </div>

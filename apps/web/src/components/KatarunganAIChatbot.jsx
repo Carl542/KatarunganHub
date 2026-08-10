@@ -187,15 +187,15 @@ export default function KatarunganAIChatbot() {
   }
 
   return (
-    <aside aria-label="AI Legal Assistant" className="fixed bottom-5 right-5 z-50 flex flex-col items-end print:hidden">
+    <aside aria-label="AI Legal Assistant" className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end print:hidden">
       {/* Floating Toggle Button matching exact deep royal navy scheme */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group relative bg-[#0b2545] text-white rounded-full px-4 py-3.5 shadow-2xl hover:shadow-[#0b2545]/40 hover:scale-105 transition-all duration-300 flex items-center gap-3 border border-white/20 active:scale-95"
+          className="group relative bg-[#0b2545] text-white rounded-full px-3.5 py-2.5 sm:px-4 sm:py-3 shadow-2xl hover:shadow-[#0b2545]/40 hover:scale-105 transition-all duration-300 flex items-center gap-2.5 sm:gap-3 border border-white/25 active:scale-95"
         >
-          <span className="w-9 h-9 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shrink-0">
-            <BrandMark size={22} />
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shrink-0">
+            <BrandMark size={20} />
           </span>
           <div className="flex flex-col items-start text-left">
             <span className="text-xs sm:text-sm font-bold tracking-tight text-white flex items-center gap-1.5 font-display">
@@ -204,14 +204,14 @@ export default function KatarunganAIChatbot() {
                 AI
               </span>
             </span>
-            <span className="text-[11px] text-blue-100/90 font-medium">R.A. 7160 Legal Assistant</span>
+            <span className="text-[10px] sm:text-[11px] text-blue-100/90 font-medium">R.A. 7160 Legal Assistant</span>
           </div>
         </button>
       )}
 
-      {/* Floating Chat Modal matching exact deep royal navy scheme */}
+      {/* Floating Chat Modal (Zero Mobile Overflow) */}
       {isOpen && (
-        <div className="bg-white border border-slate-300 rounded-2xl shadow-2xl w-[95vw] sm:w-[450px] h-[580px] max-h-[86vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="bg-white border border-slate-300 rounded-2xl shadow-2xl w-[calc(100vw-32px)] sm:w-[420px] max-w-[420px] h-[520px] sm:h-[560px] max-h-[78vh] sm:max-h-[84vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Custom Header matching exact deep royal navy #0b2545 */}
           <div className="bg-[#0b2545] text-white px-3.5 py-3 flex items-center justify-between shrink-0 border-b border-white/10 shadow-md">
             <div className="flex items-center gap-2.5 min-w-0 flex-1">

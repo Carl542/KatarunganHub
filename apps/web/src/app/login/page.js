@@ -67,7 +67,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      <div className="flex-1 flex items-center justify-center px-4 py-8 sm:py-12 relative overflow-hidden">
         <div aria-hidden="true" className="pointer-events-none absolute -right-24 -bottom-24 opacity-[0.06] lg:hidden">
           <BrandMark size={420} />
         </div>
@@ -75,70 +75,70 @@ export default function LoginPage() {
         <form
           onSubmit={handleSubmit}
           aria-describedby={error ? errorId : undefined}
-          className="relative bg-white/90 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-8 w-full max-w-sm"
+          className="relative bg-white/95 border border-border rounded-sm shadow-[0_1px_2px_rgba(30,42,63,0.06),0_12px_32px_-16px_rgba(30,42,63,0.25)] p-5 sm:p-8 w-full max-w-[380px] sm:max-w-sm"
         >
-          <div className="flex justify-center mb-4">
-            <BrandMark size={128} />
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <BrandMark size={96} />
           </div>
-          <h1 className="font-display text-3xl font-semibold text-center text-foreground">Welcome Back!</h1>
-          <p className="text-center text-base text-foreground-muted mt-1 mb-6">Sign in to your account</p>
-          <div className="h-px bg-brass/40 mb-6" aria-hidden="true" />
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold text-center text-foreground">Welcome Back!</h1>
+          <p className="text-center text-xs sm:text-sm text-foreground-muted mt-1 mb-4 sm:mb-6">Sign in to your account</p>
+          <div className="h-px bg-brass/40 mb-5 sm:mb-6" aria-hidden="true" />
 
-          <label className="block text-sm font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="email">
+          <label className="block text-xs font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="email">
             Email
           </label>
           <div className="relative mb-4">
-            <Icon name="mail" className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
+            <Icon name="mail" className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
             <input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full min-h-12 text-base border border-border rounded-sm pl-10 pr-3 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              className="w-full min-h-11 sm:min-h-12 text-sm border border-border rounded-sm pl-9 sm:pl-10 pr-3 py-2 bg-white focus-visible:outline-2 focus-visible:outline-primary"
             />
           </div>
 
-          <label className="block text-sm font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="password">
+          <label className="block text-xs font-medium tracking-wide uppercase text-foreground-muted mb-1" htmlFor="password">
             Password
           </label>
           <div className="relative mb-3">
-            <Icon name="lock" className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
+            <Icon name="lock" className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
             <input
               id="password"
               type={showPassword ? "text" : "password"}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full min-h-12 text-base border border-border rounded-sm pl-10 pr-11 py-2 bg-white focus-visible:outline-3 focus-visible:outline-primary"
+              className="w-full min-h-11 sm:min-h-12 text-sm border border-border rounded-sm pl-9 sm:pl-10 pr-10 sm:pr-11 py-2 bg-white focus-visible:outline-2 focus-visible:outline-primary"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground p-1"
             >
-              <Icon name={showPassword ? "eye-off" : "eye"} className="w-5 h-5" />
+              <Icon name={showPassword ? "eye-off" : "eye"} className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
-          <div className="flex items-center justify-between mb-5 text-base">
-            <label className="flex items-center gap-2 text-foreground-muted">
+          <div className="flex items-center justify-between gap-1.5 mb-5 text-xs sm:text-sm">
+            <label className="flex items-center gap-1.5 text-foreground-muted whitespace-nowrap cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-5 h-5 accent-primary"
+                className="w-4 h-4 accent-primary rounded-xs shrink-0"
               />
-              Remember me
+              <span>Remember me</span>
             </label>
-            <Link href="/forgot-password" className="text-primary font-medium hover:underline">
+            <Link href="/forgot-password" className="text-primary font-medium hover:underline whitespace-nowrap">
               Forgot Password?
             </Link>
           </div>
 
           {error && (
-            <p id={errorId} role="alert" className="text-danger text-base mb-4">
+            <p id={errorId} role="alert" className="text-danger text-xs sm:text-sm mb-4 font-medium">
               {error}
             </p>
           )}
@@ -146,12 +146,12 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full min-h-12 text-base bg-primary text-white rounded-sm py-2 font-medium tracking-wide disabled:opacity-60 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary hover:bg-primary/90 transition-colors"
+            className="w-full min-h-11 sm:min-h-12 text-sm sm:text-base bg-primary text-white rounded-sm py-2.5 font-medium tracking-wide disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:bg-primary/90 transition-colors active:scale-[0.99]"
           >
             {loading ? "Signing in…" : "Login"}
           </button>
 
-          <p className="text-center text-[0.65rem] text-foreground-muted mt-6">
+          <p className="text-center text-[0.65rem] text-foreground-muted mt-5 sm:mt-6">
             © {new Date().getFullYear()} KatarunganHub
           </p>
         </form>

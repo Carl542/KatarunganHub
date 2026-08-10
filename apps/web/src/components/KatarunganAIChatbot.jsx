@@ -211,34 +211,38 @@ export default function KatarunganAIChatbot() {
 
       {/* Floating Chat Modal matching exact deep royal navy scheme */}
       {isOpen && (
-        <div className="bg-white border border-slate-300 rounded-2xl shadow-2xl w-[94vw] sm:w-[430px] h-[580px] max-h-[86vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="bg-white border border-slate-300 rounded-2xl shadow-2xl w-[95vw] sm:w-[450px] h-[580px] max-h-[86vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Custom Header matching exact deep royal navy #0b2545 */}
-          <div className="bg-[#0b2545] text-white px-4 py-3.5 flex items-center justify-between shrink-0 border-b border-white/10 shadow-md">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shrink-0 shadow-xs">
-                <BrandMark size={26} />
+          <div className="bg-[#0b2545] text-white px-3.5 py-3 flex items-center justify-between shrink-0 border-b border-white/10 shadow-md">
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shrink-0">
+                <BrandMark size={22} />
               </div>
-              <div>
-                <h2 className="font-display font-bold text-base text-white flex items-center gap-2 tracking-tight">
-                  KatarunganAI Assistant
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-300 border border-emerald-400/40">
+              <div className="flex flex-col min-w-0 justify-center">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <h2 className="font-display font-bold text-xs sm:text-sm text-white tracking-tight whitespace-nowrap leading-tight">
+                    KatarunganAI Assistant
+                  </h2>
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/25 text-emerald-300 border border-emerald-400/40 shrink-0">
                     🟢 Online
                   </span>
-                </h2>
-                <p className="text-xs text-blue-100/90 font-medium">Official R.A. 7160 Legal Knowledge Base</p>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-blue-100/90 font-medium leading-tight truncate">
+                  Official R.A. 7160 Legal Knowledge Base
+                </p>
               </div>
             </div>
 
-            {/* Header Action Controls (High-Visibility Box Buttons) */}
-            <div className="flex items-center gap-2 shrink-0 ml-auto pl-2">
+            {/* Header Action Controls (Perfectly Aligned Minimize & Exit Buttons) */}
+            <div className="flex items-center gap-1.5 shrink-0 ml-2">
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 title="Minimize"
                 aria-label="Minimize"
-                className="bg-white/25 hover:bg-white/40 text-white font-extrabold px-2.5 py-1 rounded-lg border border-white/50 shadow-sm transition-all active:scale-95 flex items-center justify-center min-w-[34px] min-h-[34px]"
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/20 hover:bg-white/35 text-white font-extrabold border border-white/40 shadow-xs transition-all active:scale-95 flex items-center justify-center text-base font-sans"
               >
-                <span className="text-lg font-bold leading-none text-white block -mt-1">–</span>
+                –
               </button>
               <button
                 type="button"
@@ -248,9 +252,9 @@ export default function KatarunganAIChatbot() {
                 }}
                 title="Exit / Close"
                 aria-label="Exit / Close"
-                className="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-2.5 py-1 rounded-lg border border-rose-400 shadow-sm transition-all active:scale-95 flex items-center justify-center min-w-[34px] min-h-[34px]"
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-extrabold border border-rose-400 shadow-xs transition-all active:scale-95 flex items-center justify-center text-xs font-sans"
               >
-                <span className="text-base font-bold leading-none text-white block">✕</span>
+                ✕
               </button>
             </div>
           </div>

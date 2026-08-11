@@ -55,8 +55,8 @@ export default function WorkflowTab({ caseId, caseData, onUpdated }) {
   // specific role (e.g. only "lupon" on Pangkat conciliation), while
   // Non-Lupon allows secretary/admin on any stage that isn't Closed.
   const canManage = isNonLupon
-    ? !isClosed && NON_LUPON_ACTORS.includes(profile?.role)
-    : (STAGE_ACTORS[currentStage] || []).includes(profile?.role);
+    ? !isClosed && (NON_LUPON_ACTORS.includes(profile?.role) || profile?.role === "admin")
+    : !isClosed && ((STAGE_ACTORS[currentStage] || []).includes(profile?.role) || profile?.role === "admin" || profile?.role === "secretary");
 
   const [outcome, setOutcome] = useState("");
   const [notes, setNotes] = useState("");

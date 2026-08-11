@@ -53,14 +53,14 @@ export const NEXT_STAGE_BY_OUTCOME = {
 };
 
 export const STAGE_ACTORS = {
-  "Official complaint encoded": ["secretary"],
-  "Jurisdiction review": ["punong", "secretary"],
-  "Summons issued": ["punong", "secretary"],
-  "Punong Barangay mediation": ["punong"],
-  "Pangkat formation": ["punong", "secretary"],
-  "Pangkat conciliation": ["lupon"],
-  "Settlement monitoring": ["secretary"],
-  "Proper disposition": ["punong", "secretary"],
+  "Official complaint encoded": ["secretary", "admin"],
+  "Jurisdiction review": ["punong", "secretary", "admin"],
+  "Summons issued": ["punong", "secretary", "admin"],
+  "Punong Barangay mediation": ["punong", "secretary", "admin"],
+  "Pangkat formation": ["punong", "secretary", "admin"],
+  "Pangkat conciliation": ["lupon", "punong", "secretary", "admin"],
+  "Settlement monitoring": ["secretary", "admin"],
+  "Proper disposition": ["punong", "secretary", "admin"],
   Closed: [],
 };
 
@@ -73,5 +73,6 @@ export function getNextStage(stage, outcome) {
 }
 
 export function canActOnStage(stage, role) {
+  if (role === "admin" || role === "secretary") return true;
   return (STAGE_ACTORS[stage] || []).includes(role);
 }

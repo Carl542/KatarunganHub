@@ -10,16 +10,19 @@ router.get(
   requireRole("admin", "punong", "secretary", "lupon"),
   async (req, res) => {
     const supabase = getSupabaseClient();
-    const { dateFrom, dateTo, filedBy } = req.query;
+    const { dateFrom, dateTo, filedBy, type, status, search } = req.query;
 
     let query = supabase
       .from("complaints")
       .select(
-        "id, status, type, category:complaint_categories(name), priority:priority_levels(name), complainant:profiles!complainant_id(full_name)"
+        "id, title, reference_number, status, type, category:complaint_categories(name), priority:priority_levels(name), complainant:profiles!complainant_id(full_name)"
       );
     if (dateFrom) query = query.gte("filed_at", dateFrom);
     if (dateTo) query = query.lte("filed_at", dateTo);
     if (filedBy) query = query.eq("created_by", filedBy);
+    if (type && type !== "All") query = query.eq("type", type);
+    if (status && status !== "All") query = query.eq("status", status);
+    if (search) query = query.or(`title.ilike.%${search}%,reference_number.ilike.%${search}%`);
 
     const { data, error } = await query;
     if (error) return res.status(500).json({ error: error.message });

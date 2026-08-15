@@ -15,7 +15,7 @@ function toChartData(obj) {
 }
 
 export default function ReportsPage() {
-  const [filters, setFilters] = useState({ dateFrom: "", dateTo: "", filedBy: "" });
+  const [filters, setFilters] = useState({ dateFrom: "", dateTo: "", filedBy: "", search: "", status: "All", type: "All" });
   const [summary, setSummary] = useState(null);
   const [barangay, setBarangay] = useState({});
   const [error, setError] = useState("");
@@ -35,6 +35,9 @@ export default function ReportsPage() {
       if (filters.dateFrom) params.set("dateFrom", filters.dateFrom);
       if (filters.dateTo) params.set("dateTo", filters.dateTo);
       if (filters.filedBy) params.set("filedBy", filters.filedBy);
+      if (filters.search) params.set("search", filters.search);
+      if (filters.status && filters.status !== "All") params.set("status", filters.status);
+      if (filters.type && filters.type !== "All") params.set("type", filters.type);
       const data = await apiFetch(`/reports/summary?${params.toString()}`);
       setSummary(data);
     } catch (err) {
@@ -121,6 +124,44 @@ export default function ReportsPage() {
       </div>
 
       <div className="bg-white/90 rounded-sm border border-border p-4 mb-6 flex flex-wrap items-end gap-3 print:hidden">
+        <label className="flex flex-col gap-1 min-w-[200px] flex-1">
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Search (Barangay / Title)</span>
+          <input
+            type="text"
+            placeholder="Search by Barangay/Purok or Title..."
+            value={filters.search}
+            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary text-sm"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Case Type</span>
+          <select
+            value={filters.type}
+            onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary text-sm"
+          >
+            <option value="All">All Types</option>
+            <option value="Lupon">Lupon Cases</option>
+            <option value="Non-Lupon">Non-Lupon Cases</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Status Filter</span>
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            className="border border-border rounded-sm px-3 py-2 min-h-11 bg-white focus-visible:outline-3 focus-visible:outline-primary text-sm"
+          >
+            <option value="All">All Statuses</option>
+            <option value="New">New</option>
+            <option value="Active">Active</option>
+            <option value="Under Mediation">Under Mediation</option>
+            <option value="Under Conciliation">Under Conciliation</option>
+            <option value="Settled">Settled</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </label>
         <label className="flex flex-col gap-1">
           <span className="text-xs font-medium tracking-wide uppercase text-foreground-muted">Filed from</span>
           <input

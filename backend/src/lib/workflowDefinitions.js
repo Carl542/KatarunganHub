@@ -59,7 +59,7 @@ export const STAGE_ACTORS = {
   "Punong Barangay mediation": ["punong", "secretary", "admin"],
   "Pangkat formation": ["punong", "secretary", "admin"],
   "Pangkat conciliation": ["lupon", "punong", "secretary", "admin"],
-  "Settlement monitoring": ["secretary", "admin"],
+  "Settlement monitoring": ["punong", "secretary", "admin"],
   "Proper disposition": ["punong", "secretary", "admin"],
   Closed: [],
 };

@@ -119,11 +119,12 @@ export default function SchedulesPage() {
     setAddError("");
     setAdding(true);
     try {
+      const scheduledDate = form.scheduledAt ? new Date(form.scheduledAt).toISOString() : null;
       await apiFetch(`/complaints/${form.caseId}/schedules`, {
         method: "POST",
         body: JSON.stringify({
           type: form.type,
-          scheduledAt: form.scheduledAt,
+          scheduledAt: scheduledDate,
           venue: form.venue,
           facilitatorId: form.facilitatorId || undefined,
         }),

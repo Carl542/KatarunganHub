@@ -32,7 +32,11 @@ export default function SchedulesTab({ caseId }) {
     e.preventDefault();
     setError("");
     try {
-      await apiFetch(`/complaints/${caseId}/schedules`, { method: "POST", body: JSON.stringify(form) });
+      const scheduledDate = form.scheduledAt ? new Date(form.scheduledAt).toISOString() : null;
+      await apiFetch(`/complaints/${caseId}/schedules`, {
+        method: "POST",
+        body: JSON.stringify({ ...form, scheduledAt: scheduledDate }),
+      });
       setForm({ type: "Summons", scheduledAt: "", venue: "Barangay Hall", facilitatorId: "" });
       load();
     } catch (err) {

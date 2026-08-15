@@ -38,7 +38,21 @@ router.post("/", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
       .single();
 
     if (complaint) {
-      const message = `A ${type} is scheduled for ${scheduledAt} at ${venue} (case ${complaint.reference_number}).`;
+      let formattedDate = scheduledAt;
+      try {
+        formattedDate = new Date(scheduledAt).toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+          timeZone: "Asia/Manila",
+        });
+      } catch (e) {
+        /* fallback to raw */
+      }
+      const message = `A ${type} is scheduled for ${formattedDate} at ${venue} (case ${complaint.reference_number}).`;
       notify({ recipientId: complaint.complainant_id, complaintId: req.params.complaintId, message });
       notify({ recipientId: complaint.respondent_id, complaintId: req.params.complaintId, message });
     }
